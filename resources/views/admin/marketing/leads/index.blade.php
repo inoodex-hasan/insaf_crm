@@ -28,9 +28,9 @@
         <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
             <form action="{{ route('admin.marketing.leads.index') }}" method="GET"
                 class="flex w-full flex-1 flex-col gap-5 md:flex-row md:items-center">
-                <div class="relative w-full md:w-80">
+                <div class="relative w-full md:w-auto" style="width: 220px;">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search Student Name or Phone..." class="form-input ltr:pr-11 rtl:pl-11" />
+                        placeholder="Name/Phone..." class="form-input ltr:pr-11 rtl:pl-11" />
                     <button type="submit"
                         class="hover:text-primary absolute inset-y-0 flex items-center ltr:right-4 rtl:left-4">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -42,7 +42,7 @@
                     </button>
                 </div>
                 <div class="flex gap-2">
-                    <select name="source" class="form-select w-full md:w-40">
+                    <select name="source" class="form-select w-full md:w-auto" style="width: 100px;">
                         <option value="">Sources</option>
                         <option value="Phone" {{ request('source') == 'Phone' ? 'selected' : '' }}>Phone Call</option>
                         <option value="Message" {{ request('source') == 'Message' ? 'selected' : '' }}>WhatsApp/SMS</option>
@@ -52,13 +52,13 @@
                         </option>
                         <option value="Walk-in" {{ request('source') == 'Walk-in' ? 'selected' : '' }}>Walk-in</option>
                     </select>
-                    <select name="priority" class="form-select w-full md:w-36">
+                    <select name="priority" class="form-select w-full md:w-auto" style="width: 120px;">
                         <option value="">Priority</option>
                         <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
                         <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
                         <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
                     </select>
-                    @if ($canViewAllLeads ?? false)
+                    <!-- @if ($canViewAllLeads ?? false)
                         <select name="collected_by" class="form-select w-full min-w-[150px]">
                             <option value="">Collected By</option>
                             @foreach ($collectors ?? [] as $collector)
@@ -67,7 +67,7 @@
                                     {{ $collector->name }}</option>
                             @endforeach
                         </select>
-                    @endif
+                    @endif -->
                     <input type="date" name="follow_up_from" value="{{ request('follow_up_from') }}"
                         class="form-input w-full md:w-40" placeholder="Follow-up From" title="Follow-up From" />
                     <input type="date" name="follow_up_to" value="{{ request('follow_up_to') }}"
@@ -89,7 +89,8 @@
                             <th>Contact Source</th>
                             <th>Follow-up Date</th>
                             {{-- <th>Status</th> --}}
-                            <th>Collected By</th>
+                            <th>Created At</th>
+                            <!-- <th>Collected By</th> -->
                             @canany(['*marketing', '*consultant'])
                                 <th class="text-center">Action</th>
                             @endcanany
@@ -100,7 +101,7 @@
                             <tr>
                                 <td>
                                     <div class="font-semibold">{{ $lead->student_name }}</div>
-                                    <div class="text-white-dark text-xs">{{ $lead->email ?? 'No Email' }}</div>
+                                    <div class="text-white-dark text-xs">{{ \Illuminate\Support\Str::limit($lead->email, 12) ?? 'No Email' }}</div>
                                 </td>
                                 <td>
                                     @if ($lead->phone)
@@ -146,36 +147,65 @@
                                         -
                                     @endif
                                 </td>
-                                {{-- <td>
+                                <!-- <td>
                                     <span class="badge @if ($lead->status == 'pending') badge-outline-warning @elseif($lead->status == 'interested') badge-outline-success @elseif($lead->status == 'forwarded') badge-outline-info @else badge-outline-danger @endif capitalize">
                                         {{ $lead->status }}
                                     </span>
-                                </td> --}}
+                                </td> -->
                                 <td>
+                                    <span class="badge badge-outline-primary">{{ $lead->created_at->format('M d, Y') }}</span>
+                                </td>
+                                <!-- <td>
                                     @if ($lead->creator)
                                         <span class="badge badge-outline-primary">{{ $lead->creator->name }}</span>
                                     @else
                                         -
                                     @endif
-                                </td>
+                                </td> -->
                                 @canany(['*marketing', '*consultant'])
                                     <td class="text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <a href="{{ route('admin.marketing.leads.show', $lead->id) }}"
-                                                class="btn btn-sm btn-outline-info">View</a>
-
-                                            @can('*marketing')
-                                                <a href="{{ route('admin.marketing.leads.edit', $lead->id) }}"
-                                                    class="btn btn-sm btn-outline-primary">Edit</a>
-
-                                                <form action="{{ route('admin.marketing.leads.destroy', $lead->id) }}"
-                                                    method="POST" onsubmit="return confirm('Delete this lead?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                                </form>
-                                            @endcan
-
+                                        <div class="dropdown flex items-center justify-center" x-data="dropdown" @click.outside="open = false">
+                                            <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-dark/70 hover:bg-gray-100 hover:text-primary dark:text-white-light/70 dark:hover:bg-dark/40 dark:hover:text-primary" @click="toggle">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                                </svg>
+                                            </button>
+                                            <ul x-cloak x-show="open" x-transition x-transition.duration.300ms class="ltr:right-0 rtl:left-0 !z-50 whitespace-nowrap shadow-lg">
+                                                <li>
+                                                    <a href="{{ route('admin.marketing.leads.show', $lead->id) }}" @click="toggle">
+                                                        <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-info" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                            <circle cx="12" cy="12" r="3"></circle>
+                                                        </svg>
+                                                        View
+                                                    </a>
+                                                </li>
+                                                @can('*marketing')
+                                                    <li>
+                                                        <a href="{{ route('admin.marketing.leads.edit', $lead->id) }}" @click="toggle">
+                                                            <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                            </svg>
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('admin.marketing.leads.destroy', $lead->id) }}" method="POST"
+                                                            onsubmit="return confirm('Delete this lead?');" class="m-0">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="flex w-full items-center px-4 py-2 text-left text-danger hover:!bg-danger/10 hover:!text-danger">
+                                                                <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-danger" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                                </svg>
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endcan
+                                            </ul>
                                         </div>
                                     </td>
                                 @endcanany
@@ -189,7 +219,7 @@
                 </table>
             </div>
             <div class="mt-4">
-                {{ $leads->links() }}
+                {{ $leads->onEachSide(1)->links() }}
             </div>
         </div>
     </div>

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 11, 2026 at 07:03 AM
--- Server version: 11.4.10-MariaDB-cll-lve-log
--- PHP Version: 8.4.21
+-- Generation Time: Aug 16, 2026 at 10:41 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `insaxwgx_insaf_crm`
+-- Database: `insaf_crm`
 --
 
 -- --------------------------------------------------------
@@ -28,18 +28,18 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounting_periods` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `year` year(4) DEFAULT NULL,
-  `month` tinyint(3) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `year` year DEFAULT NULL,
+  `month` tinyint UNSIGNED DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
-  `type` enum('fiscal_year','monthly','quarterly') NOT NULL DEFAULT 'monthly',
-  `status` enum('open','closed') NOT NULL DEFAULT 'open',
-  `remarks` text DEFAULT NULL,
+  `type` enum('fiscal_year','monthly','quarterly') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'monthly',
+  `status` enum('open','closed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
+  `remarks` text COLLATE utf8mb4_unicode_ci,
   `is_closed` tinyint(1) DEFAULT NULL,
   `closed_at` timestamp NULL DEFAULT NULL,
-  `closed_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `closed_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -58,43 +58,43 @@ INSERT INTO `accounting_periods` (`id`, `name`, `year`, `month`, `start_date`, `
 --
 
 CREATE TABLE `applications` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` varchar(255) NOT NULL,
-  `student_id` bigint(20) UNSIGNED NOT NULL,
-  `university_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `course_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `course_intake_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `application_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `student_id` bigint UNSIGNED NOT NULL,
+  `university_id` bigint UNSIGNED DEFAULT NULL,
+  `course_id` bigint UNSIGNED DEFAULT NULL,
+  `course_intake_id` bigint UNSIGNED DEFAULT NULL,
   `tuition_fee` decimal(12,2) DEFAULT NULL,
-  `tuition_fee_status` enum('pending','paid','partial') NOT NULL DEFAULT 'pending',
-  `service_charge_status` enum('pending','paid','partial') NOT NULL DEFAULT 'pending',
-  `application_priority` enum('normal','priority','vip') NOT NULL DEFAULT 'normal',
-  `internal_notes` text DEFAULT NULL,
-  `documents_checklist` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`documents_checklist`)),
-  `final_status` enum('pending','in_progress','completed','cancelled') NOT NULL DEFAULT 'pending',
-  `security_deposit_status` tinyint(1) NOT NULL DEFAULT 0,
-  `cvu_fee_status` tinyint(1) NOT NULL DEFAULT 0,
-  `admission_fee_status` tinyint(1) NOT NULL DEFAULT 0,
-  `final_payment_status` tinyint(1) NOT NULL DEFAULT 0,
-  `emgs_payment_status` tinyint(1) NOT NULL DEFAULT 0,
-  `emgs_score` int(11) DEFAULT NULL,
-  `total_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
-  `offer_letter_received` tinyint(1) NOT NULL DEFAULT 0,
+  `tuition_fee_status` enum('pending','paid','partial') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `service_charge_status` enum('pending','paid','partial') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `application_priority` enum('normal','priority','vip') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'normal',
+  `internal_notes` text COLLATE utf8mb4_unicode_ci,
+  `documents_checklist` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `final_status` enum('pending','in_progress','completed','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `security_deposit_status` tinyint(1) NOT NULL DEFAULT '0',
+  `cvu_fee_status` tinyint(1) NOT NULL DEFAULT '0',
+  `admission_fee_status` tinyint(1) NOT NULL DEFAULT '0',
+  `final_payment_status` tinyint(1) NOT NULL DEFAULT '0',
+  `emgs_payment_status` tinyint(1) NOT NULL DEFAULT '0',
+  `emgs_score` int DEFAULT NULL,
+  `total_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `offer_letter_received` tinyint(1) NOT NULL DEFAULT '0',
   `offer_letter_received_date` date DEFAULT NULL,
-  `vfs_appointment` tinyint(1) NOT NULL DEFAULT 0,
+  `vfs_appointment` tinyint(1) NOT NULL DEFAULT '0',
   `vfs_appointment_date` date DEFAULT NULL,
-  `file_submission` tinyint(1) NOT NULL DEFAULT 0,
+  `file_submission` tinyint(1) NOT NULL DEFAULT '0',
   `file_submission_date` date DEFAULT NULL,
-  `visa_status` enum('not_applied','pending','approved','rejected') NOT NULL DEFAULT 'not_applied',
+  `visa_status` enum('not_applied','pending','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'not_applied',
   `visa_decision_date` date DEFAULT NULL,
   `visa_approval_date` date DEFAULT NULL,
-  `notes` text DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `vfs_result` varchar(255) NOT NULL DEFAULT 'pending',
-  `vfs_note` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `vfs_result` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `vfs_note` text COLLATE utf8mb4_unicode_ci
+) ;
 
 --
 -- Dumping data for table `applications`
@@ -114,15 +114,15 @@ INSERT INTO `applications` (`id`, `application_id`, `student_id`, `university_id
 --
 
 CREATE TABLE `bank_reconciliations` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `account_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `account_id` bigint UNSIGNED NOT NULL,
   `statement_date` date NOT NULL,
   `statement_balance` decimal(15,2) NOT NULL,
   `system_balance` decimal(15,2) NOT NULL,
-  `difference` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `status` enum('draft','closed') NOT NULL DEFAULT 'draft',
+  `difference` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `status` enum('draft','closed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
   `closed_at` timestamp NULL DEFAULT NULL,
-  `closed_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `closed_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -134,16 +134,16 @@ CREATE TABLE `bank_reconciliations` (
 --
 
 CREATE TABLE `bank_reconciliation_items` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `reconciliation_id` bigint(20) UNSIGNED NOT NULL,
-  `bank_statement_ref` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `reconciliation_id` bigint UNSIGNED NOT NULL,
+  `bank_statement_ref` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` decimal(15,2) NOT NULL,
-  `type` enum('matched','unmatched','adjustment') NOT NULL DEFAULT 'unmatched',
+  `type` enum('matched','unmatched','adjustment') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'unmatched',
   `matched_at` timestamp NULL DEFAULT NULL,
-  `matched_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `matched_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `journal_entry_item_id` bigint(20) UNSIGNED DEFAULT NULL
+  `journal_entry_item_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -153,14 +153,14 @@ CREATE TABLE `bank_reconciliation_items` (
 --
 
 CREATE TABLE `budgets` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED DEFAULT NULL,
   `amount` decimal(12,2) NOT NULL,
-  `period` enum('monthly','yearly') NOT NULL DEFAULT 'monthly',
+  `period` enum('monthly','yearly') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'monthly',
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -172,9 +172,9 @@ CREATE TABLE `budgets` (
 --
 
 CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -182,8 +182,8 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('admin-dashboard-cache-active_currencies', 'O:39:\"Illuminate\\Database\\Eloquent\\Collection\":2:{s:8:\"\0*\0items\";a:1:{i:0;O:19:\"App\\Models\\Currency\":33:{s:13:\"\0*\0connection\";s:5:\"mysql\";s:8:\"\0*\0table\";s:10:\"currencies\";s:13:\"\0*\0primaryKey\";s:2:\"id\";s:10:\"\0*\0keyType\";s:3:\"int\";s:12:\"incrementing\";b:1;s:7:\"\0*\0with\";a:0:{}s:12:\"\0*\0withCount\";a:0:{}s:19:\"preventsLazyLoading\";b:0;s:10:\"\0*\0perPage\";i:15;s:6:\"exists\";b:1;s:18:\"wasRecentlyCreated\";b:0;s:28:\"\0*\0escapeWhenCastingToString\";b:0;s:13:\"\0*\0attributes\";a:9:{s:2:\"id\";s:1:\"2\";s:4:\"name\";s:4:\"Euro\";s:4:\"code\";s:3:\"EUR\";s:6:\"symbol\";s:3:\"€\";s:13:\"exchange_rate\";s:12:\"144.32000000\";s:9:\"is_active\";s:1:\"1\";s:10:\"is_default\";s:1:\"0\";s:10:\"created_at\";s:19:\"2026-05-06 20:10:59\";s:10:\"updated_at\";s:19:\"2026-06-11 04:53:47\";}s:11:\"\0*\0original\";a:9:{s:2:\"id\";s:1:\"2\";s:4:\"name\";s:4:\"Euro\";s:4:\"code\";s:3:\"EUR\";s:6:\"symbol\";s:3:\"€\";s:13:\"exchange_rate\";s:12:\"144.32000000\";s:9:\"is_active\";s:1:\"1\";s:10:\"is_default\";s:1:\"0\";s:10:\"created_at\";s:19:\"2026-05-06 20:10:59\";s:10:\"updated_at\";s:19:\"2026-06-11 04:53:47\";}s:10:\"\0*\0changes\";a:0:{}s:11:\"\0*\0previous\";a:0:{}s:8:\"\0*\0casts\";a:3:{s:13:\"exchange_rate\";s:9:\"decimal:2\";s:9:\"is_active\";s:7:\"boolean\";s:10:\"is_default\";s:7:\"boolean\";}s:17:\"\0*\0classCastCache\";a:0:{}s:21:\"\0*\0attributeCastCache\";a:0:{}s:13:\"\0*\0dateFormat\";N;s:10:\"\0*\0appends\";a:0:{}s:19:\"\0*\0dispatchesEvents\";a:0:{}s:14:\"\0*\0observables\";a:0:{}s:12:\"\0*\0relations\";a:0:{}s:10:\"\0*\0touches\";a:0:{}s:27:\"\0*\0relationAutoloadCallback\";N;s:26:\"\0*\0relationAutoloadContext\";N;s:10:\"timestamps\";b:1;s:13:\"usesUniqueIds\";b:0;s:9:\"\0*\0hidden\";a:0:{}s:10:\"\0*\0visible\";a:0:{}s:11:\"\0*\0fillable\";a:6:{i:0;s:4:\"name\";i:1;s:4:\"code\";i:2;s:6:\"symbol\";i:3;s:13:\"exchange_rate\";i:4;s:9:\"is_active\";i:5;s:10:\"is_default\";}s:10:\"\0*\0guarded\";a:1:{i:0;s:1:\"*\";}}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}', 1781174189),
-('admin-dashboard-cache-tyro:user-1:roles', 'a:1:{i:0;s:5:\"admin\";}', 1780992763),
+('admin-dashboard-cache-active_currencies', 'O:39:\"Illuminate\\Database\\Eloquent\\Collection\":2:{s:8:\"\0*\0items\";a:1:{i:0;O:19:\"App\\Models\\Currency\":33:{s:13:\"\0*\0connection\";s:5:\"mysql\";s:8:\"\0*\0table\";s:10:\"currencies\";s:13:\"\0*\0primaryKey\";s:2:\"id\";s:10:\"\0*\0keyType\";s:3:\"int\";s:12:\"incrementing\";b:1;s:7:\"\0*\0with\";a:0:{}s:12:\"\0*\0withCount\";a:0:{}s:19:\"preventsLazyLoading\";b:0;s:10:\"\0*\0perPage\";i:15;s:6:\"exists\";b:1;s:18:\"wasRecentlyCreated\";b:0;s:28:\"\0*\0escapeWhenCastingToString\";b:0;s:13:\"\0*\0attributes\";a:9:{s:2:\"id\";i:2;s:4:\"name\";s:4:\"Euro\";s:4:\"code\";s:3:\"EUR\";s:6:\"symbol\";s:3:\"€\";s:13:\"exchange_rate\";s:12:\"144.32000000\";s:9:\"is_active\";i:1;s:10:\"is_default\";i:0;s:10:\"created_at\";s:19:\"2026-05-07 06:10:59\";s:10:\"updated_at\";s:19:\"2026-06-11 14:53:47\";}s:11:\"\0*\0original\";a:9:{s:2:\"id\";i:2;s:4:\"name\";s:4:\"Euro\";s:4:\"code\";s:3:\"EUR\";s:6:\"symbol\";s:3:\"€\";s:13:\"exchange_rate\";s:12:\"144.32000000\";s:9:\"is_active\";i:1;s:10:\"is_default\";i:0;s:10:\"created_at\";s:19:\"2026-05-07 06:10:59\";s:10:\"updated_at\";s:19:\"2026-06-11 14:53:47\";}s:10:\"\0*\0changes\";a:0:{}s:11:\"\0*\0previous\";a:0:{}s:8:\"\0*\0casts\";a:3:{s:13:\"exchange_rate\";s:9:\"decimal:2\";s:9:\"is_active\";s:7:\"boolean\";s:10:\"is_default\";s:7:\"boolean\";}s:17:\"\0*\0classCastCache\";a:0:{}s:21:\"\0*\0attributeCastCache\";a:0:{}s:13:\"\0*\0dateFormat\";N;s:10:\"\0*\0appends\";a:0:{}s:19:\"\0*\0dispatchesEvents\";a:0:{}s:14:\"\0*\0observables\";a:0:{}s:12:\"\0*\0relations\";a:0:{}s:10:\"\0*\0touches\";a:0:{}s:27:\"\0*\0relationAutoloadCallback\";N;s:26:\"\0*\0relationAutoloadContext\";N;s:10:\"timestamps\";b:1;s:13:\"usesUniqueIds\";b:0;s:9:\"\0*\0hidden\";a:0:{}s:10:\"\0*\0visible\";a:0:{}s:11:\"\0*\0fillable\";a:6:{i:0;s:4:\"name\";i:1;s:4:\"code\";i:2;s:6:\"symbol\";i:3;s:13:\"exchange_rate\";i:4;s:9:\"is_active\";i:5;s:10:\"is_default\";}s:10:\"\0*\0guarded\";a:1:{i:0;s:1:\"*\";}}}s:28:\"\0*\0escapeWhenCastingToString\";b:0;}', 1786865690),
+('admin-dashboard-cache-tyro:user-1:roles', 'a:1:{i:0;s:5:\"admin\";}', 1786865644),
 ('admin-dashboard-cache-tyro:user-12:privileges', 'a:4:{i:0;s:11:\"*consultant\";i:1;s:8:\"*invoice\";i:2;s:7:\"*editor\";i:3;s:12:\"*application\";}', 1781164027),
 ('admin-dashboard-cache-tyro:user-12:roles', 'a:3:{i:0;s:10:\"consultant\";i:1;s:6:\"editor\";i:2;s:11:\"application\";}', 1781164026),
 ('admin-dashboard-cache-tyro:user-13:privileges', 'a:1:{i:0;s:10:\"*marketing\";}', 1781158920),
@@ -239,9 +239,9 @@ INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
 --
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -251,13 +251,13 @@ CREATE TABLE `cache_locks` (
 --
 
 CREATE TABLE `chart_of_accounts` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `parent_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `code` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` enum('asset','liability','equity','revenue','expense') NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `id` bigint UNSIGNED NOT NULL,
+  `parent_id` bigint UNSIGNED DEFAULT NULL,
+  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('asset','liability','equity','revenue','expense') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -286,20 +286,20 @@ INSERT INTO `chart_of_accounts` (`id`, `parent_id`, `code`, `name`, `type`, `is_
 --
 
 CREATE TABLE `commissions` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `application_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
   `percentage` decimal(5,2) DEFAULT NULL,
-  `amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `proposed_amount` decimal(15,2) DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
-  `workflow_status` varchar(255) NOT NULL DEFAULT 'draft',
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `workflow_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
   `claimed_at` timestamp NULL DEFAULT NULL,
-  `claim_notes` text DEFAULT NULL,
-  `reviewed_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `claim_notes` text COLLATE utf8mb4_unicode_ci,
+  `reviewed_by` bigint UNSIGNED DEFAULT NULL,
   `reviewed_at` timestamp NULL DEFAULT NULL,
-  `review_notes` text DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `review_notes` text COLLATE utf8mb4_unicode_ci,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -311,11 +311,11 @@ CREATE TABLE `commissions` (
 --
 
 CREATE TABLE `countries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `code` varchar(10) DEFAULT NULL,
-  `currency` varchar(10) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `currency` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -336,14 +336,14 @@ INSERT INTO `countries` (`id`, `name`, `code`, `currency`, `status`, `created_at
 --
 
 CREATE TABLE `courses` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `university_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `degree_level` varchar(255) DEFAULT NULL,
-  `duration` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `university_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `degree_level` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `duration` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tuition_fee` decimal(12,2) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -713,13 +713,13 @@ INSERT INTO `courses` (`id`, `university_id`, `name`, `description`, `degree_lev
 --
 
 CREATE TABLE `course_intakes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `course_id` bigint(20) UNSIGNED NOT NULL,
-  `intake_name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `course_id` bigint UNSIGNED NOT NULL,
+  `intake_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `application_start_date` date DEFAULT NULL,
   `application_deadline` date DEFAULT NULL,
   `class_start_date` date DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -798,13 +798,13 @@ INSERT INTO `course_intakes` (`id`, `course_id`, `intake_name`, `application_sta
 --
 
 CREATE TABLE `currencies` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `code` varchar(3) NOT NULL,
-  `symbol` varchar(10) NOT NULL,
-  `exchange_rate` decimal(16,8) NOT NULL DEFAULT 1.00000000,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `symbol` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exchange_rate` decimal(16,8) NOT NULL DEFAULT '1.00000000',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -823,19 +823,19 @@ INSERT INTO `currencies` (`id`, `name`, `code`, `symbol`, `exchange_rate`, `is_a
 --
 
 CREATE TABLE `expenses` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `description` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `expense_date` date NOT NULL,
-  `payment_method` enum('cash','bank_transfer','mobile_banking','cheque') DEFAULT NULL,
-  `office_account_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `payment_method` enum('cash','bank_transfer','mobile_banking','cheque') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `office_account_id` bigint UNSIGNED DEFAULT NULL,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `salary_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `journal_entry_id` bigint(20) UNSIGNED DEFAULT NULL
+  `salary_id` bigint UNSIGNED DEFAULT NULL,
+  `journal_entry_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -845,13 +845,13 @@ CREATE TABLE `expenses` (
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -861,9 +861,9 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `invitation_links` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `hash` varchar(32) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `hash` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -875,9 +875,9 @@ CREATE TABLE `invitation_links` (
 --
 
 CREATE TABLE `invitation_referrals` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `invitation_link_id` bigint(20) UNSIGNED NOT NULL,
-  `referred_user_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `invitation_link_id` bigint UNSIGNED NOT NULL,
+  `referred_user_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -889,16 +889,16 @@ CREATE TABLE `invitation_referrals` (
 --
 
 CREATE TABLE `invoices` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `student_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `application_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `university_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `invoice_number` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `student_id` bigint UNSIGNED DEFAULT NULL,
+  `application_id` bigint UNSIGNED DEFAULT NULL,
+  `university_id` bigint UNSIGNED DEFAULT NULL,
+  `invoice_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `date` date NOT NULL,
   `due_date` date DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
-  `status` enum('draft','sent','paid','partially_paid','void') NOT NULL DEFAULT 'draft',
-  `notes` text DEFAULT NULL,
+  `status` enum('draft','sent','paid','partially_paid','void') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -920,14 +920,14 @@ INSERT INTO `invoices` (`id`, `student_id`, `application_id`, `university_id`, `
 --
 
 CREATE TABLE `invoice_items` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `invoice_id` bigint(20) UNSIGNED NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `quantity` decimal(15,2) NOT NULL DEFAULT 1.00,
+  `id` bigint UNSIGNED NOT NULL,
+  `invoice_id` bigint UNSIGNED NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `quantity` decimal(15,2) NOT NULL DEFAULT '1.00',
   `unit_price` decimal(15,2) NOT NULL,
   `subtotal` decimal(15,2) NOT NULL,
-  `tax_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `tax_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `total` decimal(15,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -952,13 +952,13 @@ INSERT INTO `invoice_items` (`id`, `invoice_id`, `chart_of_account_id`, `descrip
 --
 
 CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
+  `id` bigint UNSIGNED NOT NULL,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint UNSIGNED NOT NULL,
+  `reserved_at` int UNSIGNED DEFAULT NULL,
+  `available_at` int UNSIGNED NOT NULL,
+  `created_at` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -968,16 +968,16 @@ CREATE TABLE `jobs` (
 --
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -987,14 +987,14 @@ CREATE TABLE `job_batches` (
 --
 
 CREATE TABLE `journal_entries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `period_id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `period_id` bigint UNSIGNED NOT NULL,
+  `application_id` bigint UNSIGNED DEFAULT NULL,
   `date` date NOT NULL,
-  `reference_number` varchar(255) NOT NULL,
-  `note` text DEFAULT NULL,
-  `status` enum('draft','posted','void') NOT NULL DEFAULT 'draft',
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `reference_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` text COLLATE utf8mb4_unicode_ci,
+  `status` enum('draft','posted','void') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
+  `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1006,12 +1006,12 @@ CREATE TABLE `journal_entries` (
 --
 
 CREATE TABLE `journal_entry_items` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `journal_entry_id` bigint(20) UNSIGNED NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED NOT NULL,
-  `debit` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `credit` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `description` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `journal_entry_id` bigint UNSIGNED NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED NOT NULL,
+  `debit` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `credit` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1023,212 +1023,213 @@ CREATE TABLE `journal_entry_items` (
 --
 
 CREATE TABLE `leads` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `student_name` varchar(255) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(255) NOT NULL,
-  `current_education` varchar(255) DEFAULT NULL,
-  `preferred_country` bigint(20) UNSIGNED DEFAULT NULL,
-  `preferred_course` bigint(20) UNSIGNED DEFAULT NULL,
-  `source` varchar(255) DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
-  `notes` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `student_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `current_education` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `preferred_country` bigint UNSIGNED DEFAULT NULL,
+  `preferred_course` bigint UNSIGNED DEFAULT NULL,
+  `source` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `priority` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'low',
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `last_contacted_at` timestamp NULL DEFAULT NULL,
   `next_follow_up_at` timestamp NULL DEFAULT NULL,
-  `follow_up_history` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`follow_up_history`)),
-  `created_by` bigint(20) UNSIGNED NOT NULL,
-  `consultant_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `follow_up_history` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `created_by` bigint UNSIGNED NOT NULL,
+  `consultant_id` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `leads`
 --
 
-INSERT INTO `leads` (`id`, `student_name`, `email`, `phone`, `current_education`, `preferred_country`, `preferred_course`, `source`, `status`, `notes`, `last_contacted_at`, `next_follow_up_at`, `follow_up_history`, `created_by`, `consultant_id`, `created_at`, `updated_at`) VALUES
-(9, 'asik', NULL, '01917640643', 'honurs', 6, NULL, 'Message', 'pending', 'interested', NULL, '2026-05-14 04:00:00', '[{\"date\":\"2026-05-14\",\"notes\":\"interested\"}]', 13, NULL, '2026-05-13 12:05:10', '2026-05-13 12:05:10'),
-(10, 'MD SABIT AL SHEIKH', 'mdsabitalsheikh2000@gmail.com', '+880 1704-737875', 'Hazi Misir Ali College [2555 ]', 4, 6, 'Message', 'pending', NULL, NULL, NULL, NULL, 8, NULL, '2026-05-13 12:11:26', '2026-05-13 12:11:26'),
-(14, 'Reuben Harris', 'your.email+fakedata76738@gmail.com', '104-962-2325', 'Triduana inventore confugo adulatio volo iure verbum arceo quisquam.', 4, 38, 'Online Chat', 'pending', '402', NULL, '2025-06-22 04:00:00', '[{\"date\":\"2025-06-22\",\"notes\":\"402\"}]', 2, NULL, '2026-05-23 09:23:06', '2026-05-23 09:23:06'),
-(15, 'Laila Afrin', NULL, '+8801611-165740', NULL, 6, NULL, 'Message', 'pending', '10 tarikh Dhakay asbe then follow up dite hbe and 11 tarikh office visit Korte pare', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"10 tarikh Dhakay asbe then follow up dite hbe and 11 tarikh office visit Korte pare\"}]', 19, NULL, '2026-06-03 15:01:14', '2026-06-03 23:38:51'),
-(17, 'HAIDER', 'haider10-1100@diu.edu.bd', '01889532005', 'IR', 4, 10, 'Message', 'pending', 'INTERESTED, OFFICE VISIT- DATE , INTEREST , LOCATION - ,IELTS -', NULL, NULL, NULL, 8, NULL, '2026-06-03 16:08:30', '2026-06-03 16:08:30'),
-(18, 'Rakibur Islam Sohag', 'rakibursohag2091@gmail.com', '01798992091', 'HSC', 4, 53, 'Phone', 'pending', NULL, NULL, NULL, NULL, 26, NULL, '2026-06-03 16:12:16', '2026-06-03 16:12:16'),
-(19, 'Tonmoy Ahmmed', NULL, '01834413145', 'Hsc 2013 (3.90)', 4, NULL, 'Message', 'pending', 'Interested \r\nOffice visit Saturday', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested \\r\\nOffice visit Saturday\"}]', 32, NULL, '2026-06-03 16:58:56', '2026-06-03 16:58:56'),
-(20, 'Ruhul Amin', NULL, '01760805401', NULL, NULL, NULL, 'Phone', 'pending', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-03 17:00:03', '2026-06-03 17:00:03'),
-(21, 'Rubel', NULL, '01775335639', 'Master’s', 4, NULL, 'Message', 'pending', 'Interested, ielts 5.5, location-lalbagh', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested, ielts 5.5, location-lalbagh\"}]', 21, NULL, '2026-06-03 18:52:06', '2026-06-03 18:52:06'),
-(22, 'MD Sagor Sikder', NULL, '+8801314-676498', 'HSC-2017', 4, NULL, 'Message', 'pending', 'sokale follow up dite hbe call diye', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe call diye\"}]', 19, NULL, '2026-06-03 23:31:50', '2026-06-03 23:31:50'),
-(23, 'Shuvo Raj', NULL, '+8801400-0502318', 'HSC-2022', 4, NULL, 'Message', 'pending', 'sokale follow up dite hbe abr call diye', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe abr call diye\"}]', 19, NULL, '2026-06-03 23:34:33', '2026-06-03 23:34:33'),
-(24, 'Haque MD Simul', NULL, '+8801608-450364`', 'HSC', 4, NULL, 'Message', 'pending', 'sokale follow up dite hbe uni Malta Russia  niye interested to ek sathe 2tai apply korte chacche but uni er age ekbar office eshe russia niye kotha bole geche', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe uni Malta Russia  niye interested to ek sathe 2tai apply korte chacche but uni er age ekbar office eshe russia niye kotha bole geche\"}]', 19, NULL, '2026-06-03 23:36:58', '2026-06-03 23:41:15'),
-(25, 'Jisanz', NULL, '+8801861-806825', NULL, 4, NULL, 'Message', 'pending', 'uni work visa te Malta te jete chacche', NULL, NULL, NULL, 19, NULL, '2026-06-03 23:40:51', '2026-06-03 23:40:51'),
-(26, 'Monika Khatun', 'monahiya179@gmail.com', '+8801959-784997', 'BBS running', 4, NULL, 'Message', 'pending', 'jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe\"}]', 19, NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
-(27, 'Monika Khatun', 'monahiya179@gmail.com', '+8801959-784997', 'BBS running', 4, NULL, 'Message', 'pending', 'jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe\"}]', 19, NULL, '2026-06-03 23:45:24', '2026-06-03 23:45:24'),
-(28, 'Nusrat Jahan Refat', NULL, '+8801731-556512`', NULL, NULL, NULL, 'Message', 'pending', 'no response follow up dite hbe sokale', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"follow up dite hbe sokale\"},{\"date\":\"2026-06-04\",\"notes\":\"no response follow up dite hbe sokale\"}]', 19, NULL, '2026-06-03 23:46:54', '2026-06-03 23:49:13'),
-(29, 'Harun', NULL, '+8801776-330510', NULL, NULL, NULL, 'Message', 'pending', 'no response sokale voice msg dite hbe', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"no response sokale voice msg dite hbe\"}]', 19, NULL, '2026-06-03 23:47:56', '2026-06-03 23:48:45'),
-(30, 'Redoan Sabbir', NULL, '+8801776-708635', 'HSC-2023', 4, NULL, 'Message', 'pending', '\"Highly-Intersted\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe\"},{\"date\":\"2026-06-13\",\"notes\":\"\\\"Highly-Intersted\\\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe\"}]', 19, NULL, '2026-06-03 23:52:27', '2026-06-03 23:53:09'),
-(31, 'Rifatul Islam Azmin', NULL, '+8801779-946313', 'HSC', 6, NULL, 'Message', 'pending', 'sonibar brahmanbaria theke wife soho 2jon ek sathe asbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"sonibar brahmanbaria theke wife soho 2jon ek sathe asbe\"}]', 19, NULL, '2026-06-03 23:54:52', '2026-06-03 23:54:52'),
-(32, 'Abu Sayed', NULL, '‪+880 1738‑626352‬', NULL, 4, NULL, 'Message', 'pending', 'Highly Interested', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Highly Interested\"}]', 22, NULL, '2026-06-04 07:50:53', '2026-06-04 07:50:53'),
-(33, 'Ahnaf Azmain', NULL, '‪+880 1717‑866704‬', NULL, 4, NULL, 'Message', 'pending', 'Highly Interested', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Highly Interested\"}]', 22, NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49'),
-(34, 'Jannat', NULL, '‪+880 1777‑351038‬', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":null}]', 22, NULL, '2026-06-04 07:53:49', '2026-06-04 07:53:49'),
-(35, 'Rinkon Barua', NULL, '‪+880 1879‑546661‬', 'Dilpoma In Engineering Eelectrical Technology', 4, NULL, 'Message', 'pending', 'Interested with spouse.', NULL, NULL, NULL, 22, NULL, '2026-06-04 07:56:10', '2026-06-04 07:56:46'),
-(36, 'Tanim Ahmed', NULL, '‪+880 1869‑873115‬', NULL, 4, NULL, 'Message', 'pending', 'Interested for his wife.', NULL, NULL, NULL, 22, NULL, '2026-06-04 08:00:31', '2026-06-04 08:00:31'),
-(37, 'Parthib Talukdar', NULL, '‪+880 1846‑302793‬', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 22, NULL, '2026-06-04 08:03:20', '2026-06-04 08:03:20'),
-(38, 'Md Redwan', NULL, '01308759316', 'Hsc', 4, NULL, 'Message', 'pending', 'Chattogram visit korbe\r\nSsc-20-2.58\r\nHsc-22-3.58', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Chattogram visit korbe\\r\\nSsc-20-2.58\\r\\nHsc-22-3.58\"}]', 21, NULL, '2026-06-04 09:01:04', '2026-06-04 09:01:04'),
-(39, 'Atiur Rahman', NULL, '01757719689', 'Ssc-2017-3.59.    Diploma-2021-3.73', 4, NULL, 'Phone', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 16, NULL, '2026-06-04 10:47:03', '2026-06-06 08:31:00'),
-(41, 'Md Farhanul Alam Chowdhury', 'mdfarhanulalamchowdhury@gmail.com', '01627532433', 'Master’s', 4, 13, 'Message', 'pending', 'File submit', NULL, NULL, NULL, 15, NULL, '2026-06-04 11:02:22', '2026-06-04 11:02:22'),
-(42, 'Israt Jahan', NULL, '01893861571', 'Hsc 2022', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:06:05', '2026-06-04 11:06:05'),
-(43, 'Sami', NULL, '01624787406', 'Alim - 2022', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:12:41', '2026-06-04 11:12:41'),
-(44, 'Anto Sarker', NULL, '01786175159', 'Hon\'s 2022', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:14:01', '2026-06-04 11:14:01'),
-(45, 'Md Farhan Rashid', NULL, '01601015632', 'HSC', 6, NULL, 'Message', 'pending', 'File dite pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-05\",\"notes\":null},{\"date\":\"2026-06-05\",\"notes\":\"File dite pare\"},{\"date\":\"2026-06-08\",\"notes\":\"File dite pare\"}]', 37, NULL, '2026-06-04 12:29:12', '2026-06-06 12:16:59'),
-(46, 'Pithun Mia', NULL, '01772588197', 'Hsc 2025', 4, NULL, 'Message', 'pending', 'File dite pare.', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"File dite pare.\"}]', 15, NULL, '2026-06-04 12:59:27', '2026-06-04 12:59:27'),
-(47, 'Kawar miah', NULL, '01770280267', 'Bba 2017', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 13:02:57', '2026-06-04 13:02:57'),
-(48, 'Asma', NULL, '01610918778', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26'),
-(49, 'Salina Ruma', NULL, '01407468842', 'HSC', 6, NULL, 'Message', 'pending', 'Somoy kore asbe Chittagong office e \r\nclient location: Chittagong, Cornelhat', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong,Kornelhat\"},{\"date\":\"2026-09-07\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong, Cornelhat\"},{\"date\":\"2026-06-09\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong, Cornelhat\"}]', 37, NULL, '2026-06-04 13:33:56', '2026-06-08 14:36:38'),
-(50, 'Moin Ali', NULL, '01568675578', 'HSC', 6, NULL, 'Message', 'pending', 'location: Hobiganj', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"location: Hobiganj\"},{\"date\":\"2026-06-09\",\"notes\":\"location: Hobiganj\"}]', 37, NULL, '2026-06-04 13:37:20', '2026-06-08 14:35:36'),
-(51, 'Fahad Mahmud', NULL, '01874818128', 'SSC', 5, NULL, 'Message', 'pending', 'Not potential', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Not potential\"}]', 37, NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45'),
-(52, 'Miraj', NULL, '+880 1717-437913', 'Msc', 4, NULL, 'Message', 'pending', 'SSC-2003, 3.88\r\nHSC-2005, 3.10\r\nBSc- 2012, 2nd Class\r\nMSc- 2014, 2nd Class\r\nIELTS- 5.5 (general training)', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"SSC-2003, 3.88\\r\\nHSC-2005, 3.10\\r\\nBSc- 2012, 2nd Class\\r\\nMSc- 2014, 2nd Class\\r\\nIELTS- 5.5 (general training)\"}]', 21, NULL, '2026-06-04 13:41:14', '2026-06-04 13:41:14'),
-(53, 'Tamim', NULL, '01923244904', 'Hsc', 4, NULL, 'Message', 'pending', 'Science Department\r\nSSC 2022 5.00\r\nHSC 2024  3.96\r\nNo IELTS.', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Science Department\\r\\nSSC 2022 5.00\\r\\nHSC 2024  3.96\\r\\nNo IELTS.\"}]', 21, NULL, '2026-06-04 13:43:43', '2026-06-04 13:43:43'),
-(54, 'Mohiuddin Gazi', NULL, '+880 1911-611208', 'Diploma', 6, NULL, 'Message', 'pending', 'File diye diche', NULL, NULL, '[{\"date\":\"2026-06-05\",\"notes\":\"Shoni bar sokal 11 tay khulna theke asbe.file dite\"},{\"date\":\"2026-06-05\",\"notes\":\"File diye diche\"}]', 25, NULL, '2026-06-04 13:45:19', '2026-06-07 15:57:19'),
-(55, 'Md Abdul Hakim Apurbo', NULL, '01771710831', 'HSC', 6, NULL, 'Message', 'pending', 'Family r sathe kotha bole janabe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Family r sathe kotha bole janabe\"}]', 37, NULL, '2026-06-04 13:45:38', '2026-06-04 13:45:38'),
-(56, 'Mahabub', NULL, '01522105646', 'HSC', 6, NULL, 'Message', 'pending', '09 june office visit kortese', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-10\",\"notes\":\"Office visit korbe bolce\"},{\"date\":\"2026-06-10\",\"notes\":\"09 june office visit kortese\"}]', 37, NULL, '2026-06-04 13:47:08', '2026-06-09 14:16:13'),
-(58, 'Muhammad Entiaz', NULL, '01701055928', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:49:54', '2026-06-04 13:49:54'),
-(59, 'Sumitra', NULL, '01637158805', 'MBA', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:51:38', '2026-06-04 13:51:38'),
-(60, 'Hossen', NULL, '01410127779', 'B.SC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:53:13', '2026-06-04 13:53:13'),
-(61, 'Anupom', NULL, '01985378513', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:54:45', '2026-06-04 13:54:45'),
-(62, 'Sporsho', NULL, '01636022779', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:58:58', '2026-06-04 13:58:58'),
-(63, 'Umme Salma Dina', NULL, '01603453048', NULL, 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 14:04:35', '2026-06-04 14:04:35'),
-(64, 'Fahad Mustafa', NULL, '01879503669', 'HSC', 6, NULL, 'Message', 'pending', 'Sonibar Chittagong Office e jabe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Sonibar Chittagong Office e jabe\"}]', 37, NULL, '2026-06-04 14:06:40', '2026-06-04 14:07:18'),
-(65, 'Erick', NULL, '01975088890', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 14:08:32', '2026-06-04 14:08:32'),
-(66, 'Akash howlader', NULL, '01923453235', 'Ssc-4.91-2017.   Hsc-4.83-2019.    Bsc-12025', 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:09:12', '2026-06-04 14:09:12'),
-(67, 'Sukti', NULL, '01706137438', 'HSC', 6, NULL, 'Message', 'pending', 'Malaysia te file dise onno karo client', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Malaysia te file dise onno karo client\"}]', 37, NULL, '2026-06-04 14:09:52', '2026-06-06 14:47:11'),
-(68, 'Akib (Mirpur)', NULL, '01705908198', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:12:19', '2026-06-04 14:12:19'),
-(69, 'Kabir Hossain (barisal)', NULL, '01710964578', 'Diploma 2025 (engineering)', 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:15:46', '2026-06-04 14:15:46'),
-(70, 'Md omor farukh', NULL, '01771889317', 'BBA', 4, NULL, 'Message', 'pending', 'Highly interested, soni ba robibar asbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Highly interested, soni ba robibar asbe\"}]', 21, NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48'),
-(71, 'Sagor', NULL, '01780416313', 'HSC', 6, NULL, 'Message', 'pending', 'Sylhet location \r\nAs soon as possible asbe bolce', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Sylhet location \\r\\nAs soon as possible asbe bolce\"}]', 37, NULL, '2026-06-04 15:40:51', '2026-06-04 15:40:51'),
-(72, 'Arib Mahmud', NULL, '01301608705', 'Diploma 2023', 4, NULL, 'Phone', 'pending', 'File dibe', NULL, NULL, NULL, 15, NULL, '2026-06-04 15:58:53', '2026-06-04 15:58:53'),
-(74, 'Shakib', NULL, '01837062756', NULL, NULL, NULL, 'Message', 'pending', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 17:55:47', '2026-06-04 17:55:47'),
-(75, 'Unknown', NULL, '01812944120', NULL, NULL, NULL, 'Message', 'pending', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 17:57:38', '2026-06-04 17:57:38'),
-(76, 'Akib', NULL, '01407825696', 'Diploma 2024 (3.92)', 4, NULL, 'Message', 'pending', 'Basay ktha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-04 17:59:56', '2026-06-04 17:59:56'),
-(77, 'Jishan', NULL, '01764667215', 'Hsc 2023 (3.64)', 4, NULL, 'Message', 'pending', 'Interested \r\nOffice visit', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested \\r\\nOffice visit\"}]', 32, NULL, '2026-06-04 18:02:54', '2026-06-04 18:02:54'),
-(78, 'Pranta', NULL, '01710483748', NULL, NULL, NULL, 'Phone', 'pending', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 18:04:29', '2026-06-04 18:04:29'),
-(79, 'Nahar Talukder', NULL, '01856186597', 'Bsc', 4, NULL, 'Message', 'pending', 'Ssc-4.58, dip-3.58,bsc-2.95(2022)\r\nSonibar asbe office a, highly interested, location- feni', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Ssc-4.58, dip-3.58,bsc-2.95(2022)\\r\\nSonibar asbe office a, highly interested, location- feni\"}]', 21, NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00'),
-(80, 'Unknown', NULL, '01742128109', 'Diploma', 4, NULL, 'Message', 'pending', 'Ssc-16-3.11(commerts) dip-24-3.27(civil)\r\nHighly interested soni ba robibar asve, loc-pabna', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Ssc-16-3.11(commerts) dip-24-3.27(civil)\\r\\nHighly interested soni ba robibar asve, loc-pabna\"}]', 21, NULL, '2026-06-05 09:27:00', '2026-06-05 09:27:00'),
-(81, 'Mohammad Alamin', NULL, '01775734389', 'Hsc', 4, NULL, 'Message', 'pending', 'SSC 3.50 2020 Purba Rampura High School \r\nHSC 3.17  2023 Rajarbag Police Lines School And College\r\nDhakar baire ase dhaka ase contact korbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"SSC 3.50 2020 Purba Rampura High School \\r\\nHSC 3.17  2023 Rajarbag Police Lines School And College\\r\\nDhakar baire ase dhaka ase contact korbe\"}]', 21, NULL, '2026-06-06 09:10:30', '2026-06-06 09:10:30'),
-(82, 'Shoikot', NULL, '01609322095', 'Hsc', 4, NULL, 'Message', 'pending', 'Japaner jonno file dise jodi japan reject hoi tahole maltay apply korbe', NULL, '2026-08-23 04:00:00', '[{\"date\":\"2026-08-23\",\"notes\":\"Japaner jonno file dise jodi japan reject hoi tahole maltay apply korbe\"}]', 21, NULL, '2026-06-06 09:14:23', '2026-06-06 09:14:23'),
-(83, 'Shohan rahman', NULL, '01710989858', 'Bsc', 4, NULL, 'Message', 'pending', 'SSC 3.23-2009\r\nDiploma in electronics 3.18 -2014\r\nBsc eee 3.10 -2021\r\nInformation newar jonno knock dise', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"SSC 3.23-2009\\r\\nDiploma in electronics 3.18 -2014\\r\\nBsc eee 3.10 -2021\\r\\nInformation newar jonno knock dise\"}]', 21, NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
-(85, 'Nila', NULL, '+880 1773-816383', 'Master’s', 4, NULL, 'Message', 'pending', 'Ssc :B.Std -2001\r\nHsc :B. Std- 2003\r\nBachelor: Honr\'s in English -2007, 2nd class( NU)\r\nMasters- HRM 2012, 3.43 (IUB)\r\nEnglish test : PTE 61\r\n R 52, W 52, \r\nL 60, S 68\r\nExperience  : Manager HRD for 13yrs\r\nLocation- Dhaka, office a asbe bolse', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Ssc :B.Std -2001\\r\\nHsc :B. Std- 2003\\r\\nBachelor: Honr\'s in English -2007, 2nd class( NU)\\r\\nMasters- HRM 2012, 3.43 (IUB)\\r\\nEnglish test : PTE 61\\r\\n R 52, W 52, \\r\\nL 60, S 68\\r\\nExperience  : Manager HRD for 13yrs\\r\\nLocation- Dhaka, office a asbe bolse\"}]', 21, NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46'),
-(86, 'Mahim', NULL, '01977293345', 'Msc', 4, NULL, 'Message', 'pending', 'Bsc and MSc in Civil Engineering with MOI, cgpa 2.84/4 from Ahsanullah University of science and Technology\r\nPassing year 2025', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Bsc and MSc in Civil Engineering with MOI, cgpa 2.84\\/4 from Ahsanullah University of science and Technology\\r\\nPassing year 2025\"}]', 21, NULL, '2026-06-06 09:33:24', '2026-06-06 09:33:24'),
-(87, 'Md nadim', NULL, '01301622441', 'Hsc', 4, NULL, 'Message', 'pending', 'Ssc 2011 result 2.5\r\nHSC 12 result 3.0\r\nInformation newar jonno knock dise', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Ssc 2011 result 2.5\\r\\nHSC 12 result 3.0\\r\\nInformation newar jonno knock dise\"}]', 21, NULL, '2026-06-06 09:41:39', '2026-06-06 09:41:39'),
-(88, 'Lupin', NULL, '+880 1640-830008', 'HSC', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested\"}]', 26, NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
-(89, 'RESEARCH BARUA', 'baruaresearch29@gmail.com', '01630-701484', NULL, 4, 48, 'Phone', 'pending', NULL, NULL, NULL, NULL, 38, NULL, '2026-06-06 15:18:34', '2026-06-06 15:18:34'),
-(90, 'Hasan', NULL, '01630581970', 'Ssc-2022-5.00     hsc-2024-4.25', 4, NULL, 'Message', 'pending', 'Apply korte pare', NULL, NULL, NULL, 16, NULL, '2026-06-06 16:30:18', '2026-06-06 16:30:18'),
-(91, 'Md. Nayeem Bhuiyan', NULL, '01863805035', 'Hsc 2021', 4, NULL, 'Message', 'pending', 'File dibe', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:15:39', '2026-06-07 08:15:39'),
-(92, 'Tashfia Jahin', NULL, '01805762213', 'Bachelor 2026', 4, NULL, 'Message', 'pending', 'Interested for next year first intake', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49'),
-(93, 'Gausul alom mykel', NULL, '01902309747', 'Hsc-2023', 4, NULL, 'Message', 'pending', 'Bhai er sathe kotha bolbe', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Bhai er sathe kotha bolbe\"}]', 16, NULL, '2026-06-07 08:24:27', '2026-06-07 08:24:27'),
-(94, 'Shafin Ahmed', NULL, '01308082479', 'Hsc 2022', 4, NULL, 'Message', 'pending', 'Interested but confused', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Interested but confused\"}]', 15, NULL, '2026-06-07 08:26:41', '2026-06-07 08:26:41'),
-(95, 'Shanto', NULL, '01616270028', 'Hsc 2023', 4, NULL, 'Phone', 'pending', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 15, NULL, '2026-06-07 08:29:03', '2026-06-07 08:29:03'),
-(96, 'Walid khan', NULL, '01714957393', NULL, 4, NULL, 'Message', 'pending', 'Correct transcript niye ashbe', NULL, NULL, NULL, 16, NULL, '2026-06-07 08:38:00', '2026-06-07 08:38:00'),
-(97, 'Walid khan', NULL, '01714957393', NULL, 4, NULL, 'Message', 'pending', 'Correct transcript niye ashbe', NULL, NULL, NULL, 16, NULL, '2026-06-07 08:38:01', '2026-06-07 08:38:01'),
-(98, 'Saikot', NULL, '01787129080', 'Diploma 2022', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 08:38:50', '2026-06-07 08:38:50'),
-(99, 'Md. Assaduzzaman', NULL, '01981303363', 'Diploma in civil 2017', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 08:43:24', '2026-06-07 08:43:24'),
-(100, 'Md Ashik', NULL, '01921910703', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 15, NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
-(101, 'Md Abdul Aziz', NULL, '01757661407', 'MBA 2017', 4, NULL, 'Message', 'pending', 'From laxmipur', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:49:48', '2026-06-07 08:49:48'),
-(102, 'Mahfuz Sheikh', NULL, '01828054901', 'Hsc 2023', 4, NULL, 'Message', 'pending', 'IELTS - 5\r\nInterested', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"IELTS - 5\\r\\nInterested\"}]', 15, NULL, '2026-06-07 08:55:48', '2026-06-07 08:55:48'),
-(103, 'Ifranul kabir', NULL, '0 1601-926771', 'Hsc 4.33 2024 Ssc 4.22 2022 Honours running  In Bangla  Ielts nai', 4, NULL, 'Message', 'pending', 'Office visit korte pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Office visit korte pare\"}]', 16, NULL, '2026-06-07 08:57:22', '2026-06-07 08:57:22'),
-(104, 'Anto Sarkar', NULL, '01786175159', 'Hons 2022', 4, NULL, 'Message', 'pending', 'Interested', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-07 08:58:02', '2026-06-07 08:58:02'),
-(105, 'Durjoy', NULL, '+880 1303-051588', 'Hsc-2019', 4, NULL, 'Message', 'pending', 'Not sure', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Not sure\"}]', 16, NULL, '2026-06-07 09:04:26', '2026-06-07 09:04:26'),
-(106, 'Nandita', NULL, '01881876534', NULL, 4, NULL, 'Phone', 'pending', 'Interested for Nursing programme \r\nFeom ctg', NULL, NULL, NULL, 15, NULL, '2026-06-07 09:04:44', '2026-06-07 09:04:44'),
-(107, 'Md Rakibul Islam', NULL, '01868412558', 'Bba 2023', 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 15, NULL, '2026-06-07 09:06:42', '2026-06-07 09:06:42'),
-(108, 'Shrabani Barua', NULL, '01959651676', 'MBA 2021', 4, NULL, 'Message', 'pending', 'Ctg office  visit korbe', NULL, NULL, NULL, 15, NULL, '2026-06-07 09:09:02', '2026-06-07 09:09:02'),
-(109, 'Siam Hossain', NULL, '01756264736', 'Hsc 2017', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 09:24:58', '2026-06-07 09:24:58'),
-(110, 'Alif mahmud ove', NULL, '+880 1961-837195', 'SSC (2013): 3.19 HSC (2015): 2.87 BSS (2022): 2:95', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":null}]', 16, NULL, '2026-06-07 09:40:53', '2026-06-07 09:40:53'),
-(111, 'Shadin', NULL, '+880 1991-417876', 'Hon\'s', 4, NULL, 'Message', 'pending', 'Hon\'s- sports science from cu(26)\r\nIelts dibe kisodin por tarpor jabe', NULL, '2026-07-02 04:00:00', '[{\"date\":\"2026-07-02\",\"notes\":\"Hon\'s- sports science from cu(26)\\r\\nIelts dibe kisodin por tarpor jabe\"}]', 21, NULL, '2026-06-07 10:52:19', '2026-06-07 10:52:19'),
-(112, 'Ahmed akash', NULL, '01860160338', NULL, 4, NULL, 'Message', 'pending', 'Ssc 2021 :3.94\r\nHsc 2023 :3.50\r\nLoc- Tangail \r\nFamiltr sathe kotha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Ssc 2021 :3.94\\r\\nHsc 2023 :3.50\\r\\nLoc- Tangail \\r\\nFamiltr sathe kotha bole janabe\"}]', 21, NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
-(113, 'Tipu sultan', NULL, '+880 1960-603376', NULL, 4, NULL, 'Message', 'pending', 'Interested, ssc 4.27(2010) dip-2.66(2014)\r\n2,3 din pore asbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Interested, ssc 4.27(2010) dip-2.66(2014)\\r\\n2,3 din pore asbe\"}]', 21, NULL, '2026-06-07 12:28:08', '2026-06-07 12:28:08'),
-(114, 'Ariful', NULL, '01822952622', NULL, 4, NULL, 'Phone', 'pending', 'Will confirm', NULL, NULL, NULL, 26, NULL, '2026-06-07 13:29:39', '2026-06-07 13:29:39'),
-(115, 'Arfin', NULL, '01987538233', NULL, 4, NULL, 'Message', 'pending', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-07 13:31:40', '2026-06-07 13:31:40'),
-(116, 'Naim', NULL, '+880 1798-533956', 'Hons 2019', 4, NULL, 'Message', 'pending', 'Interested', NULL, NULL, NULL, 15, NULL, '2026-06-07 15:36:40', '2026-06-07 15:36:40'),
-(117, 'Rofik', NULL, '01960672211', NULL, 6, NULL, 'Message', 'pending', '07/06/2026 office visite korche', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:48:17', '2026-06-07 15:48:17'),
-(121, 'Jahid hasan', NULL, '01960965378', NULL, 4, NULL, 'Message', 'pending', 'Highly interested, location-keranigong', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Highly interested, location-keranigong\"}]', 21, NULL, '2026-06-07 15:49:10', '2026-06-07 15:49:10'),
-(122, 'Sourav', NULL, '01734298037', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 26, NULL, '2026-06-07 15:50:11', '2026-06-07 15:50:11'),
-(124, 'Jdatatent', NULL, '01788532947', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":null}]', 26, NULL, '2026-06-07 15:52:44', '2026-06-07 15:52:44'),
-(125, 'Sojib', NULL, '01782419492', NULL, 6, NULL, 'Message', 'pending', 'Aschilo', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Aschilo\"}]', 25, NULL, '2026-06-07 15:54:21', '2026-06-07 15:57:44'),
-(126, 'Jihad', NULL, '01704964131', NULL, 6, NULL, 'Message', 'pending', 'File diche', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:55:19', '2026-06-07 15:55:33'),
-(127, 'Nazim', NULL, '01783088599', NULL, 6, NULL, 'Message', 'pending', 'Aschilo', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:56:32', '2026-06-07 15:56:32'),
-(128, 'Saimum', NULL, '01894532483', 'BSS', 4, NULL, 'Message', 'pending', 'Next month office e ashbe', NULL, '2026-07-01 04:00:00', '[{\"date\":\"2026-07-01\",\"notes\":\"Next month office e ashbe\"}]', 32, NULL, '2026-06-07 18:21:18', '2026-06-07 18:21:18'),
-(129, 'Jannat', NULL, '01850622832', 'Honours', 4, NULL, 'Message', 'pending', 'Basay ktha bole janabe', NULL, '2026-05-09 04:00:00', '[{\"date\":\"2026-05-09\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-07 19:19:56', '2026-06-07 19:19:56'),
-(130, 'Sahab', NULL, '01303176607', 'Hsc', 4, NULL, 'Message', 'pending', 'Robibare janabe', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Robibare janabe\"}]', 32, NULL, '2026-06-07 19:21:23', '2026-06-07 19:21:23'),
-(132, 'Kaosar', NULL, '01969418997', NULL, 4, NULL, 'Message', 'pending', 'Not interested', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28'),
-(133, 'Unknown', NULL, '01703568172', 'Hsc', 4, NULL, 'Message', 'pending', 'Passport nai', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:26:20', '2026-06-07 19:26:20'),
-(134, 'Siam', NULL, '01963752996', NULL, 4, NULL, 'Message', 'pending', 'Basay ktha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Baday ktha bole janabe\"},{\"date\":\"2026-06-10\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-07 19:27:36', '2026-06-07 19:28:06'),
-(135, 'Unknown', NULL, '01614935058', 'SSC', 4, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 32, NULL, '2026-06-07 19:31:25', '2026-06-07 19:31:25'),
-(136, 'Sharmin', NULL, '01708913292', 'Hsc', 4, NULL, 'Message', 'pending', 'Passport nei', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:32:38', '2026-06-07 19:32:38'),
-(137, 'Unknown', NULL, '01754494368', NULL, 4, NULL, 'Message', 'pending', 'Ssc result ber hoinai ekhno', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:33:36', '2026-06-07 19:33:36'),
-(138, 'Unknown', NULL, '01760805401', NULL, NULL, NULL, 'Phone', 'pending', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:34:23', '2026-06-07 19:34:23'),
-(139, 'Arafat Islam', NULL, '01533362825', 'ssc 3.44 hsc 2.83  bba 2.77 (2021) Finance & Banking', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 16, NULL, '2026-06-08 13:05:24', '2026-06-08 13:05:24'),
-(140, 'Yousuf Ali Rifat', NULL, '01855775808', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-08-09\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:25:39', '2026-06-08 14:36:13'),
-(141, 'Milon Ahmed', NULL, '01321516165', 'HSC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:30:10', '2026-06-08 14:15:26'),
-(142, '😊', NULL, '01576906242', 'B.SC', 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:35:03', '2026-06-08 14:16:23'),
-(143, 'Tamal Sharma', NULL, '01836126261', NULL, 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:42:45', '2026-06-08 14:35:54'),
-(144, 'Sajid', NULL, '01570249576', 'Hsc', 4, NULL, 'Message', 'pending', 'Ssc. 4.44 / 2022\r\nHsc 3.75 /2024', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Ssc. 4.44 \\/ 2022\\r\\nHsc 3.75 \\/2024\"}]', 21, NULL, '2026-06-08 14:01:53', '2026-06-08 14:01:53'),
-(145, 'Sayema majumder', NULL, '01763580853', 'Hon\'s', 4, NULL, 'Message', 'pending', '2006,s.s.c.\r\nGpa:2.81\r\n2008,H.S.C\r\nGpa:2.60\r\n2012: hon\'s \r\nSecond CLS.\r\n2023 LLB: Second cls.', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"2006,s.s.c.\\r\\nGpa:2.81\\r\\n2008,H.S.C\\r\\nGpa:2.60\\r\\n2012: hon\'s \\r\\nSecond CLS.\\r\\n2023 LLB: Second cls.\"}]', 21, NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
-(146, 'Rakib', NULL, '+880 1794-397567', 'Hsc', 4, NULL, 'Message', 'pending', 'Rakibul IsLAM \r\n HSC 24 GPA 5 science\r\nSSC 22 GPA 4.75 humanities\r\n IELTS 4.5\r\n interested to malta', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Rakibul IsLAM \\r\\n HSC 24 GPA 5 science\\r\\nSSC 22 GPA 4.75 humanities\\r\\n IELTS 4.5\\r\\n interested to malta\"}]', 21, NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
-(147, 'Himel', NULL, '01311465569', 'Hsc', 4, NULL, 'Message', 'pending', 'Office visit korbe', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"Office visit korbe\"}]', 32, NULL, '2026-06-08 14:30:40', '2026-06-08 14:30:40'),
-(148, 'Md Riyad', NULL, '01848390374', NULL, 6, NULL, 'Message', 'pending', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 15:09:43', '2026-06-08 15:09:43'),
-(149, 'Shakil', NULL, '01746165680', 'Hsc', 4, NULL, 'Message', 'pending', 'Kal asty pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Kal asty pare\"}]', 32, NULL, '2026-06-08 15:10:15', '2026-06-08 15:10:15'),
-(150, 'Mahadi mahib', NULL, '01322643583', 'Ssc 4.44, year :2023 Hsc 4.17 year:2025 No IELTS  Current location :Sukrabad, Dhanmodi.', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":null}]', 16, NULL, '2026-06-08 15:18:15', '2026-06-08 15:18:15'),
-(151, 'Khaled hasan rony', NULL, '01867812574', 'Ssc 2022 GPA 2:78 HSC 2024 GPA 2:75', NULL, NULL, 'Message', 'pending', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 16, NULL, '2026-06-08 15:19:45', '2026-06-08 15:19:45'),
-(152, 'SB', NULL, '01340430870', NULL, NULL, NULL, 'Message', 'pending', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:29:20', '2026-06-08 15:29:20'),
-(153, 'Murad', NULL, '01721243588', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-15 04:00:00', '[{\"date\":\"2026-06-15\",\"notes\":null}]', 26, NULL, '2026-06-08 15:30:29', '2026-06-08 15:30:29'),
-(154, 'Sahab', NULL, '01717565089', 'Bachelor', 4, NULL, 'Message', 'pending', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:31:19', '2026-06-08 15:31:19'),
-(155, 'MD Asif Ikbal Leion', NULL, '+880 1817-452040', 'HSC', 6, 80, 'Message', 'pending', 'File dise', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":null},{\"date\":\"2026-06-08\",\"notes\":\"File dise\"}]', 37, NULL, '2026-06-08 15:33:04', '2026-06-09 14:25:35'),
-(156, 'Ak', NULL, '01714341235', 'HSC', 4, NULL, 'Message', 'pending', 'Visited', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:33:37', '2026-06-08 15:33:37'),
-(157, 'Zishan', NULL, '01787550490', 'HSC', 4, NULL, 'Phone', 'pending', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":null},{\"date\":\"2026-06-11\",\"notes\":null}]', 26, NULL, '2026-06-08 15:35:00', '2026-06-10 12:09:35'),
-(158, 'Shahin', NULL, '01303893439', 'Bsc', 4, NULL, 'Message', 'pending', 'Passport nei', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
-(162, 'Amit', NULL, '01607394700', 'Narsindi', 4, NULL, 'Phone', 'pending', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:40:06', '2026-06-08 15:40:06'),
-(163, 'Lenion', NULL, '01817452040', NULL, 6, NULL, 'Message', 'pending', 'File diche', NULL, NULL, NULL, 25, NULL, '2026-06-08 15:41:09', '2026-06-08 15:41:09'),
-(164, 'Khalil', NULL, '01823642583', NULL, 4, NULL, 'Message', 'pending', 'Basay ktha bole janabe', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:42:26', '2026-06-08 15:42:26'),
-(165, 'Md shahariar', NULL, '01785481747', NULL, 4, NULL, 'Phone', 'pending', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:42:56', '2026-06-08 15:42:56'),
-(166, 'Abdusshokkor', NULL, '‪+880 1860‑931360‬', 'Gretuation Complete, CGPA, 2:46, Master’s on going.', 4, NULL, 'Message', 'pending', 'interest.\r\nlocation cox bazar', NULL, NULL, NULL, 22, NULL, '2026-06-08 15:44:04', '2026-06-08 15:44:04'),
-(167, 'Rafi', NULL, '01604331354', NULL, 4, NULL, 'Phone', 'pending', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
-(168, 'Ratul', NULL, '01308223514', 'Hsc', 4, NULL, 'Message', 'pending', 'Next week e asty pare', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Next week e asty pare\"}]', 32, NULL, '2026-06-08 15:45:01', '2026-06-08 15:45:01'),
-(169, 'Asraful Islam', NULL, '‪+880 1776‑819870‬', 'SSC- 4.50/2018 Diploma- 3.42/2023 IELTS- 5.5', 4, NULL, 'Message', 'pending', 'interest', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"interest\"}]', 22, NULL, '2026-06-08 15:45:37', '2026-06-08 15:45:37'),
-(170, 'Unknown', NULL, '01518321023', 'Bsc', NULL, NULL, 'Message', 'pending', 'January intake e apply korbe\r\n3 mash por', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:47:12', '2026-06-08 15:47:12'),
-(171, 'Mir Rabby Hasan', NULL, '+8801799-287158', 'Diploma Complete', 4, NULL, 'Message', 'pending', 'HSC er por diploma diyeche 9 tarikh follow up dite hbe update janar jonno', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"HSC er por diploma diyeche 9 tarikh follow up dite hbe update janar jonno\"}]', 19, NULL, '2026-06-09 01:05:22', '2026-06-09 01:06:28'),
-(172, 'Md Simul Haque', NULL, '+8801608-450364', NULL, 4, NULL, 'Message', 'pending', '8 tarikh office visit koreche to sonibar follow up dite hbe malta niye ki decision ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"8 tarikh office visit koreche to sonibar follow up dite hbe malta niye ki decision ta janar jonno\"}]', 19, NULL, '2026-06-09 01:08:49', '2026-06-09 01:08:49'),
-(173, 'Engr. Shreekanto', NULL, '+8801827-411613', NULL, 4, NULL, 'Message', 'pending', '6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte\"}]', 19, NULL, '2026-06-09 01:10:51', '2026-06-09 01:10:51'),
-(174, 'Engr. Shreekanto', NULL, '+8801827-411613', NULL, 4, NULL, 'Message', 'pending', '6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte\"}]', 19, NULL, '2026-06-09 01:10:53', '2026-06-09 01:10:53'),
-(175, 'Mushfiqur Rahman', NULL, '+8801925-668554', 'BSC', 4, NULL, 'Message', 'pending', 'follow up dite hbe sokale', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"follow up dite hbe sokale\"}]', 19, NULL, '2026-06-09 01:12:25', '2026-06-09 01:12:25'),
-(176, '..', NULL, '+8801948-100198', NULL, NULL, NULL, 'Message', 'pending', 'no response sonibar call dite hbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"no response sonibar call dite hbe\"}]', 19, NULL, '2026-06-09 01:13:45', '2026-06-09 01:13:45'),
-(177, 'Alamgir', NULL, '+8801322-839468', 'BSC-2.67(2017)', 4, NULL, 'Message', 'pending', 'sokale follow up dite hbe then call diye all process ta bolte hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"sokale follow up dite hbe then call diye all process ta bolte hbe\"}]', 19, NULL, '2026-06-09 01:17:33', '2026-06-09 01:17:33'),
-(178, 'Ridoy Talukder', NULL, '+8801308-912154', NULL, 4, NULL, 'Message', 'pending', 'highly interested sokale follow up dite hbe file dite pare', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"highly interested sokale follow up dite hbe file dite pare\"}]', 19, NULL, '2026-06-09 01:24:37', '2026-06-09 01:25:37'),
-(179, 'khusbo', NULL, '+8801334-291465', NULL, 4, NULL, 'Message', 'pending', 'sonibar follow up dite hbe je malta ki decision niyeche ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sonibar follow up dite hbe je malta ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:28:18', '2026-06-09 01:28:18'),
-(180, 'Bm Ashikullah Babu', NULL, '+8801711-600071', NULL, 4, NULL, 'Message', 'pending', 'NO SEEN/ NO RESPONSE', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"NO SEEN\\/ NO RESPONSE\"}]', 19, NULL, '2026-06-09 01:31:30', '2026-06-09 01:31:30'),
-(181, 'Tanvir Ahmed Ridoy', NULL, '+8801833-957600', NULL, 4, NULL, 'Message', 'pending', 'sonibar direct call diye update jante hbe ki decision niyeche ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sonibar direct call diye update jante hbe ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26'),
-(182, '??', NULL, '+8801616-081408', 'ssc-3.56(2021) hsc-3.00(2023)', 4, NULL, 'Message', 'pending', 'spain jete chay tao sokale follow up diye tar decision jante hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"spain jete chay tao sokale follow up diye tar decision jante hbe\"}]', 19, NULL, '2026-06-09 01:37:25', '2026-06-09 01:37:25'),
-(183, '??', NULL, '+8801616-081408', 'ssc-3.56(2021) hsc-3.00(2023)', 4, NULL, 'Message', 'pending', 'spain jete chay tao sokale follow up diye tar decision jante hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"spain jete chay tao sokale follow up diye tar decision jante hbe\"}]', 19, NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35'),
-(184, 'Sayma', NULL, '+8801951-197117', NULL, 4, NULL, 'Message', 'pending', '9 tarikh sokal 11 tar por asbe husband soho 2 jon ek sathe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"9 tarikh sokal 11 tar por asbe husband soho 2 jon ek sathe\"}]', 19, NULL, '2026-06-09 01:39:01', '2026-06-09 01:39:01'),
-(185, 'Bokahri', NULL, '+8801955-375812', 'ssc-4.06(2011) hsc-4.00(2013) bba-2.80(2017) mba-2.98(2018)', 4, NULL, 'Message', 'pending', 'sokale follow up dite hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"sokale follow up dite hbe\"}]', 19, NULL, '2026-06-09 01:40:07', '2026-06-09 01:42:12'),
-(186, 'Megh', NULL, '+8801329-901329', 'ssc', 4, NULL, 'Message', 'pending', 'ssc pass', NULL, NULL, NULL, 19, NULL, '2026-06-09 01:43:43', '2026-06-09 01:43:43'),
-(187, 'Shajatrimon', NULL, '+8801931-514985', 'ssc-2.78(2015) hsc-4.71(2019) degree 3 year complete', 4, NULL, 'Message', 'pending', '11 tarikh follow up diye update jante hbe je uni ki decision niyeche ta janar jonno', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"11 tarikh follow up diye update jante hbe je uni ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:49:57', '2026-06-09 01:49:57'),
-(188, 'Md omor faruk', NULL, '01771889317', 'Bachelor complete', 4, NULL, 'Phone', 'pending', 'Visit', NULL, NULL, NULL, 17, NULL, '2026-06-09 08:27:45', '2026-06-09 08:29:23'),
-(189, 'MInhaz Uddin Sabbir', NULL, '01833999286', 'M.A', 6, NULL, 'Message', 'pending', '9 tarik office visit korbe bolce ( CTG office)', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"9 tarik office visit korbe bolce\"},{\"date\":\"2026-06-10\",\"notes\":\"9 tarik office visit korbe bolce ( CTG office)\"}]', 37, NULL, '2026-06-09 10:01:42', '2026-06-09 10:02:05'),
-(190, 'Aamol', NULL, '+8618182744746', NULL, 4, NULL, 'Message', 'pending', 'From china.will confirm later', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:35:54', '2026-06-09 14:35:54'),
-(191, 'Biddut', NULL, '01778115060', NULL, NULL, NULL, 'Phone', 'pending', 'No answer', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:36:32', '2026-06-09 14:36:32'),
-(192, 'Sagor', NULL, '01677477120', NULL, 4, NULL, 'Message', 'pending', 'Not interested', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21'),
-(193, 'Shihab', NULL, '01851395387', NULL, 4, NULL, 'Message', 'pending', 'Interested to open file', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:39:03', '2026-06-09 14:39:03'),
-(194, '****', NULL, '01985741618', NULL, 4, NULL, 'Message', 'pending', 'Came office', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:41:51', '2026-06-09 14:41:51'),
-(195, 'Ohide', NULL, '01837374462', NULL, NULL, NULL, 'Phone', 'pending', 'Will confirm,Certificate issue', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:44:23', '2026-06-09 14:44:23'),
-(196, '**', NULL, '01344926864', 'HSC', 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 26, NULL, '2026-06-10 12:08:58', '2026-06-10 12:08:58'),
-(197, 'Mahfuz', NULL, '01993465694', NULL, 4, NULL, 'Message', 'pending', NULL, NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":null}]', 26, NULL, '2026-06-10 12:11:44', '2026-06-10 12:11:44'),
-(198, 'Abrar Faiyaz', NULL, '01755917506', 'B.SC', 6, NULL, 'Message', 'pending', 'Next week asbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Next week asbe\"}]', 37, NULL, '2026-06-10 14:53:59', '2026-06-10 14:53:59'),
-(200, 'Sahriar', NULL, '‪+880 1337‑165367‬', NULL, 5, NULL, 'Message', 'pending', '13 tarik CTG Office a file dibe. ( Malaysia)', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"13 tarik CTG Office a file dibe. ( Malaysia)\"}]', 13, NULL, '2026-06-10 16:16:37', '2026-06-10 16:16:37'),
-(201, 'Mursalin', NULL, '‪+880 1786‑056068‬', NULL, 6, NULL, 'Message', 'pending', 'Mirpur, 11tarik Office visit korbe', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Mirpur, 11tarik Office visit korbe\"}]', 13, NULL, '2026-06-10 16:18:46', '2026-06-10 16:18:46'),
-(202, 'Saimul islam', NULL, '01819113688', NULL, 6, NULL, 'Message', 'pending', 'Kalke', NULL, NULL, NULL, 25, NULL, '2026-06-10 16:30:41', '2026-06-10 16:30:41'),
-(203, 'Momengir', NULL, '01889904945', NULL, 6, NULL, 'Message', 'pending', NULL, NULL, NULL, NULL, 25, NULL, '2026-06-10 16:31:47', '2026-06-10 16:31:47'),
-(204, 'Polash', NULL, '‪+880 1782‑238891‬', NULL, 4, NULL, 'Message', 'pending', 'Saturday Office a ashbe', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"Saturday Office a ashbe\"}]', 13, NULL, '2026-06-11 09:32:46', '2026-06-11 09:32:46'),
-(205, 'MD Yeasin', NULL, '‪+880 1858‑023208‬', NULL, 4, NULL, 'Message', 'pending', 'Bashai kotha bole update janabe', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Bashai kotha bole update janabe\"}]', 13, NULL, '2026-06-11 09:34:59', '2026-06-11 09:34:59'),
-(206, 'Avoy', NULL, '‪+880 1647‑635261‬', NULL, NULL, NULL, 'Message', 'pending', 'Dhaka ashteche ,, 1/143tarik office visit', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Dhaka ashteche ,, 1\\/143tarik office visit\"}]', 13, NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57'),
-(207, 'Nasrin sultanaa', NULL, '‪+880 1740‑242575‬', NULL, NULL, NULL, 'Message', 'pending', 'CTG office. file dibe. Malta', NULL, '2026-06-17 04:00:00', '[{\"date\":\"2026-06-17\",\"notes\":\"CTG office. file dibe. Malta\"}]', 13, NULL, '2026-06-11 10:20:56', '2026-06-11 10:20:56');
+INSERT INTO `leads` (`id`, `student_name`, `email`, `phone`, `current_education`, `preferred_country`, `preferred_course`, `source`, `status`, `priority`, `notes`, `last_contacted_at`, `next_follow_up_at`, `follow_up_history`, `created_by`, `consultant_id`, `created_at`, `updated_at`) VALUES
+(9, 'asik', NULL, '01917640643', 'honurs', 6, NULL, 'Message', 'pending', 'low', 'interested', NULL, '2026-05-14 04:00:00', '[{\"date\":\"2026-05-14\",\"notes\":\"interested\"}]', 13, NULL, '2026-05-13 12:05:10', '2026-05-13 12:05:10'),
+(10, 'MD SABIT AL SHEIKH', 'mdsabitalsheikh2000@gmail.com', '+880 1704-737875', 'Hazi Misir Ali College [2555 ]', 4, 6, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 8, NULL, '2026-05-13 12:11:26', '2026-05-13 12:11:26'),
+(14, 'Reuben Harris', 'your.email+fakedata76738@gmail.com', '104-962-2325', 'Triduana inventore confugo adulatio volo iure verbum arceo quisquam.', 4, 38, 'Online Chat', 'pending', 'medium', '402', NULL, '2025-06-21 18:00:00', '[{\"date\":\"2025-06-22\",\"notes\":\"402\"}]', 2, NULL, '2026-05-23 09:23:06', '2026-08-16 01:23:48'),
+(15, 'Laila Afrin', NULL, '+8801611-165740', NULL, 6, NULL, 'Message', 'pending', 'low', '10 tarikh Dhakay asbe then follow up dite hbe and 11 tarikh office visit Korte pare', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"10 tarikh Dhakay asbe then follow up dite hbe and 11 tarikh office visit Korte pare\"}]', 19, NULL, '2026-06-03 15:01:14', '2026-06-03 23:38:51'),
+(17, 'HAIDER', 'haider10-1100@diu.edu.bd', '01889532005', 'IR', 4, 10, 'Message', 'pending', 'low', 'INTERESTED, OFFICE VISIT- DATE , INTEREST , LOCATION - ,IELTS -', NULL, NULL, NULL, 8, NULL, '2026-06-03 16:08:30', '2026-06-03 16:08:30'),
+(18, 'Rakibur Islam Sohag', 'rakibursohag2091@gmail.com', '01798992091', 'HSC', 4, 53, 'Phone', 'pending', 'low', NULL, NULL, NULL, NULL, 26, NULL, '2026-06-03 16:12:16', '2026-06-03 16:12:16'),
+(19, 'Tonmoy Ahmmed', NULL, '01834413145', 'Hsc 2013 (3.90)', 4, NULL, 'Message', 'pending', 'low', 'Interested \r\nOffice visit Saturday', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested \\r\\nOffice visit Saturday\"}]', 32, NULL, '2026-06-03 16:58:56', '2026-06-03 16:58:56'),
+(20, 'Ruhul Amin', NULL, '01760805401', NULL, NULL, NULL, 'Phone', 'pending', 'low', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-03 17:00:03', '2026-06-03 17:00:03'),
+(21, 'Rubel', NULL, '01775335639', 'Master’s', 4, NULL, 'Message', 'pending', 'low', 'Interested, ielts 5.5, location-lalbagh', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested, ielts 5.5, location-lalbagh\"}]', 21, NULL, '2026-06-03 18:52:06', '2026-06-03 18:52:06'),
+(22, 'MD Sagor Sikder', NULL, '+8801314-676498', 'HSC-2017', 4, NULL, 'Message', 'pending', 'low', 'sokale follow up dite hbe call diye', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe call diye\"}]', 19, NULL, '2026-06-03 23:31:50', '2026-06-03 23:31:50'),
+(23, 'Shuvo Raj', NULL, '+8801400-0502318', 'HSC-2022', 4, NULL, 'Message', 'pending', 'low', 'sokale follow up dite hbe abr call diye', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe abr call diye\"}]', 19, NULL, '2026-06-03 23:34:33', '2026-06-03 23:34:33'),
+(24, 'Haque MD Simul', NULL, '+8801608-450364`', 'HSC', 4, NULL, 'Message', 'pending', 'low', 'sokale follow up dite hbe uni Malta Russia  niye interested to ek sathe 2tai apply korte chacche but uni er age ekbar office eshe russia niye kotha bole geche', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"sokale follow up dite hbe uni Malta Russia  niye interested to ek sathe 2tai apply korte chacche but uni er age ekbar office eshe russia niye kotha bole geche\"}]', 19, NULL, '2026-06-03 23:36:58', '2026-06-03 23:41:15'),
+(25, 'Jisanz', NULL, '+8801861-806825', NULL, 4, NULL, 'Message', 'pending', 'low', 'uni work visa te Malta te jete chacche', NULL, NULL, NULL, 19, NULL, '2026-06-03 23:40:51', '2026-06-03 23:40:51'),
+(26, 'Monika Khatun', 'monahiya179@gmail.com', '+8801959-784997', 'BBS running', 4, NULL, 'Message', 'pending', 'low', 'jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe\"}]', 19, NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
+(27, 'Monika Khatun', 'monahiya179@gmail.com', '+8801959-784997', 'BBS running', 4, NULL, 'Message', 'pending', 'low', 'jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"jossor e thake sonibar follow up dite hbe jante hbe je kobe dhakay asbe ar dhakay asbe office visit korbe\"}]', 19, NULL, '2026-06-03 23:45:24', '2026-06-03 23:45:24'),
+(28, 'Nusrat Jahan Refat', NULL, '+8801731-556512`', NULL, NULL, NULL, 'Message', 'pending', 'low', 'no response follow up dite hbe sokale', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"follow up dite hbe sokale\"},{\"date\":\"2026-06-04\",\"notes\":\"no response follow up dite hbe sokale\"}]', 19, NULL, '2026-06-03 23:46:54', '2026-06-03 23:49:13'),
+(29, 'Harun', NULL, '+8801776-330510', NULL, NULL, NULL, 'Message', 'pending', 'low', 'no response sokale voice msg dite hbe', NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":\"no response sokale voice msg dite hbe\"}]', 19, NULL, '2026-06-03 23:47:56', '2026-06-03 23:48:45'),
+(30, 'Redoan Sabbir', NULL, '+8801776-708635', 'HSC-2023', 4, NULL, 'Message', 'pending', 'low', '\"Highly-Intersted\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe\"},{\"date\":\"2026-06-13\",\"notes\":\"\\\"Highly-Intersted\\\"sokale haider bhaiyer sathe kotha bolate hbe ar 13 tarikh sonibar follow up dite hbe\"}]', 19, NULL, '2026-06-03 23:52:27', '2026-06-03 23:53:09'),
+(31, 'Rifatul Islam Azmin', NULL, '+8801779-946313', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'sonibar brahmanbaria theke wife soho 2jon ek sathe asbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"sonibar brahmanbaria theke wife soho 2jon ek sathe asbe\"}]', 19, NULL, '2026-06-03 23:54:52', '2026-06-03 23:54:52'),
+(32, 'Abu Sayed', NULL, '‪+880 1738‑626352‬', NULL, 4, NULL, 'Message', 'pending', 'low', 'Highly Interested', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Highly Interested\"}]', 22, NULL, '2026-06-04 07:50:53', '2026-06-04 07:50:53'),
+(33, 'Ahnaf Azmain', NULL, '‪+880 1717‑866704‬', NULL, 4, NULL, 'Message', 'pending', 'low', 'Highly Interested', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Highly Interested\"}]', 22, NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49'),
+(34, 'Jannat', NULL, '‪+880 1777‑351038‬', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-04 04:00:00', '[{\"date\":\"2026-06-04\",\"notes\":null}]', 22, NULL, '2026-06-04 07:53:49', '2026-06-04 07:53:49'),
+(35, 'Rinkon Barua', NULL, '‪+880 1879‑546661‬', 'Dilpoma In Engineering Eelectrical Technology', 4, NULL, 'Message', 'pending', 'low', 'Interested with spouse.', NULL, NULL, NULL, 22, NULL, '2026-06-04 07:56:10', '2026-06-04 07:56:46'),
+(36, 'Tanim Ahmed', NULL, '‪+880 1869‑873115‬', NULL, 4, NULL, 'Message', 'pending', 'low', 'Interested for his wife.', NULL, NULL, NULL, 22, NULL, '2026-06-04 08:00:31', '2026-06-04 08:00:31'),
+(37, 'Parthib Talukdar', NULL, '‪+880 1846‑302793‬', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 22, NULL, '2026-06-04 08:03:20', '2026-06-04 08:03:20'),
+(38, 'Md Redwan', NULL, '01308759316', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Chattogram visit korbe\r\nSsc-20-2.58\r\nHsc-22-3.58', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Chattogram visit korbe\\r\\nSsc-20-2.58\\r\\nHsc-22-3.58\"}]', 21, NULL, '2026-06-04 09:01:04', '2026-06-04 09:01:04'),
+(39, 'Atiur Rahman', NULL, '01757719689', 'Ssc-2017-3.59.    Diploma-2021-3.73', 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 16, NULL, '2026-06-04 10:47:03', '2026-06-06 08:31:00'),
+(41, 'Md Farhanul Alam Chowdhury', 'mdfarhanulalamchowdhury@gmail.com', '01627532433', 'Master’s', 4, 13, 'Message', 'pending', 'low', 'File submit', NULL, NULL, NULL, 15, NULL, '2026-06-04 11:02:22', '2026-06-04 11:02:22'),
+(42, 'Israt Jahan', NULL, '01893861571', 'Hsc 2022', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:06:05', '2026-06-04 11:06:05'),
+(43, 'Sami', NULL, '01624787406', 'Alim - 2022', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:12:41', '2026-06-04 11:12:41'),
+(44, 'Anto Sarker', NULL, '01786175159', 'Hon\'s 2022', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 11:14:01', '2026-06-04 11:14:01'),
+(45, 'Md Farhan Rashid', NULL, '01601015632', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'File dite pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-05\",\"notes\":null},{\"date\":\"2026-06-05\",\"notes\":\"File dite pare\"},{\"date\":\"2026-06-08\",\"notes\":\"File dite pare\"}]', 37, NULL, '2026-06-04 12:29:12', '2026-06-06 12:16:59'),
+(46, 'Pithun Mia', NULL, '01772588197', 'Hsc 2025', 4, NULL, 'Message', 'pending', 'low', 'File dite pare.', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"File dite pare.\"}]', 15, NULL, '2026-06-04 12:59:27', '2026-06-04 12:59:27'),
+(47, 'Kawar miah', NULL, '01770280267', 'Bba 2017', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-04 13:02:57', '2026-06-04 13:02:57'),
+(48, 'Asma', NULL, '01610918778', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26'),
+(49, 'Salina Ruma', NULL, '01407468842', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'Somoy kore asbe Chittagong office e \r\nclient location: Chittagong, Cornelhat', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong,Kornelhat\"},{\"date\":\"2026-09-07\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong, Cornelhat\"},{\"date\":\"2026-06-09\",\"notes\":\"Somoy kore asbe Chittagong office e \\r\\nclient location: Chittagong, Cornelhat\"}]', 37, NULL, '2026-06-04 13:33:56', '2026-06-08 14:36:38'),
+(50, 'Moin Ali', NULL, '01568675578', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'location: Hobiganj', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"location: Hobiganj\"},{\"date\":\"2026-06-09\",\"notes\":\"location: Hobiganj\"}]', 37, NULL, '2026-06-04 13:37:20', '2026-06-08 14:35:36'),
+(51, 'Fahad Mahmud', NULL, '01874818128', 'SSC', 5, NULL, 'Message', 'pending', 'low', 'Not potential', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Not potential\"}]', 37, NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45'),
+(52, 'Miraj', NULL, '+880 1717-437913', 'Msc', 4, NULL, 'Message', 'pending', 'low', 'SSC-2003, 3.88\r\nHSC-2005, 3.10\r\nBSc- 2012, 2nd Class\r\nMSc- 2014, 2nd Class\r\nIELTS- 5.5 (general training)', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"SSC-2003, 3.88\\r\\nHSC-2005, 3.10\\r\\nBSc- 2012, 2nd Class\\r\\nMSc- 2014, 2nd Class\\r\\nIELTS- 5.5 (general training)\"}]', 21, NULL, '2026-06-04 13:41:14', '2026-06-04 13:41:14'),
+(53, 'Tamim', NULL, '01923244904', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Science Department\r\nSSC 2022 5.00\r\nHSC 2024  3.96\r\nNo IELTS.', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Science Department\\r\\nSSC 2022 5.00\\r\\nHSC 2024  3.96\\r\\nNo IELTS.\"}]', 21, NULL, '2026-06-04 13:43:43', '2026-06-04 13:43:43'),
+(54, 'Mohiuddin Gazi', NULL, '+880 1911-611208', 'Diploma', 6, NULL, 'Message', 'pending', 'low', 'File diye diche', NULL, NULL, '[{\"date\":\"2026-06-05\",\"notes\":\"Shoni bar sokal 11 tay khulna theke asbe.file dite\"},{\"date\":\"2026-06-05\",\"notes\":\"File diye diche\"}]', 25, NULL, '2026-06-04 13:45:19', '2026-06-07 15:57:19'),
+(55, 'Md Abdul Hakim Apurbo', NULL, '01771710831', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'Family r sathe kotha bole janabe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Family r sathe kotha bole janabe\"}]', 37, NULL, '2026-06-04 13:45:38', '2026-06-04 13:45:38'),
+(56, 'Mahabub', NULL, '01522105646', 'HSC', 6, NULL, 'Message', 'pending', 'low', '09 june office visit kortese', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-10\",\"notes\":\"Office visit korbe bolce\"},{\"date\":\"2026-06-10\",\"notes\":\"09 june office visit kortese\"}]', 37, NULL, '2026-06-04 13:47:08', '2026-06-09 14:16:13'),
+(58, 'Muhammad Entiaz', NULL, '01701055928', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:49:54', '2026-06-04 13:49:54'),
+(59, 'Sumitra', NULL, '01637158805', 'MBA', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:51:38', '2026-06-04 13:51:38'),
+(60, 'Hossen', NULL, '01410127779', 'B.SC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:53:13', '2026-06-04 13:53:13'),
+(61, 'Anupom', NULL, '01985378513', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:54:45', '2026-06-04 13:54:45'),
+(62, 'Sporsho', NULL, '01636022779', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 13:58:58', '2026-06-04 13:58:58'),
+(63, 'Umme Salma Dina', NULL, '01603453048', NULL, 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 14:04:35', '2026-06-04 14:04:35'),
+(64, 'Fahad Mustafa', NULL, '01879503669', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'Sonibar Chittagong Office e jabe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Sonibar Chittagong Office e jabe\"}]', 37, NULL, '2026-06-04 14:06:40', '2026-06-04 14:07:18'),
+(65, 'Erick', NULL, '01975088890', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null}]', 37, NULL, '2026-06-04 14:08:32', '2026-06-04 14:08:32'),
+(66, 'Akash howlader', NULL, '01923453235', 'Ssc-4.91-2017.   Hsc-4.83-2019.    Bsc-12025', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:09:12', '2026-06-04 14:09:12'),
+(67, 'Sukti', NULL, '01706137438', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'Malaysia te file dise onno karo client', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":null},{\"date\":\"2026-06-06\",\"notes\":\"Malaysia te file dise onno karo client\"}]', 37, NULL, '2026-06-04 14:09:52', '2026-06-06 14:47:11'),
+(68, 'Akib (Mirpur)', NULL, '01705908198', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:12:19', '2026-06-04 14:12:19'),
+(69, 'Kabir Hossain (barisal)', NULL, '01710964578', 'Diploma 2025 (engineering)', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 16, NULL, '2026-06-04 14:15:46', '2026-06-04 14:15:46'),
+(70, 'Md omor farukh', NULL, '01771889317', 'BBA', 4, NULL, 'Message', 'pending', 'low', 'Highly interested, soni ba robibar asbe', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Highly interested, soni ba robibar asbe\"}]', 21, NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48'),
+(71, 'Sagor', NULL, '01780416313', 'HSC', 6, NULL, 'Message', 'pending', 'low', 'Sylhet location \r\nAs soon as possible asbe bolce', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Sylhet location \\r\\nAs soon as possible asbe bolce\"}]', 37, NULL, '2026-06-04 15:40:51', '2026-06-04 15:40:51'),
+(72, 'Arib Mahmud', NULL, '01301608705', 'Diploma 2023', 4, NULL, 'Phone', 'pending', 'low', 'File dibe', NULL, NULL, NULL, 15, NULL, '2026-06-04 15:58:53', '2026-06-04 15:58:53'),
+(74, 'Shakib', NULL, '01837062756', NULL, NULL, NULL, 'Message', 'pending', 'low', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 17:55:47', '2026-06-04 17:55:47'),
+(75, 'Unknown', NULL, '01812944120', NULL, NULL, NULL, 'Message', 'pending', 'low', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 17:57:38', '2026-06-04 17:57:38'),
+(76, 'Akib', NULL, '01407825696', 'Diploma 2024 (3.92)', 4, NULL, 'Message', 'pending', 'low', 'Basay ktha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-04 17:59:56', '2026-06-04 17:59:56'),
+(77, 'Jishan', NULL, '01764667215', 'Hsc 2023 (3.64)', 4, NULL, 'Message', 'pending', 'low', 'Interested \r\nOffice visit', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested \\r\\nOffice visit\"}]', 32, NULL, '2026-06-04 18:02:54', '2026-06-04 18:02:54'),
+(78, 'Pranta', NULL, '01710483748', NULL, NULL, NULL, 'Phone', 'pending', 'low', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-04 18:04:29', '2026-06-04 18:04:29'),
+(79, 'Nahar Talukder', NULL, '01856186597', 'Bsc', 4, NULL, 'Message', 'pending', 'low', 'Ssc-4.58, dip-3.58,bsc-2.95(2022)\r\nSonibar asbe office a, highly interested, location- feni', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Ssc-4.58, dip-3.58,bsc-2.95(2022)\\r\\nSonibar asbe office a, highly interested, location- feni\"}]', 21, NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00'),
+(80, 'Unknown', NULL, '01742128109', 'Diploma', 4, NULL, 'Message', 'pending', 'low', 'Ssc-16-3.11(commerts) dip-24-3.27(civil)\r\nHighly interested soni ba robibar asve, loc-pabna', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Ssc-16-3.11(commerts) dip-24-3.27(civil)\\r\\nHighly interested soni ba robibar asve, loc-pabna\"}]', 21, NULL, '2026-06-05 09:27:00', '2026-06-05 09:27:00'),
+(81, 'Mohammad Alamin', NULL, '01775734389', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'SSC 3.50 2020 Purba Rampura High School \r\nHSC 3.17  2023 Rajarbag Police Lines School And College\r\nDhakar baire ase dhaka ase contact korbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"SSC 3.50 2020 Purba Rampura High School \\r\\nHSC 3.17  2023 Rajarbag Police Lines School And College\\r\\nDhakar baire ase dhaka ase contact korbe\"}]', 21, NULL, '2026-06-06 09:10:30', '2026-06-06 09:10:30'),
+(82, 'Shoikot', NULL, '01609322095', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Japaner jonno file dise jodi japan reject hoi tahole maltay apply korbe', NULL, '2026-08-23 04:00:00', '[{\"date\":\"2026-08-23\",\"notes\":\"Japaner jonno file dise jodi japan reject hoi tahole maltay apply korbe\"}]', 21, NULL, '2026-06-06 09:14:23', '2026-06-06 09:14:23'),
+(83, 'Shohan rahman', NULL, '01710989858', 'Bsc', 4, NULL, 'Message', 'pending', 'low', 'SSC 3.23-2009\r\nDiploma in electronics 3.18 -2014\r\nBsc eee 3.10 -2021\r\nInformation newar jonno knock dise', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"SSC 3.23-2009\\r\\nDiploma in electronics 3.18 -2014\\r\\nBsc eee 3.10 -2021\\r\\nInformation newar jonno knock dise\"}]', 21, NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
+(85, 'Nila', NULL, '+880 1773-816383', 'Master’s', 4, NULL, 'Message', 'pending', 'low', 'Ssc :B.Std -2001\r\nHsc :B. Std- 2003\r\nBachelor: Honr\'s in English -2007, 2nd class( NU)\r\nMasters- HRM 2012, 3.43 (IUB)\r\nEnglish test : PTE 61\r\n R 52, W 52, \r\nL 60, S 68\r\nExperience  : Manager HRD for 13yrs\r\nLocation- Dhaka, office a asbe bolse', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Ssc :B.Std -2001\\r\\nHsc :B. Std- 2003\\r\\nBachelor: Honr\'s in English -2007, 2nd class( NU)\\r\\nMasters- HRM 2012, 3.43 (IUB)\\r\\nEnglish test : PTE 61\\r\\n R 52, W 52, \\r\\nL 60, S 68\\r\\nExperience  : Manager HRD for 13yrs\\r\\nLocation- Dhaka, office a asbe bolse\"}]', 21, NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46'),
+(86, 'Mahim', NULL, '01977293345', 'Msc', 4, NULL, 'Message', 'pending', 'low', 'Bsc and MSc in Civil Engineering with MOI, cgpa 2.84/4 from Ahsanullah University of science and Technology\r\nPassing year 2025', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Bsc and MSc in Civil Engineering with MOI, cgpa 2.84\\/4 from Ahsanullah University of science and Technology\\r\\nPassing year 2025\"}]', 21, NULL, '2026-06-06 09:33:24', '2026-06-06 09:33:24'),
+(87, 'Md nadim', NULL, '01301622441', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Ssc 2011 result 2.5\r\nHSC 12 result 3.0\r\nInformation newar jonno knock dise', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Ssc 2011 result 2.5\\r\\nHSC 12 result 3.0\\r\\nInformation newar jonno knock dise\"}]', 21, NULL, '2026-06-06 09:41:39', '2026-06-06 09:41:39'),
+(88, 'Lupin', NULL, '+880 1640-830008', 'HSC', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-06 04:00:00', '[{\"date\":\"2026-06-06\",\"notes\":\"Interested\"}]', 26, NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
+(89, 'RESEARCH BARUA', 'baruaresearch29@gmail.com', '01630-701484', NULL, 4, 48, 'Phone', 'pending', 'low', NULL, NULL, NULL, NULL, 38, NULL, '2026-06-06 15:18:34', '2026-06-06 15:18:34'),
+(90, 'Hasan', NULL, '01630581970', 'Ssc-2022-5.00     hsc-2024-4.25', 4, NULL, 'Message', 'pending', 'low', 'Apply korte pare', NULL, NULL, NULL, 16, NULL, '2026-06-06 16:30:18', '2026-06-06 16:30:18'),
+(91, 'Md. Nayeem Bhuiyan', NULL, '01863805035', 'Hsc 2021', 4, NULL, 'Message', 'pending', 'low', 'File dibe', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:15:39', '2026-06-07 08:15:39'),
+(92, 'Tashfia Jahin', NULL, '01805762213', 'Bachelor 2026', 4, NULL, 'Message', 'pending', 'low', 'Interested for next year first intake', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49'),
+(93, 'Gausul alom mykel', NULL, '01902309747', 'Hsc-2023', 4, NULL, 'Message', 'pending', 'low', 'Bhai er sathe kotha bolbe', NULL, '2026-06-07 04:00:00', '[{\"date\":\"2026-06-07\",\"notes\":\"Bhai er sathe kotha bolbe\"}]', 16, NULL, '2026-06-07 08:24:27', '2026-06-07 08:24:27'),
+(94, 'Shafin Ahmed', NULL, '01308082479', 'Hsc 2022', 4, NULL, 'Message', 'pending', 'low', 'Interested but confused', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Interested but confused\"}]', 15, NULL, '2026-06-07 08:26:41', '2026-06-07 08:26:41'),
+(95, 'Shanto', NULL, '01616270028', 'Hsc 2023', 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 15, NULL, '2026-06-07 08:29:03', '2026-06-07 08:29:03'),
+(96, 'Walid khan', NULL, '01714957393', NULL, 4, NULL, 'Message', 'pending', 'low', 'Correct transcript niye ashbe', NULL, NULL, NULL, 16, NULL, '2026-06-07 08:38:00', '2026-06-07 08:38:00'),
+(97, 'Walid khan', NULL, '01714957393', NULL, 4, NULL, 'Message', 'pending', 'low', 'Correct transcript niye ashbe', NULL, NULL, NULL, 16, NULL, '2026-06-07 08:38:01', '2026-06-07 08:38:01'),
+(98, 'Saikot', NULL, '01787129080', 'Diploma 2022', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 08:38:50', '2026-06-07 08:38:50'),
+(99, 'Md. Assaduzzaman', NULL, '01981303363', 'Diploma in civil 2017', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 08:43:24', '2026-06-07 08:43:24'),
+(100, 'Md Ashik', NULL, '01921910703', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 15, NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
+(101, 'Md Abdul Aziz', NULL, '01757661407', 'MBA 2017', 4, NULL, 'Message', 'pending', 'low', 'From laxmipur', NULL, NULL, NULL, 15, NULL, '2026-06-07 08:49:48', '2026-06-07 08:49:48'),
+(102, 'Mahfuz Sheikh', NULL, '01828054901', 'Hsc 2023', 4, NULL, 'Message', 'pending', 'low', 'IELTS - 5\r\nInterested', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"IELTS - 5\\r\\nInterested\"}]', 15, NULL, '2026-06-07 08:55:48', '2026-06-07 08:55:48'),
+(103, 'Ifranul kabir', NULL, '0 1601-926771', 'Hsc 4.33 2024 Ssc 4.22 2022 Honours running  In Bangla  Ielts nai', 4, NULL, 'Message', 'pending', 'low', 'Office visit korte pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Office visit korte pare\"}]', 16, NULL, '2026-06-07 08:57:22', '2026-06-07 08:57:22'),
+(104, 'Anto Sarkar', NULL, '01786175159', 'Hons 2022', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Interested\"}]', 15, NULL, '2026-06-07 08:58:02', '2026-06-07 08:58:02'),
+(105, 'Durjoy', NULL, '+880 1303-051588', 'Hsc-2019', 4, NULL, 'Message', 'pending', 'low', 'Not sure', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Not sure\"}]', 16, NULL, '2026-06-07 09:04:26', '2026-06-07 09:04:26'),
+(106, 'Nandita', NULL, '01881876534', NULL, 4, NULL, 'Phone', 'pending', 'low', 'Interested for Nursing programme \r\nFeom ctg', NULL, NULL, NULL, 15, NULL, '2026-06-07 09:04:44', '2026-06-07 09:04:44'),
+(107, 'Md Rakibul Islam', NULL, '01868412558', 'Bba 2023', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 15, NULL, '2026-06-07 09:06:42', '2026-06-07 09:06:42'),
+(108, 'Shrabani Barua', NULL, '01959651676', 'MBA 2021', 4, NULL, 'Message', 'pending', 'low', 'Ctg office  visit korbe', NULL, NULL, NULL, 15, NULL, '2026-06-07 09:09:02', '2026-06-07 09:09:02'),
+(109, 'Siam Hossain', NULL, '01756264736', 'Hsc 2017', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":null}]', 15, NULL, '2026-06-07 09:24:58', '2026-06-07 09:24:58'),
+(110, 'Alif mahmud ove', NULL, '+880 1961-837195', 'SSC (2013): 3.19 HSC (2015): 2.87 BSS (2022): 2:95', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":null}]', 16, NULL, '2026-06-07 09:40:53', '2026-06-07 09:40:53'),
+(111, 'Shadin', NULL, '+880 1991-417876', 'Hon\'s', 4, NULL, 'Message', 'pending', 'low', 'Hon\'s- sports science from cu(26)\r\nIelts dibe kisodin por tarpor jabe', NULL, '2026-07-02 04:00:00', '[{\"date\":\"2026-07-02\",\"notes\":\"Hon\'s- sports science from cu(26)\\r\\nIelts dibe kisodin por tarpor jabe\"}]', 21, NULL, '2026-06-07 10:52:19', '2026-06-07 10:52:19'),
+(112, 'Ahmed akash', NULL, '01860160338', NULL, 4, NULL, 'Message', 'pending', 'low', 'Ssc 2021 :3.94\r\nHsc 2023 :3.50\r\nLoc- Tangail \r\nFamiltr sathe kotha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Ssc 2021 :3.94\\r\\nHsc 2023 :3.50\\r\\nLoc- Tangail \\r\\nFamiltr sathe kotha bole janabe\"}]', 21, NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
+(113, 'Tipu sultan', NULL, '+880 1960-603376', NULL, 4, NULL, 'Message', 'pending', 'low', 'Interested, ssc 4.27(2010) dip-2.66(2014)\r\n2,3 din pore asbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Interested, ssc 4.27(2010) dip-2.66(2014)\\r\\n2,3 din pore asbe\"}]', 21, NULL, '2026-06-07 12:28:08', '2026-06-07 12:28:08'),
+(114, 'Ariful', NULL, '01822952622', NULL, 4, NULL, 'Phone', 'pending', 'low', 'Will confirm', NULL, NULL, NULL, 26, NULL, '2026-06-07 13:29:39', '2026-06-07 13:29:39'),
+(115, 'Arfin', NULL, '01987538233', NULL, 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-07 13:31:40', '2026-06-07 13:31:40'),
+(116, 'Naim', NULL, '+880 1798-533956', 'Hons 2019', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, NULL, NULL, 15, NULL, '2026-06-07 15:36:40', '2026-06-07 15:36:40'),
+(117, 'Rofik', NULL, '01960672211', NULL, 6, NULL, 'Message', 'pending', 'low', '07/06/2026 office visite korche', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:48:17', '2026-06-07 15:48:17'),
+(121, 'Jahid hasan', NULL, '01960965378', NULL, 4, NULL, 'Message', 'pending', 'low', 'Highly interested, location-keranigong', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Highly interested, location-keranigong\"}]', 21, NULL, '2026-06-07 15:49:10', '2026-06-07 15:49:10'),
+(122, 'Sourav', NULL, '01734298037', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 26, NULL, '2026-06-07 15:50:11', '2026-06-07 15:50:11'),
+(124, 'Jdatatent', NULL, '01788532947', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":null}]', 26, NULL, '2026-06-07 15:52:44', '2026-06-07 15:52:44'),
+(125, 'Sojib', NULL, '01782419492', NULL, 6, NULL, 'Message', 'pending', 'low', 'Aschilo', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Aschilo\"}]', 25, NULL, '2026-06-07 15:54:21', '2026-06-07 15:57:44'),
+(126, 'Jihad', NULL, '01704964131', NULL, 6, NULL, 'Message', 'pending', 'low', 'File diche', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:55:19', '2026-06-07 15:55:33'),
+(127, 'Nazim', NULL, '01783088599', NULL, 6, NULL, 'Message', 'pending', 'low', 'Aschilo', NULL, NULL, NULL, 25, NULL, '2026-06-07 15:56:32', '2026-06-07 15:56:32'),
+(128, 'Saimum', NULL, '01894532483', 'BSS', 4, NULL, 'Message', 'pending', 'low', 'Next month office e ashbe', NULL, '2026-07-01 04:00:00', '[{\"date\":\"2026-07-01\",\"notes\":\"Next month office e ashbe\"}]', 32, NULL, '2026-06-07 18:21:18', '2026-06-07 18:21:18'),
+(129, 'Jannat', NULL, '01850622832', 'Honours', 4, NULL, 'Message', 'pending', 'low', 'Basay ktha bole janabe', NULL, '2026-05-09 04:00:00', '[{\"date\":\"2026-05-09\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-07 19:19:56', '2026-06-07 19:19:56'),
+(130, 'Sahab', NULL, '01303176607', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Robibare janabe', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Robibare janabe\"}]', 32, NULL, '2026-06-07 19:21:23', '2026-06-07 19:21:23'),
+(132, 'Kaosar', NULL, '01969418997', NULL, 4, NULL, 'Message', 'pending', 'low', 'Not interested', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28'),
+(133, 'Unknown', NULL, '01703568172', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Passport nai', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:26:20', '2026-06-07 19:26:20'),
+(134, 'Siam', NULL, '01963752996', NULL, 4, NULL, 'Message', 'pending', 'low', 'Basay ktha bole janabe', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Baday ktha bole janabe\"},{\"date\":\"2026-06-10\",\"notes\":\"Basay ktha bole janabe\"}]', 32, NULL, '2026-06-07 19:27:36', '2026-06-07 19:28:06'),
+(135, 'Unknown', NULL, '01614935058', 'SSC', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 32, NULL, '2026-06-07 19:31:25', '2026-06-07 19:31:25'),
+(136, 'Sharmin', NULL, '01708913292', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Passport nei', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:32:38', '2026-06-07 19:32:38'),
+(137, 'Unknown', NULL, '01754494368', NULL, 4, NULL, 'Message', 'pending', 'low', 'Ssc result ber hoinai ekhno', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:33:36', '2026-06-07 19:33:36'),
+(138, 'Unknown', NULL, '01760805401', NULL, NULL, NULL, 'Phone', 'pending', 'low', 'No response', NULL, NULL, NULL, 32, NULL, '2026-06-07 19:34:23', '2026-06-07 19:34:23'),
+(139, 'Arafat Islam', NULL, '01533362825', 'ssc 3.44 hsc 2.83  bba 2.77 (2021) Finance & Banking', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 16, NULL, '2026-06-08 13:05:24', '2026-06-08 13:05:24'),
+(140, 'Yousuf Ali Rifat', NULL, '01855775808', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-08-09\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:25:39', '2026-06-08 14:36:13'),
+(141, 'Milon Ahmed', NULL, '01321516165', 'HSC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:30:10', '2026-06-08 14:15:26'),
+(142, '😊', NULL, '01576906242', 'B.SC', 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:35:03', '2026-06-08 14:16:23'),
+(143, 'Tamal Sharma', NULL, '01836126261', NULL, 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-08-07\",\"notes\":null},{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 13:42:45', '2026-06-08 14:35:54'),
+(144, 'Sajid', NULL, '01570249576', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Ssc. 4.44 / 2022\r\nHsc 3.75 /2024', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"Ssc. 4.44 \\/ 2022\\r\\nHsc 3.75 \\/2024\"}]', 21, NULL, '2026-06-08 14:01:53', '2026-06-08 14:01:53'),
+(145, 'Sayema majumder', NULL, '01763580853', 'Hon\'s', 4, NULL, 'Message', 'pending', 'low', '2006,s.s.c.\r\nGpa:2.81\r\n2008,H.S.C\r\nGpa:2.60\r\n2012: hon\'s \r\nSecond CLS.\r\n2023 LLB: Second cls.', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"2006,s.s.c.\\r\\nGpa:2.81\\r\\n2008,H.S.C\\r\\nGpa:2.60\\r\\n2012: hon\'s \\r\\nSecond CLS.\\r\\n2023 LLB: Second cls.\"}]', 21, NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
+(146, 'Rakib', NULL, '+880 1794-397567', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Rakibul IsLAM \r\n HSC 24 GPA 5 science\r\nSSC 22 GPA 4.75 humanities\r\n IELTS 4.5\r\n interested to malta', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"Rakibul IsLAM \\r\\n HSC 24 GPA 5 science\\r\\nSSC 22 GPA 4.75 humanities\\r\\n IELTS 4.5\\r\\n interested to malta\"}]', 21, NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
+(147, 'Himel', NULL, '01311465569', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Office visit korbe', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"Office visit korbe\"}]', 32, NULL, '2026-06-08 14:30:40', '2026-06-08 14:30:40'),
+(148, 'Md Riyad', NULL, '01848390374', NULL, 6, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":null}]', 37, NULL, '2026-06-08 15:09:43', '2026-06-08 15:09:43'),
+(149, 'Shakil', NULL, '01746165680', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Kal asty pare', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"Kal asty pare\"}]', 32, NULL, '2026-06-08 15:10:15', '2026-06-08 15:10:15'),
+(150, 'Mahadi mahib', NULL, '01322643583', 'Ssc 4.44, year :2023 Hsc 4.17 year:2025 No IELTS  Current location :Sukrabad, Dhanmodi.', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":null}]', 16, NULL, '2026-06-08 15:18:15', '2026-06-08 15:18:15'),
+(151, 'Khaled hasan rony', NULL, '01867812574', 'Ssc 2022 GPA 2:78 HSC 2024 GPA 2:75', NULL, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 16, NULL, '2026-06-08 15:19:45', '2026-06-08 15:19:45'),
+(152, 'SB', NULL, '01340430870', NULL, NULL, NULL, 'Message', 'pending', 'low', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:29:20', '2026-06-08 15:29:20'),
+(153, 'Murad', NULL, '01721243588', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-15 04:00:00', '[{\"date\":\"2026-06-15\",\"notes\":null}]', 26, NULL, '2026-06-08 15:30:29', '2026-06-08 15:30:29'),
+(154, 'Sahab', NULL, '01717565089', 'Bachelor', 4, NULL, 'Message', 'pending', 'low', 'Interested', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:31:19', '2026-06-08 15:31:19'),
+(155, 'MD Asif Ikbal Leion', NULL, '+880 1817-452040', 'HSC', 6, 80, 'Message', 'pending', 'low', 'File dise', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":null},{\"date\":\"2026-06-08\",\"notes\":\"File dise\"}]', 37, NULL, '2026-06-08 15:33:04', '2026-06-09 14:25:35'),
+(156, 'Ak', NULL, '01714341235', 'HSC', 4, NULL, 'Message', 'pending', 'low', 'Visited', NULL, NULL, NULL, 26, NULL, '2026-06-08 15:33:37', '2026-06-08 15:33:37'),
+(157, 'Zishan', NULL, '01787550490', 'HSC', 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":null},{\"date\":\"2026-06-11\",\"notes\":null}]', 26, NULL, '2026-06-08 15:35:00', '2026-06-10 12:09:35'),
+(158, 'Shahin', NULL, '01303893439', 'Bsc', 4, NULL, 'Message', 'pending', 'low', 'Passport nei', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
+(162, 'Amit', NULL, '01607394700', 'Narsindi', 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:40:06', '2026-06-08 15:40:06'),
+(163, 'Lenion', NULL, '01817452040', NULL, 6, NULL, 'Message', 'pending', 'low', 'File diche', NULL, NULL, NULL, 25, NULL, '2026-06-08 15:41:09', '2026-06-08 15:41:09'),
+(164, 'Khalil', NULL, '01823642583', NULL, 4, NULL, 'Message', 'pending', 'low', 'Basay ktha bole janabe', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:42:26', '2026-06-08 15:42:26'),
+(165, 'Md shahariar', NULL, '01785481747', NULL, 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:42:56', '2026-06-08 15:42:56'),
+(166, 'Abdusshokkor', NULL, '‪+880 1860‑931360‬', 'Gretuation Complete, CGPA, 2:46, Master’s on going.', 4, NULL, 'Message', 'pending', 'low', 'interest.\r\nlocation cox bazar', NULL, NULL, NULL, 22, NULL, '2026-06-08 15:44:04', '2026-06-08 15:44:04'),
+(167, 'Rafi', NULL, '01604331354', NULL, 4, NULL, 'Phone', 'pending', 'low', NULL, NULL, NULL, NULL, 17, NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
+(168, 'Ratul', NULL, '01308223514', 'Hsc', 4, NULL, 'Message', 'pending', 'low', 'Next week e asty pare', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Next week e asty pare\"}]', 32, NULL, '2026-06-08 15:45:01', '2026-06-08 15:45:01'),
+(169, 'Asraful Islam', NULL, '‪+880 1776‑819870‬', 'SSC- 4.50/2018 Diploma- 3.42/2023 IELTS- 5.5', 4, NULL, 'Message', 'pending', 'low', 'interest', NULL, '2026-06-08 04:00:00', '[{\"date\":\"2026-06-08\",\"notes\":\"interest\"}]', 22, NULL, '2026-06-08 15:45:37', '2026-06-08 15:45:37'),
+(170, 'Unknown', NULL, '01518321023', 'Bsc', NULL, NULL, 'Message', 'pending', 'low', 'January intake e apply korbe\r\n3 mash por', NULL, NULL, NULL, 32, NULL, '2026-06-08 15:47:12', '2026-06-08 15:47:12'),
+(171, 'Mir Rabby Hasan', NULL, '+8801799-287158', 'Diploma Complete', 4, NULL, 'Message', 'pending', 'low', 'HSC er por diploma diyeche 9 tarikh follow up dite hbe update janar jonno', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"HSC er por diploma diyeche 9 tarikh follow up dite hbe update janar jonno\"}]', 19, NULL, '2026-06-09 01:05:22', '2026-06-09 01:06:28'),
+(172, 'Md Simul Haque', NULL, '+8801608-450364', NULL, 4, NULL, 'Message', 'pending', 'low', '8 tarikh office visit koreche to sonibar follow up dite hbe malta niye ki decision ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"8 tarikh office visit koreche to sonibar follow up dite hbe malta niye ki decision ta janar jonno\"}]', 19, NULL, '2026-06-09 01:08:49', '2026-06-09 01:08:49'),
+(173, 'Engr. Shreekanto', NULL, '+8801827-411613', NULL, 4, NULL, 'Message', 'pending', 'low', '6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte\"}]', 19, NULL, '2026-06-09 01:10:51', '2026-06-09 01:10:51'),
+(174, 'Engr. Shreekanto', NULL, '+8801827-411613', NULL, 4, NULL, 'Message', 'pending', 'low', '6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"6 tarikh follow up dite hbe karon uni bolechilo ei week seshe asbe office visit korte\"}]', 19, NULL, '2026-06-09 01:10:53', '2026-06-09 01:10:53'),
+(175, 'Mushfiqur Rahman', NULL, '+8801925-668554', 'BSC', 4, NULL, 'Message', 'pending', 'low', 'follow up dite hbe sokale', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"follow up dite hbe sokale\"}]', 19, NULL, '2026-06-09 01:12:25', '2026-06-09 01:12:25'),
+(176, '..', NULL, '+8801948-100198', NULL, NULL, NULL, 'Message', 'pending', 'low', 'no response sonibar call dite hbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"no response sonibar call dite hbe\"}]', 19, NULL, '2026-06-09 01:13:45', '2026-06-09 01:13:45'),
+(177, 'Alamgir', NULL, '+8801322-839468', 'BSC-2.67(2017)', 4, NULL, 'Message', 'pending', 'low', 'sokale follow up dite hbe then call diye all process ta bolte hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"sokale follow up dite hbe then call diye all process ta bolte hbe\"}]', 19, NULL, '2026-06-09 01:17:33', '2026-06-09 01:17:33'),
+(178, 'Ridoy Talukder', NULL, '+8801308-912154', NULL, 4, NULL, 'Message', 'pending', 'low', 'highly interested sokale follow up dite hbe file dite pare', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"highly interested sokale follow up dite hbe file dite pare\"}]', 19, NULL, '2026-06-09 01:24:37', '2026-06-09 01:25:37'),
+(179, 'khusbo', NULL, '+8801334-291465', NULL, 4, NULL, 'Message', 'pending', 'low', 'sonibar follow up dite hbe je malta ki decision niyeche ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sonibar follow up dite hbe je malta ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:28:18', '2026-06-09 01:28:18'),
+(180, 'Bm Ashikullah Babu', NULL, '+8801711-600071', NULL, 4, NULL, 'Message', 'pending', 'low', 'NO SEEN/ NO RESPONSE', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"NO SEEN\\/ NO RESPONSE\"}]', 19, NULL, '2026-06-09 01:31:30', '2026-06-09 01:31:30'),
+(181, 'Tanvir Ahmed Ridoy', NULL, '+8801833-957600', NULL, 4, NULL, 'Message', 'pending', 'low', 'sonibar direct call diye update jante hbe ki decision niyeche ta janar jonno', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"sonibar direct call diye update jante hbe ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26'),
+(182, '??', NULL, '+8801616-081408', 'ssc-3.56(2021) hsc-3.00(2023)', 4, NULL, 'Message', 'pending', 'low', 'spain jete chay tao sokale follow up diye tar decision jante hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"spain jete chay tao sokale follow up diye tar decision jante hbe\"}]', 19, NULL, '2026-06-09 01:37:25', '2026-06-09 01:37:25'),
+(183, '??', NULL, '+8801616-081408', 'ssc-3.56(2021) hsc-3.00(2023)', 4, NULL, 'Message', 'pending', 'low', 'spain jete chay tao sokale follow up diye tar decision jante hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"spain jete chay tao sokale follow up diye tar decision jante hbe\"}]', 19, NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35'),
+(184, 'Sayma', NULL, '+8801951-197117', NULL, 4, NULL, 'Message', 'pending', 'low', '9 tarikh sokal 11 tar por asbe husband soho 2 jon ek sathe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"9 tarikh sokal 11 tar por asbe husband soho 2 jon ek sathe\"}]', 19, NULL, '2026-06-09 01:39:01', '2026-06-09 01:39:01'),
+(185, 'Bokahri', NULL, '+8801955-375812', 'ssc-4.06(2011) hsc-4.00(2013) bba-2.80(2017) mba-2.98(2018)', 4, NULL, 'Message', 'pending', 'low', 'sokale follow up dite hbe', NULL, '2026-06-09 04:00:00', '[{\"date\":\"2026-06-09\",\"notes\":\"sokale follow up dite hbe\"}]', 19, NULL, '2026-06-09 01:40:07', '2026-06-09 01:42:12'),
+(186, 'Megh', NULL, '+8801329-901329', 'ssc', 4, NULL, 'Message', 'pending', 'low', 'ssc pass', NULL, NULL, NULL, 19, NULL, '2026-06-09 01:43:43', '2026-06-09 01:43:43'),
+(187, 'Shajatrimon', NULL, '+8801931-514985', 'ssc-2.78(2015) hsc-4.71(2019) degree 3 year complete', 4, NULL, 'Message', 'pending', 'low', '11 tarikh follow up diye update jante hbe je uni ki decision niyeche ta janar jonno', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"11 tarikh follow up diye update jante hbe je uni ki decision niyeche ta janar jonno\"}]', 19, NULL, '2026-06-09 01:49:57', '2026-06-09 01:49:57'),
+(188, 'Md omor faruk', NULL, '01771889317', 'Bachelor complete', 4, NULL, 'Phone', 'pending', 'low', 'Visit', NULL, NULL, NULL, 17, NULL, '2026-06-09 08:27:45', '2026-06-09 08:29:23'),
+(189, 'MInhaz Uddin Sabbir', NULL, '01833999286', 'M.A', 6, NULL, 'Message', 'pending', 'low', '9 tarik office visit korbe bolce ( CTG office)', NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":\"9 tarik office visit korbe bolce\"},{\"date\":\"2026-06-10\",\"notes\":\"9 tarik office visit korbe bolce ( CTG office)\"}]', 37, NULL, '2026-06-09 10:01:42', '2026-06-09 10:02:05'),
+(190, 'Aamol', NULL, '+8618182744746', NULL, 4, NULL, 'Message', 'pending', 'low', 'From china.will confirm later', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:35:54', '2026-06-09 14:35:54'),
+(191, 'Biddut', NULL, '01778115060', NULL, NULL, NULL, 'Phone', 'pending', 'low', 'No answer', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:36:32', '2026-06-09 14:36:32'),
+(192, 'Sagor', NULL, '01677477120', NULL, 4, NULL, 'Message', 'pending', 'low', 'Not interested', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21'),
+(193, 'Shihab', NULL, '01851395387', NULL, 4, NULL, 'Message', 'pending', 'low', 'Interested to open file', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:39:03', '2026-06-09 14:39:03'),
+(194, '****', NULL, '01985741618', NULL, 4, NULL, 'Message', 'pending', 'low', 'Came office', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:41:51', '2026-06-09 14:41:51'),
+(195, 'Ohide', NULL, '01837374462', NULL, NULL, NULL, 'Phone', 'pending', 'low', 'Will confirm,Certificate issue', NULL, NULL, NULL, 26, NULL, '2026-06-09 14:44:23', '2026-06-09 14:44:23'),
+(196, '**', NULL, '01344926864', 'HSC', 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":null}]', 26, NULL, '2026-06-10 12:08:58', '2026-06-10 12:08:58'),
+(197, 'Mahfuz', NULL, '01993465694', NULL, 4, NULL, 'Message', 'pending', 'low', NULL, NULL, '2026-06-10 04:00:00', '[{\"date\":\"2026-06-10\",\"notes\":null}]', 26, NULL, '2026-06-10 12:11:44', '2026-06-10 12:11:44'),
+(198, 'Abrar Faiyaz', NULL, '01755917506', 'B.SC', 6, NULL, 'Message', 'pending', 'low', 'Next week asbe', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Next week asbe\"}]', 37, NULL, '2026-06-10 14:53:59', '2026-06-10 14:53:59'),
+(200, 'Sahriar', NULL, '‪+880 1337‑165367‬', NULL, 5, NULL, 'Message', 'pending', 'low', '13 tarik CTG Office a file dibe. ( Malaysia)', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"13 tarik CTG Office a file dibe. ( Malaysia)\"}]', 13, NULL, '2026-06-10 16:16:37', '2026-06-10 16:16:37'),
+(201, 'Mursalin', NULL, '‪+880 1786‑056068‬', NULL, 6, NULL, 'Message', 'pending', 'low', 'Mirpur, 11tarik Office visit korbe', NULL, '2026-06-11 04:00:00', '[{\"date\":\"2026-06-11\",\"notes\":\"Mirpur, 11tarik Office visit korbe\"}]', 13, NULL, '2026-06-10 16:18:46', '2026-06-10 16:18:46'),
+(202, 'Saimul islam', NULL, '01819113688', NULL, 6, NULL, 'Message', 'pending', 'low', 'Kalke', NULL, NULL, NULL, 25, NULL, '2026-06-10 16:30:41', '2026-06-10 16:30:41'),
+(203, 'Momengir', NULL, '01889904945', NULL, 6, NULL, 'Message', 'pending', 'low', NULL, NULL, NULL, NULL, 25, NULL, '2026-06-10 16:31:47', '2026-06-10 16:31:47'),
+(204, 'Polash', NULL, '‪+880 1782‑238891‬', NULL, 4, NULL, 'Message', 'pending', 'low', 'Saturday Office a ashbe', NULL, '2026-06-12 04:00:00', '[{\"date\":\"2026-06-12\",\"notes\":\"Saturday Office a ashbe\"}]', 13, NULL, '2026-06-11 09:32:46', '2026-06-11 09:32:46'),
+(205, 'MD Yeasin', NULL, '‪+880 1858‑023208‬', NULL, 4, NULL, 'Message', 'pending', 'low', 'Bashai kotha bole update janabe', NULL, '2026-06-14 04:00:00', '[{\"date\":\"2026-06-14\",\"notes\":\"Bashai kotha bole update janabe\"}]', 13, NULL, '2026-06-11 09:34:59', '2026-06-11 09:34:59'),
+(206, 'Avoy', NULL, '‪+880 1647‑635261‬', NULL, NULL, NULL, 'Message', 'pending', 'low', 'Dhaka ashteche ,, 1/143tarik office visit', NULL, '2026-06-13 04:00:00', '[{\"date\":\"2026-06-13\",\"notes\":\"Dhaka ashteche ,, 1\\/143tarik office visit\"}]', 13, NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57'),
+(207, 'Nasrin sultanaa', NULL, '‪+880 1740‑242575‬', NULL, NULL, NULL, 'Message', 'pending', 'low', 'CTG office. file dibe. Malta', NULL, '2026-06-17 04:00:00', '[{\"date\":\"2026-06-17\",\"notes\":\"CTG office. file dibe. Malta\"}]', 13, NULL, '2026-06-11 10:20:56', '2026-06-11 10:20:56');
 
 -- --------------------------------------------------------
 
@@ -1237,13 +1238,13 @@ INSERT INTO `leads` (`id`, `student_name`, `email`, `phone`, `current_education`
 --
 
 CREATE TABLE `marketing_campaigns` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
-  `boosting_status` enum('on','off') NOT NULL DEFAULT 'off',
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `boosting_status` enum('on','off') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'off',
+  `created_by` bigint UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1262,13 +1263,13 @@ INSERT INTO `marketing_campaigns` (`id`, `name`, `start_date`, `end_date`, `boos
 --
 
 CREATE TABLE `marketing_documents` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` bigint(20) UNSIGNED NOT NULL,
-  `document_name` varchar(255) NOT NULL,
-  `document_type` enum('sop','cv','cl') NOT NULL,
-  `status` enum('pending','received','not_received','ready','submitted') NOT NULL DEFAULT 'pending',
-  `notes` text DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `application_id` bigint UNSIGNED NOT NULL,
+  `document_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document_type` enum('sop','cv','cl') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','received','not_received','ready','submitted') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1289,9 +1290,9 @@ INSERT INTO `marketing_documents` (`id`, `application_id`, `document_name`, `doc
 --
 
 CREATE TABLE `marketing_posters` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `poster_name` varchar(255) NOT NULL,
-  `status` enum('pending','not_ready','designing','ready','uploaded') DEFAULT 'pending',
+  `id` bigint UNSIGNED NOT NULL,
+  `poster_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','not_ready','designing','ready','uploaded') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1303,9 +1304,9 @@ CREATE TABLE `marketing_posters` (
 --
 
 CREATE TABLE `marketing_videos` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `video_name` varchar(255) NOT NULL,
-  `status` enum('pending','not_edited','editing','ready','uploaded') DEFAULT 'pending',
+  `id` bigint UNSIGNED NOT NULL,
+  `video_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','not_edited','editing','ready','uploaded') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1324,9 +1325,9 @@ INSERT INTO `marketing_videos` (`id`, `video_name`, `status`, `created_at`, `upd
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1437,7 +1438,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (106, '2026_05_06_120000_move_salary_account_fields_from_users_to_salaries', 62),
 (107, '2026_05_06_130000_add_username_to_users_for_login', 63),
 (108, '2026_05_07_115300_create_currencies_table', 64),
-(109, '2026_05_11_045856_add_designation_to_users_table', 65);
+(109, '2026_05_11_045856_add_designation_to_users_table', 65),
+(110, '2026_05_14_053132_add_description_to_courses_table', 66),
+(111, '2026_05_14_081545_add_vfs_result_to_applications_table', 66),
+(112, '2026_05_14_082321_add_vfs_note_to_applications_table', 66),
+(113, '2026_06_11_103108_add_plain_password_to_users_table', 66),
+(114, '2026_08_16_000001_add_priority_to_leads_table', 67);
 
 -- --------------------------------------------------------
 
@@ -1446,11 +1452,11 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `notifications` (
-  `id` char(36) NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `notifiable_type` varchar(255) NOT NULL,
-  `notifiable_id` bigint(20) UNSIGNED NOT NULL,
-  `data` text NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notifiable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notifiable_id` bigint UNSIGNED NOT NULL,
+  `data` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `read_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -1524,6 +1530,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('04cc0cfe-277b-4c9c-b9ce-a75ba7b66381', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":154,\"student_name\":\"Sahab\",\"phone\":\"01717565089\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/154\"}', NULL, '2026-06-08 15:31:19', '2026-06-08 15:31:19'),
 ('04d17899-8ecc-40c8-923d-d2f32830983a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":18,\"student_name\":\"Rakibur Islam Sohag\",\"phone\":\"01798992091\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/18\"}', NULL, '2026-06-03 16:12:16', '2026-06-03 16:12:16'),
 ('04d5ad97-e5e2-4aac-82ce-2f66365ce8df', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":35,\"student_name\":\"Rinkon Barua\",\"phone\":\"\\u202a+880\\u00a01879\\u2011546661\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/35\"}', NULL, '2026-06-04 07:56:10', '2026-06-04 07:56:10'),
+('04e11c8b-16a3-4a30-baec-88c0205a60b9', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('0510f21c-2210-4a9c-bd30-e673041e2171', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":153,\"student_name\":\"Murad\",\"phone\":\"01721243588\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/153\"}', NULL, '2026-06-08 15:30:29', '2026-06-08 15:30:29'),
 ('0531c49d-2c50-4e39-b7b3-13246895d5b6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":167,\"student_name\":\"Rafi\",\"phone\":\"01604331354\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/167\"}', NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
 ('054abdee-07ec-4aee-9a74-4489931eba65', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":124,\"student_name\":\"Jdatatent\",\"phone\":\"01788532947\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/124\"}', NULL, '2026-06-07 15:52:44', '2026-06-07 15:52:44'),
@@ -1578,9 +1585,9 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('08cb54bd-7c73-4e17-a6b8-ae48aaca57d0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":105,\"student_name\":\"Durjoy\",\"phone\":\"+880 1303-051588\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/105\"}', NULL, '2026-06-07 09:04:26', '2026-06-07 09:04:26'),
 ('08cd57f4-697d-47d1-9bee-037bebec4208', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":180,\"student_name\":\"Bm Ashikullah Babu\",\"phone\":\"+8801711-600071\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/180\"}', NULL, '2026-06-09 01:31:30', '2026-06-09 01:31:30'),
 ('08e3f6c8-ce3d-47c2-bb90-e76a740c3ebf', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":13,\"student_name\":\"Berk Simpson\",\"phone\":\"+1 (738) 387-1714\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/13\"}', NULL, '2026-05-23 09:14:04', '2026-05-23 09:14:04'),
-('08fc47db-3ef2-4964-bf2c-93219ebc5846', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":142,\"student_name\":\"\\ud83d\\ude0a\",\"phone\":\"01576906242\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/142\"}', NULL, '2026-06-08 13:35:03', '2026-06-08 13:35:03'),
-('0905ffd5-789b-45b9-80c9-7837fe3f803a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":70,\"student_name\":\"Md omor farukh\",\"phone\":\"01771889317\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/70\"}', NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48');
+('08fc47db-3ef2-4964-bf2c-93219ebc5846', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":142,\"student_name\":\"\\ud83d\\ude0a\",\"phone\":\"01576906242\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/142\"}', NULL, '2026-06-08 13:35:03', '2026-06-08 13:35:03');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('0905ffd5-789b-45b9-80c9-7837fe3f803a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":70,\"student_name\":\"Md omor farukh\",\"phone\":\"01771889317\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/70\"}', NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48'),
 ('09541b3a-d1ac-44f3-9f9c-ea7026b1db57', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":120,\"student_name\":\"Rofik\",\"phone\":\"01960672211\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/120\"}', NULL, '2026-06-07 15:48:18', '2026-06-07 15:48:18'),
 ('097bf2ea-395d-4c43-bbf2-204a00ba9ab0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":39,\"student_name\":\"Atiur Rahman\",\"phone\":\"01757719689\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/39\"}', NULL, '2026-06-04 10:47:03', '2026-06-04 10:47:03'),
 ('09be17f4-1acb-422f-8d6c-0a283b017ef2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":159,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/159\"}', NULL, '2026-06-08 15:40:04', '2026-06-08 15:40:04'),
@@ -1698,9 +1705,9 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('1382d0ac-adb6-4fd1-97c4-f04c7cb71317', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":100,\"student_name\":\"Md Ashik\",\"phone\":\"01921910703\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/100\"}', NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
 ('13a46cc6-1543-4781-ac1f-10d069802498', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":182,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/182\"}', NULL, '2026-06-09 01:37:25', '2026-06-09 01:37:25'),
 ('13b09556-123b-44ac-9dab-47f3a8f9c742', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":51,\"student_name\":\"Fahad Mahmud\",\"phone\":\"01874818128\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/51\"}', NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45'),
-('13b51803-0abc-4d84-9b7f-78ad0214c66e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":192,\"student_name\":\"Sagor\",\"phone\":\"01677477120\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/192\"}', NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21'),
-('14228834-6e79-4638-873c-c4c21432df33', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":111,\"student_name\":\"Shadin\",\"phone\":\"+880 1991-417876\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/111\"}', NULL, '2026-06-07 10:52:19', '2026-06-07 10:52:19');
+('13b51803-0abc-4d84-9b7f-78ad0214c66e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":192,\"student_name\":\"Sagor\",\"phone\":\"01677477120\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/192\"}', NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('14228834-6e79-4638-873c-c4c21432df33', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":111,\"student_name\":\"Shadin\",\"phone\":\"+880 1991-417876\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/111\"}', NULL, '2026-06-07 10:52:19', '2026-06-07 10:52:19'),
 ('142d7f4e-4aa1-4927-bf58-e5a0944e96bb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":46,\"student_name\":\"Pithun Mia\",\"phone\":\"01772588197\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/46\"}', NULL, '2026-06-04 12:59:27', '2026-06-04 12:59:27'),
 ('1436a2ed-e59b-4618-ab61-6cb7e0731865', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":146,\"student_name\":\"Rakib\",\"phone\":\"+880 1794-397567\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/146\"}', NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
 ('144cc9f2-cb37-4da3-a173-2ad0e8780b9d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
@@ -1818,9 +1825,9 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('1d294589-ceb7-4d4a-9bb6-31f0d46c1c87', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":116,\"student_name\":\"Naim\",\"phone\":\"+880 1798-533956\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/116\"}', NULL, '2026-06-07 15:36:40', '2026-06-07 15:36:40'),
 ('1d35d2c9-690c-4adb-934d-24d51fbadf16', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":135,\"student_name\":\"Unknown\",\"phone\":\"01614935058\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/135\"}', NULL, '2026-06-07 19:31:25', '2026-06-07 19:31:25'),
 ('1d3d8c72-47a8-4194-9f79-673b1fa7755b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":22,\"student_name\":\"MD Sagor Sikder\",\"phone\":\"+8801314-676498\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/22\"}', NULL, '2026-06-03 23:31:50', '2026-06-03 23:31:50'),
-('1d5c06a1-ed51-48bd-b3a7-e2774a12d095', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12'),
-('1d6d9d40-fe34-4e4c-a900-2cfac12c830b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24');
+('1d5c06a1-ed51-48bd-b3a7-e2774a12d095', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('1d6d9d40-fe34-4e4c-a900-2cfac12c830b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
 ('1d749cf4-2380-4c13-b919-b3e9dee1d880', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":154,\"student_name\":\"Sahab\",\"phone\":\"01717565089\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/154\"}', NULL, '2026-06-08 15:31:19', '2026-06-08 15:31:19'),
 ('1d8263f6-be9f-4cdb-bed6-a46ffed5217f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":83,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/83\"}', NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
 ('1dacb63c-432c-4eef-bc1d-b4ba136f9f38', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":91,\"student_name\":\"Md. Nayeem Bhuiyan\",\"phone\":\"01863805035\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/91\"}', NULL, '2026-06-07 08:15:39', '2026-06-07 08:15:39'),
@@ -1939,9 +1946,9 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('27c759e0-d018-4e10-8f87-10009500ae86', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":130,\"student_name\":\"Sahab\",\"phone\":\"01303176607\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/130\"}', NULL, '2026-06-07 19:21:24', '2026-06-07 19:21:24'),
 ('27cbbe04-d8fc-41c2-ac6e-d6a6b2a615d8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":26,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/26\"}', NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
 ('27eaace0-1087-4198-bac5-a572c4b2ab23', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":139,\"student_name\":\"Arafat Islam\",\"phone\":\"01533362825\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/139\"}', NULL, '2026-06-08 13:05:24', '2026-06-08 13:05:24'),
-('280d265d-6224-4985-8ace-e384d68528ae', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14'),
-('282dd9c2-14e8-4b1d-aa67-e1cc4bc67daf', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":24,\"student_name\":\"Haque MD Simul\",\"phone\":\"+8801608-450364`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/24\"}', NULL, '2026-06-03 23:36:58', '2026-06-03 23:36:58');
+('280d265d-6224-4985-8ace-e384d68528ae', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('282dd9c2-14e8-4b1d-aa67-e1cc4bc67daf', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":24,\"student_name\":\"Haque MD Simul\",\"phone\":\"+8801608-450364`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/24\"}', NULL, '2026-06-03 23:36:58', '2026-06-03 23:36:58'),
 ('282ffad1-b73a-4303-9cdf-4649f35d1a5f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":127,\"student_name\":\"Nazim\",\"phone\":\"01783088599\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/127\"}', NULL, '2026-06-07 15:56:32', '2026-06-07 15:56:32'),
 ('28484ad6-4022-442a-b889-a87b755dc2aa', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":66,\"student_name\":\"Akash howlader\",\"phone\":\"01923453235\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/66\"}', NULL, '2026-06-04 14:09:12', '2026-06-04 14:09:12'),
 ('28553c02-2c8e-414b-a854-3292dbf1e3a1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":30,\"student_name\":\"Redoan Sabbir\",\"phone\":\"+8801776-708635\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/30\"}', NULL, '2026-06-03 23:52:27', '2026-06-03 23:52:27'),
@@ -1996,6 +2003,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('2c0c18a1-93e1-43e5-bcbb-309c31713074', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":33,\"student_name\":\"Ahnaf Azmain\",\"phone\":\"\\u202a+880\\u00a01717\\u2011866704\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/33\"}', NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49'),
 ('2c24463b-7aed-408c-99de-119052644645', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":103,\"student_name\":\"Ifranul kabir\",\"phone\":\"0 1601-926771\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/103\"}', NULL, '2026-06-07 08:57:22', '2026-06-07 08:57:22'),
 ('2c474790-509b-4292-9084-b87b4faa5326', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":194,\"student_name\":\"****\",\"phone\":\"01985741618\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/194\"}', NULL, '2026-06-09 14:41:51', '2026-06-09 14:41:51'),
+('2c4f0c6d-df04-469f-8b29-faa6fc4e295c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('2c73daf3-8584-47ee-a2bf-27187e28c9b9', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":202,\"student_name\":\"Saimul islam\",\"phone\":\"01819113688\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/202\"}', NULL, '2026-06-10 16:30:41', '2026-06-10 16:30:41'),
 ('2c8df187-af43-4214-a06f-9e882178265f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
 ('2c99604c-3efc-49af-bc4c-6c6242225bb7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":20,\"student_name\":\"Ruhul Amin\",\"phone\":\"01760805401\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/20\"}', NULL, '2026-06-03 17:00:03', '2026-06-03 17:00:03'),
@@ -2004,6 +2012,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('2ce92f44-a520-496a-a529-76e986ab182c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":144,\"student_name\":\"Sajid\",\"phone\":\"01570249576\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/144\"}', NULL, '2026-06-08 14:01:54', '2026-06-08 14:01:54'),
 ('2cf24744-4a26-4af3-a5b7-76b4e8b60262', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":131,\"student_name\":\"Sahab\",\"phone\":\"01303176607\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/131\"}', NULL, '2026-06-07 19:22:29', '2026-06-07 19:22:29'),
 ('2d147f9d-c838-4000-8bbd-f6bf4059563f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":188,\"student_name\":\"Md omor faruk\",\"phone\":\"01771889317\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/188\"}', NULL, '2026-06-09 08:27:45', '2026-06-09 08:27:45'),
+('2d1a1fc9-4524-4b11-8a4a-704c02843965', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('2d386b37-ea36-48d9-9635-4082cadc723c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":83,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/83\"}', NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
 ('2d3b57ff-948d-4f60-b745-c6e5d9f6a4d8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":124,\"student_name\":\"Jdatatent\",\"phone\":\"01788532947\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/124\"}', NULL, '2026-06-07 15:52:44', '2026-06-07 15:52:44'),
 ('2d44bf88-9d82-4edc-8d4e-e1a38298ef72', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":84,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/84\"}', NULL, '2026-06-06 09:17:35', '2026-06-06 09:17:35'),
@@ -2058,11 +2067,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('31a40dde-4451-416a-81c3-3fce86982208', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":80,\"student_name\":\"Unknown\",\"phone\":\"01742128109\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/80\"}', NULL, '2026-06-05 09:27:00', '2026-06-05 09:27:00'),
 ('31aaa310-18f4-4bbc-8959-a1afe786cb02', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":172,\"student_name\":\"Md Simul Haque\",\"phone\":\"+8801608-450364\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/172\"}', NULL, '2026-06-09 01:08:49', '2026-06-09 01:08:49'),
 ('31c3547f-cad3-408f-b4b4-429d0680f507', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":141,\"student_name\":\"Milon Ahmed\",\"phone\":\"01321516165\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/141\"}', NULL, '2026-06-08 13:30:10', '2026-06-08 13:30:10'),
-('31e602e6-ba29-496d-a999-eb729c5ffb30', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":130,\"student_name\":\"Sahab\",\"phone\":\"01303176607\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/130\"}', NULL, '2026-06-07 19:21:24', '2026-06-07 19:21:24'),
+('31e602e6-ba29-496d-a999-eb729c5ffb30', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":130,\"student_name\":\"Sahab\",\"phone\":\"01303176607\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/130\"}', NULL, '2026-06-07 19:21:24', '2026-06-07 19:21:24');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('31ff6708-2f04-44a6-ab82-f832393e89a7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":20,\"student_name\":\"Ruhul Amin\",\"phone\":\"01760805401\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/20\"}', NULL, '2026-06-03 17:00:03', '2026-06-03 17:00:03'),
 ('32177799-f6ae-489e-ac85-d6a848a03fe5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":171,\"student_name\":\"Mir Rabby Hasan\",\"phone\":\"+8801799-287158\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/171\"}', NULL, '2026-06-09 01:05:22', '2026-06-09 01:05:22'),
-('32352356-ef44-40cd-b48b-b7b6f3e8fc36', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('32352356-ef44-40cd-b48b-b7b6f3e8fc36', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36'),
 ('323b136a-6da3-4a69-ba3c-4f462bd40164', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":70,\"student_name\":\"Md omor farukh\",\"phone\":\"01771889317\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/70\"}', NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48'),
 ('326e8b8d-371b-4c82-ad50-042df86ef88d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":129,\"student_name\":\"Jannat\",\"phone\":\"01850622832\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/129\"}', NULL, '2026-06-07 19:19:56', '2026-06-07 19:19:56'),
 ('3279fa36-e262-464f-bbea-209a663791c9', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":163,\"student_name\":\"Lenion\",\"phone\":\"01817452040\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/163\"}', NULL, '2026-06-08 15:41:09', '2026-06-08 15:41:09'),
@@ -2178,11 +2187,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('3c5f7a18-8452-43fc-bab2-d96da8e373d2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":143,\"student_name\":\"Tamal Sharma\",\"phone\":\"01836126261\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/143\"}', NULL, '2026-06-08 13:42:45', '2026-06-08 13:42:45'),
 ('3c8e1f3a-e557-4fd9-8b72-a252888ea2a7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":173,\"student_name\":\"Engr. Shreekanto\",\"phone\":\"+8801827-411613\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/173\"}', NULL, '2026-06-09 01:10:51', '2026-06-09 01:10:51'),
 ('3cf8b46e-f1e9-4cca-bf0b-3e626859e751', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36'),
-('3d22365d-e3b5-4d2c-a0c6-f56c21bc18c1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":175,\"student_name\":\"Mushfiqur Rahman\",\"phone\":\"+8801925-668554\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/175\"}', NULL, '2026-06-09 01:12:25', '2026-06-09 01:12:25'),
+('3d22365d-e3b5-4d2c-a0c6-f56c21bc18c1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":175,\"student_name\":\"Mushfiqur Rahman\",\"phone\":\"+8801925-668554\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/175\"}', NULL, '2026-06-09 01:12:25', '2026-06-09 01:12:25');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('3d24c469-33f2-4107-bab2-612f90c55a3e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":163,\"student_name\":\"Lenion\",\"phone\":\"01817452040\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/163\"}', NULL, '2026-06-08 15:41:09', '2026-06-08 15:41:09'),
 ('3d6fc08c-7b23-4bdf-aede-ae699e9ee7d6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":123,\"student_name\":\"Sourav\",\"phone\":\"01734298037\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/123\"}', NULL, '2026-06-07 15:50:12', '2026-06-07 15:50:12'),
-('3d727fcd-446c-4053-b022-92ada8d8f34a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":12,\"student_name\":\"Md Hasan 2\",\"phone\":\"0000000000000\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/12\"}', NULL, '2026-05-22 19:10:24', '2026-05-22 19:10:24');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('3d727fcd-446c-4053-b022-92ada8d8f34a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":12,\"student_name\":\"Md Hasan 2\",\"phone\":\"0000000000000\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/12\"}', NULL, '2026-05-22 19:10:24', '2026-05-22 19:10:24'),
 ('3d7978d1-1a89-45a3-b6a7-1e8d79b2bb96', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":94,\"student_name\":\"Shafin Ahmed\",\"phone\":\"01308082479\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/94\"}', NULL, '2026-06-07 08:26:41', '2026-06-07 08:26:41'),
 ('3d85eb3f-65cb-43b7-bbbe-ec2aae1e5333', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":179,\"student_name\":\"khusbo\",\"phone\":\"+8801334-291465\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/179\"}', NULL, '2026-06-09 01:28:18', '2026-06-09 01:28:18'),
 ('3d8965b1-78d6-4e42-80e3-3eafb12cf812', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":61,\"student_name\":\"Anupom\",\"phone\":\"01985378513\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/61\"}', NULL, '2026-06-04 13:54:45', '2026-06-04 13:54:45'),
@@ -2299,10 +2308,10 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('46f230ad-8ecb-426b-a6c1-67c41cd2a0b3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":55,\"student_name\":\"Md Abdul Hakim Apurbo\",\"phone\":\"01771710831\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/55\"}', NULL, '2026-06-04 13:45:38', '2026-06-04 13:45:38'),
 ('470411c8-5182-43d5-b015-1a7c2a6faeb8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":103,\"student_name\":\"Ifranul kabir\",\"phone\":\"0 1601-926771\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/103\"}', NULL, '2026-06-07 08:57:22', '2026-06-07 08:57:22'),
 ('47340e4c-e1c7-4267-a1ad-f1fdef30de7a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":52,\"student_name\":\"Miraj\",\"phone\":\"+880 1717-437913\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/52\"}', NULL, '2026-06-04 13:41:14', '2026-06-04 13:41:14'),
-('474f2544-8c4c-4b55-a639-a63832edf1fc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":132,\"student_name\":\"Kaosar\",\"phone\":\"01969418997\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/132\"}', NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28'),
-('477e2829-50af-4cfc-b1e8-54f71ed87a3f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":169,\"student_name\":\"Asraful Islam\",\"phone\":\"\\u202a+880\\u00a01776\\u2011819870\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/169\"}', NULL, '2026-06-08 15:45:37', '2026-06-08 15:45:37'),
-('479239ad-21f2-4b3d-b9d6-f307db5fc028', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":51,\"student_name\":\"Fahad Mahmud\",\"phone\":\"01874818128\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/51\"}', NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45');
+('474f2544-8c4c-4b55-a639-a63832edf1fc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":132,\"student_name\":\"Kaosar\",\"phone\":\"01969418997\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/132\"}', NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('477e2829-50af-4cfc-b1e8-54f71ed87a3f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":169,\"student_name\":\"Asraful Islam\",\"phone\":\"\\u202a+880\\u00a01776\\u2011819870\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/169\"}', NULL, '2026-06-08 15:45:37', '2026-06-08 15:45:37'),
+('479239ad-21f2-4b3d-b9d6-f307db5fc028', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":51,\"student_name\":\"Fahad Mahmud\",\"phone\":\"01874818128\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/51\"}', NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45'),
 ('47a52dda-5d0c-4b30-918c-0c6a05586380', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":185,\"student_name\":\"Bokahri\",\"phone\":\"+8801955-375812\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/185\"}', NULL, '2026-06-09 01:40:07', '2026-06-09 01:40:07'),
 ('47c98a06-5137-4de3-b4f3-09c13ef2a9a4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":28,\"student_name\":\"Nusrat Jahan Refat\",\"phone\":\"+8801731-556512`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/28\"}', NULL, '2026-06-03 23:46:54', '2026-06-03 23:46:54'),
 ('47ce5499-7581-4bd5-b6a0-824ab4a1ac29', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
@@ -2419,10 +2428,10 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('52626c77-4437-4bc5-99b1-8c127819e1ac', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":178,\"student_name\":\"Ridoy Talukder\",\"phone\":\"+8801308-912154\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/178\"}', NULL, '2026-06-09 01:24:37', '2026-06-09 01:24:37'),
 ('52687d99-eb5e-40de-82d6-f7596aa2d1ea', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":97,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/97\"}', NULL, '2026-06-07 08:38:01', '2026-06-07 08:38:01'),
 ('52692cdf-8da8-43b8-bb2f-1b16dd05f7cb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":168,\"student_name\":\"Ratul\",\"phone\":\"01308223514\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/168\"}', NULL, '2026-06-08 15:45:01', '2026-06-08 15:45:01'),
-('527a83af-2c5c-4e7a-a161-11d2e194e738', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36'),
-('52930c86-0716-47e9-b6d5-3d323355dae3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":88,\"student_name\":\"Lupin\",\"phone\":\"+880 1640-830008\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/88\"}', NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
-('52a5661c-a519-4ede-83f2-62e1124c8816', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":109,\"student_name\":\"Siam Hossain\",\"phone\":\"01756264736\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/109\"}', NULL, '2026-06-07 09:24:58', '2026-06-07 09:24:58');
+('527a83af-2c5c-4e7a-a161-11d2e194e738', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('52930c86-0716-47e9-b6d5-3d323355dae3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":88,\"student_name\":\"Lupin\",\"phone\":\"+880 1640-830008\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/88\"}', NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
+('52a5661c-a519-4ede-83f2-62e1124c8816', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":109,\"student_name\":\"Siam Hossain\",\"phone\":\"01756264736\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/109\"}', NULL, '2026-06-07 09:24:58', '2026-06-07 09:24:58'),
 ('52e1912c-14ed-4439-a554-0b0737e2acd7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":167,\"student_name\":\"Rafi\",\"phone\":\"01604331354\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/167\"}', NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
 ('52f0bd4f-6242-4591-8547-ffa23f295938', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":85,\"student_name\":\"Nila\",\"phone\":\"+880 1773-816383\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/85\"}', NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46'),
 ('52f30019-4434-4958-8aa8-8661ade70bcd', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":29,\"student_name\":\"Harun\",\"phone\":\"+8801776-330510\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/29\"}', NULL, '2026-06-03 23:47:56', '2026-06-03 23:47:56'),
@@ -2540,10 +2549,10 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('5c56d0ac-4f6d-415e-8f50-b624d1059a54', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":171,\"student_name\":\"Mir Rabby Hasan\",\"phone\":\"+8801799-287158\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/171\"}', NULL, '2026-06-09 01:05:22', '2026-06-09 01:05:22'),
 ('5c5cb739-9cb9-426c-9bb7-111edc6e6b1a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":126,\"student_name\":\"Jihad\",\"phone\":\"01704964131\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/126\"}', NULL, '2026-06-07 15:55:19', '2026-06-07 15:55:19'),
 ('5c6bf1ec-4b54-47f2-974c-36207c3cfdad', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":22,\"student_name\":\"MD Sagor Sikder\",\"phone\":\"+8801314-676498\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/22\"}', NULL, '2026-06-03 23:31:50', '2026-06-03 23:31:50'),
-('5c6c541c-e2f4-4206-a5af-7d37a2ec67c8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":164,\"student_name\":\"Khalil\",\"phone\":\"01823642583\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/164\"}', NULL, '2026-06-08 15:42:27', '2026-06-08 15:42:27'),
-('5c7d6633-0964-4072-8303-03dcef360bf6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":137,\"student_name\":\"Unknown\",\"phone\":\"01754494368\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/137\"}', NULL, '2026-06-07 19:33:36', '2026-06-07 19:33:36'),
-('5c861704-9365-4c21-b90b-110600a67bf5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":44,\"student_name\":\"Anto Sarker\",\"phone\":\"01786175159\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/44\"}', NULL, '2026-06-04 11:14:01', '2026-06-04 11:14:01');
+('5c6c541c-e2f4-4206-a5af-7d37a2ec67c8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":164,\"student_name\":\"Khalil\",\"phone\":\"01823642583\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/164\"}', NULL, '2026-06-08 15:42:27', '2026-06-08 15:42:27');
 INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('5c7d6633-0964-4072-8303-03dcef360bf6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":137,\"student_name\":\"Unknown\",\"phone\":\"01754494368\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/137\"}', NULL, '2026-06-07 19:33:36', '2026-06-07 19:33:36'),
+('5c861704-9365-4c21-b90b-110600a67bf5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":44,\"student_name\":\"Anto Sarker\",\"phone\":\"01786175159\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/44\"}', NULL, '2026-06-04 11:14:01', '2026-06-04 11:14:01'),
 ('5c9d2d9d-d896-4c08-837a-855c98069e4d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":105,\"student_name\":\"Durjoy\",\"phone\":\"+880 1303-051588\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/105\"}', NULL, '2026-06-07 09:04:26', '2026-06-07 09:04:26'),
 ('5cbe38fe-7209-4cf2-96a6-7b952eea0afa', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":39,\"student_name\":\"Atiur Rahman\",\"phone\":\"01757719689\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/39\"}', NULL, '2026-06-04 10:47:03', '2026-06-04 10:47:03'),
 ('5ce92d18-2dcc-4132-a6c5-6c122e40cf28', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":104,\"student_name\":\"Anto Sarkar\",\"phone\":\"01786175159\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/104\"}', NULL, '2026-06-07 08:58:02', '2026-06-07 08:58:02'),
@@ -2597,6 +2606,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('61e8a13a-9a29-4b75-a7c9-fd074027c2ad', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":95,\"student_name\":\"Shanto\",\"phone\":\"01616270028\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/95\"}', NULL, '2026-06-07 08:29:03', '2026-06-07 08:29:03'),
 ('61f77923-c29c-425d-a018-394c162527b1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":169,\"student_name\":\"Asraful Islam\",\"phone\":\"\\u202a+880\\u00a01776\\u2011819870\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/169\"}', NULL, '2026-06-08 15:45:37', '2026-06-08 15:45:37'),
 ('61fd5a48-03c4-43f5-a748-00f796017390', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":158,\"student_name\":\"Shahin\",\"phone\":\"01303893439\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/158\"}', NULL, '2026-06-08 15:39:24', '2026-06-08 15:39:24'),
+('620122f0-2954-4e15-8205-fce71629d637', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('6237529f-8899-4f46-82f0-eb02170e4223', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":96,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/96\"}', NULL, '2026-06-07 08:38:00', '2026-06-07 08:38:00'),
 ('6248a925-8be2-453d-8513-cc266bc9b300', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":53,\"student_name\":\"Tamim\",\"phone\":\"01923244904\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/53\"}', NULL, '2026-06-04 13:43:43', '2026-06-04 13:43:43'),
 ('62536582-51c6-4a21-a36e-a3cf18e813fb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":203,\"student_name\":\"Momengir\",\"phone\":\"01889904945\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/203\"}', NULL, '2026-06-10 16:31:47', '2026-06-10 16:31:47'),
@@ -2660,11 +2670,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('66092579-ecd8-438b-ba1a-ec308c434410', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":27,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/27\"}', NULL, '2026-06-03 23:45:24', '2026-06-03 23:45:24'),
 ('6623034d-a64d-4841-9603-556d59388bd5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":150,\"student_name\":\"Mahadi mahib\",\"phone\":\"01322643583\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/150\"}', NULL, '2026-06-08 15:18:15', '2026-06-08 15:18:15'),
 ('6642dc5a-1318-49e4-ad80-41424ee6f2f0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":64,\"student_name\":\"Fahad Mustafa\",\"phone\":\"01879503669\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/64\"}', NULL, '2026-06-04 14:06:40', '2026-06-04 14:06:40'),
-('66447d2c-ec1f-42f1-bc14-1f6df7486853', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":177,\"student_name\":\"Alamgir\",\"phone\":\"+8801322-839468\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/177\"}', NULL, '2026-06-09 01:17:33', '2026-06-09 01:17:33'),
+('66447d2c-ec1f-42f1-bc14-1f6df7486853', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":177,\"student_name\":\"Alamgir\",\"phone\":\"+8801322-839468\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/177\"}', NULL, '2026-06-09 01:17:33', '2026-06-09 01:17:33');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('668cbb38-5a46-4133-9520-e1913cddb745', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":152,\"student_name\":\"SB\",\"phone\":\"01340430870\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/152\"}', NULL, '2026-06-08 15:29:20', '2026-06-08 15:29:20'),
 ('66a8b068-ebf8-475f-b996-236c06685809', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":75,\"student_name\":\"Unknown\",\"phone\":\"01812944120\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/75\"}', NULL, '2026-06-04 17:57:38', '2026-06-04 17:57:38'),
-('66b1d0ba-607b-4ae6-b912-9cafe721c25c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":184,\"student_name\":\"Sayma\",\"phone\":\"+8801951-197117\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/184\"}', NULL, '2026-06-09 01:39:02', '2026-06-09 01:39:02');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('66b1d0ba-607b-4ae6-b912-9cafe721c25c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":184,\"student_name\":\"Sayma\",\"phone\":\"+8801951-197117\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/184\"}', NULL, '2026-06-09 01:39:02', '2026-06-09 01:39:02'),
 ('66bbde0d-f238-4335-b1b4-3ab69b73b9f2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":127,\"student_name\":\"Nazim\",\"phone\":\"01783088599\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/127\"}', NULL, '2026-06-07 15:56:32', '2026-06-07 15:56:32'),
 ('66d291f8-943d-456e-a99c-76369141003d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":62,\"student_name\":\"Sporsho\",\"phone\":\"01636022779\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/62\"}', NULL, '2026-06-04 13:58:58', '2026-06-04 13:58:58'),
 ('66df92cb-d87d-446e-8f0c-ef997680da5d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":30,\"student_name\":\"Redoan Sabbir\",\"phone\":\"+8801776-708635\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/30\"}', NULL, '2026-06-03 23:52:27', '2026-06-03 23:52:27'),
@@ -2780,11 +2790,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('6ff5a74d-802d-41d7-a373-247520335195', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":63,\"student_name\":\"Umme Salma Dina\",\"phone\":\"01603453048\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/63\"}', NULL, '2026-06-04 14:04:35', '2026-06-04 14:04:35'),
 ('7024a01d-8241-449f-a677-6c4107b87940', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":71,\"student_name\":\"Sagor\",\"phone\":\"01780416313\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/71\"}', NULL, '2026-06-04 15:40:52', '2026-06-04 15:40:52'),
 ('7028c1b5-e219-41f8-bfab-6820009a0ca0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":100,\"student_name\":\"Md Ashik\",\"phone\":\"01921910703\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/100\"}', NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
-('702e8131-aad0-46de-9d4f-a12c16ea78a4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":74,\"student_name\":\"Shakib\",\"phone\":\"01837062756\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/74\"}', NULL, '2026-06-04 17:55:47', '2026-06-04 17:55:47'),
+('702e8131-aad0-46de-9d4f-a12c16ea78a4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":74,\"student_name\":\"Shakib\",\"phone\":\"01837062756\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/74\"}', NULL, '2026-06-04 17:55:47', '2026-06-04 17:55:47');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('70336730-4a8e-438f-ad7c-11536f479415', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":79,\"student_name\":\"Nahar Talukder\",\"phone\":\"01856186597\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/79\"}', NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00'),
 ('703984a5-8ccb-4268-ab14-cfaf22786d95', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":102,\"student_name\":\"Mahfuz Sheikh\",\"phone\":\"01828054901\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/102\"}', NULL, '2026-06-07 08:55:48', '2026-06-07 08:55:48'),
-('70423b86-67b8-4dcb-a409-085e544535b7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":31,\"student_name\":\"Rifatul Islam Azmin\",\"phone\":\"+8801779-946313\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/31\"}', NULL, '2026-06-03 23:54:52', '2026-06-03 23:54:52');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('70423b86-67b8-4dcb-a409-085e544535b7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":31,\"student_name\":\"Rifatul Islam Azmin\",\"phone\":\"+8801779-946313\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/31\"}', NULL, '2026-06-03 23:54:52', '2026-06-03 23:54:52'),
 ('704ddd7c-f088-47c4-9b15-78d1fd616d6d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":144,\"student_name\":\"Sajid\",\"phone\":\"01570249576\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/144\"}', NULL, '2026-06-08 14:01:54', '2026-06-08 14:01:54'),
 ('706b029c-3e48-4fdc-b620-c6b53313bed6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":141,\"student_name\":\"Milon Ahmed\",\"phone\":\"01321516165\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/141\"}', NULL, '2026-06-08 13:30:10', '2026-06-08 13:30:10'),
 ('70736fe3-9b05-451d-b5b3-187de8c5214b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14'),
@@ -2901,11 +2911,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('7944c53e-92ff-4107-8675-a9eb2c21dbc3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":63,\"student_name\":\"Umme Salma Dina\",\"phone\":\"01603453048\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/63\"}', NULL, '2026-06-04 14:04:35', '2026-06-04 14:04:35'),
 ('7945436d-afed-4058-af55-56560ad7ab21', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":112,\"student_name\":\"Ahmed akash\",\"phone\":\"01860160338\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/112\"}', NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
 ('796c3182-6e7e-4ada-958a-1d26ce223693', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":184,\"student_name\":\"Sayma\",\"phone\":\"+8801951-197117\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/184\"}', NULL, '2026-06-09 01:39:02', '2026-06-09 01:39:02'),
-('79720724-c69b-4839-bde4-eb59bb32b55a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":49,\"student_name\":\"Salina Ruma\",\"phone\":\"01407468842\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/49\"}', NULL, '2026-06-04 13:33:56', '2026-06-04 13:33:56'),
+('79720724-c69b-4839-bde4-eb59bb32b55a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":49,\"student_name\":\"Salina Ruma\",\"phone\":\"01407468842\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/49\"}', NULL, '2026-06-04 13:33:56', '2026-06-04 13:33:56');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('79827de4-84e7-445d-88f5-d629756bcfc2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":151,\"student_name\":\"Khaled hasan rony\",\"phone\":\"01867812574\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/151\"}', NULL, '2026-06-08 15:19:45', '2026-06-08 15:19:45'),
 ('798e4754-94af-4591-a92e-9a837a5f1d8a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":31,\"student_name\":\"Rifatul Islam Azmin\",\"phone\":\"+8801779-946313\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/31\"}', NULL, '2026-06-03 23:54:52', '2026-06-03 23:54:52'),
-('799d8af1-600d-4de5-bb8d-1da8c03d49b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":125,\"student_name\":\"Sojib\",\"phone\":\"01782419492\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/125\"}', NULL, '2026-06-07 15:54:21', '2026-06-07 15:54:21');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('799d8af1-600d-4de5-bb8d-1da8c03d49b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":125,\"student_name\":\"Sojib\",\"phone\":\"01782419492\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/125\"}', NULL, '2026-06-07 15:54:21', '2026-06-07 15:54:21'),
 ('79cf995e-ba79-4ff2-a075-4a83a7226b93', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14'),
 ('7a1591a0-44e3-4a2d-ad04-3c5bad9bb1d0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36'),
 ('7a1c1f83-5edd-482a-bc20-5f5bd55d007e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":50,\"student_name\":\"Moin Ali\",\"phone\":\"01568675578\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/50\"}', NULL, '2026-06-04 13:37:20', '2026-06-04 13:37:20'),
@@ -3021,11 +3031,11 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('8398c04d-8981-4dfb-9d6b-f6f0fc790ac0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":113,\"student_name\":\"Tipu sultan\",\"phone\":\"+880 1960-603376\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/113\"}', NULL, '2026-06-07 12:28:08', '2026-06-07 12:28:08'),
 ('83a4dc2a-5cb7-4cf0-878a-b45294964e73', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":75,\"student_name\":\"Unknown\",\"phone\":\"01812944120\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/75\"}', NULL, '2026-06-04 17:57:38', '2026-06-04 17:57:38'),
 ('83b015c2-f9b1-4092-93c6-ef599c1c0c6c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":90,\"student_name\":\"Hasan\",\"phone\":\"01630581970\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/90\"}', NULL, '2026-06-06 16:30:18', '2026-06-06 16:30:18'),
-('83b724ac-0083-45c6-892f-3cda32f87978', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":85,\"student_name\":\"Nila\",\"phone\":\"+880 1773-816383\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/85\"}', NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46'),
+('83b724ac-0083-45c6-892f-3cda32f87978', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":85,\"student_name\":\"Nila\",\"phone\":\"+880 1773-816383\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/85\"}', NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('83c3edcc-f406-4d10-9f08-22e1c8c1ea52', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":66,\"student_name\":\"Akash howlader\",\"phone\":\"01923453235\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/66\"}', NULL, '2026-06-04 14:09:12', '2026-06-04 14:09:12'),
 ('83d76ca2-81c2-4b6d-8573-9dfb175b21d5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":13,\"student_name\":\"Berk Simpson\",\"phone\":\"+1 (738) 387-1714\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/13\"}', NULL, '2026-05-23 09:14:04', '2026-05-23 09:14:04'),
-('83e54d23-015f-48f5-8630-9eab8bed435e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":100,\"student_name\":\"Md Ashik\",\"phone\":\"01921910703\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/100\"}', NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('83e54d23-015f-48f5-8630-9eab8bed435e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":100,\"student_name\":\"Md Ashik\",\"phone\":\"01921910703\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/100\"}', NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
 ('83ebe7b5-7226-4ade-80fd-5a927215be40', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":61,\"student_name\":\"Anupom\",\"phone\":\"01985378513\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/61\"}', NULL, '2026-06-04 13:54:45', '2026-06-04 13:54:45'),
 ('841fe49d-dbc5-4ddf-bd29-a5e580533b17', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":165,\"student_name\":\"Md shahariar\",\"phone\":\"01785481747\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/165\"}', NULL, '2026-06-08 15:42:56', '2026-06-08 15:42:56'),
 ('84419acf-1198-4958-a76a-633dcacf618e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":147,\"student_name\":\"Himel\",\"phone\":\"01311465569\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/147\"}', NULL, '2026-06-08 14:30:40', '2026-06-08 14:30:40'),
@@ -3106,6 +3116,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('8b4313f1-1a0f-41f2-9e4a-69eaedba9395', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":36,\"student_name\":\"Tanim Ahmed\",\"phone\":\"\\u202a+880\\u00a01869\\u2011873115\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/36\"}', NULL, '2026-06-04 08:00:31', '2026-06-04 08:00:31'),
 ('8b468045-2fb7-4e7e-9431-d4c33ea1f9de', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":84,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/84\"}', NULL, '2026-06-06 09:17:35', '2026-06-06 09:17:35'),
 ('8b59df09-1a27-4049-b84d-50e23610c791', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":88,\"student_name\":\"Lupin\",\"phone\":\"+880 1640-830008\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/88\"}', NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
+('8b707d04-690a-4ea4-9e1b-33ed1d744aa2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('8b967ed5-4be1-4a28-b6b8-702166414c05', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":50,\"student_name\":\"Moin Ali\",\"phone\":\"01568675578\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/50\"}', NULL, '2026-06-04 13:37:20', '2026-06-04 13:37:20'),
 ('8bc91bdd-96cb-4582-b950-76181e7f1ecb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":82,\"student_name\":\"Shoikot\",\"phone\":\"01609322095\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/82\"}', NULL, '2026-06-06 09:14:23', '2026-06-06 09:14:23'),
 ('8bdb86c4-9aa9-49b7-9603-b8676e1f1dc2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":18,\"student_name\":\"Rakibur Islam Sohag\",\"phone\":\"01798992091\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/18\"}', NULL, '2026-06-03 16:12:16', '2026-06-03 16:12:16'),
@@ -3140,12 +3151,12 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('8e55cb2d-d018-434d-be97-794b059ddf5b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":204,\"student_name\":\"Polash\",\"phone\":\"\\u202a+880\\u00a01782\\u2011238891\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/204\"}', NULL, '2026-06-11 09:32:46', '2026-06-11 09:32:46'),
 ('8e730dca-7fa1-431a-9f64-f2aef6a9ae3a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":183,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/183\"}', NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35'),
 ('8e76f05f-cc31-408b-85c9-67a421883ce4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":26,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/26\"}', NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
-('8e782e35-7b47-4609-9348-cf18029f8896', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":92,\"student_name\":\"Tashfia Jahin\",\"phone\":\"01805762213\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/92\"}', NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49'),
+('8e782e35-7b47-4609-9348-cf18029f8896', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":92,\"student_name\":\"Tashfia Jahin\",\"phone\":\"01805762213\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/92\"}', NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('8e921c65-b091-45a6-bf1e-32fcac3dbd75', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":171,\"student_name\":\"Mir Rabby Hasan\",\"phone\":\"+8801799-287158\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/171\"}', NULL, '2026-06-09 01:05:22', '2026-06-09 01:05:22'),
 ('8ea6fc9d-a0a9-4af7-be0d-67aa111f4a1d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":72,\"student_name\":\"Arib Mahmud\",\"phone\":\"01301608705\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/72\"}', NULL, '2026-06-04 15:58:53', '2026-06-04 15:58:53'),
 ('8ede845c-b39a-4383-8f1e-bf81a57f4312', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":33,\"student_name\":\"Ahnaf Azmain\",\"phone\":\"\\u202a+880\\u00a01717\\u2011866704\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/33\"}', NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49'),
-('8ef98236-4b32-4854-ba8d-df0e5ffb5a43', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":199,\"student_name\":\"Mahabub\",\"phone\":\"01572910961\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/199\"}', NULL, '2026-06-10 15:48:02', '2026-06-10 15:48:02');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('8ef98236-4b32-4854-ba8d-df0e5ffb5a43', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":199,\"student_name\":\"Mahabub\",\"phone\":\"01572910961\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/199\"}', NULL, '2026-06-10 15:48:02', '2026-06-10 15:48:02'),
 ('8efde50a-3106-4b1d-b8a8-c2a725dd7ae0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":70,\"student_name\":\"Md omor farukh\",\"phone\":\"01771889317\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/70\"}', NULL, '2026-06-04 14:33:48', '2026-06-04 14:33:48'),
 ('8f04c3f8-5502-4838-99e4-f8ba3aff9b60', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":28,\"student_name\":\"Nusrat Jahan Refat\",\"phone\":\"+8801731-556512`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/28\"}', NULL, '2026-06-03 23:46:54', '2026-06-03 23:46:54'),
 ('8f10946b-133e-4f7a-8a9e-e1c9a18780c3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":34,\"student_name\":\"Jannat\",\"phone\":\"\\u202a+880\\u00a01777\\u2011351038\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/34\"}', NULL, '2026-06-04 07:53:49', '2026-06-04 07:53:49'),
@@ -3260,12 +3271,12 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('9814fc1d-c24f-49f6-ba36-2392e9f5ae98', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":191,\"student_name\":\"Biddut\",\"phone\":\"01778115060\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/191\"}', NULL, '2026-06-09 14:36:32', '2026-06-09 14:36:32'),
 ('983928dc-47b3-4393-a70f-dcb486d16656', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":167,\"student_name\":\"Rafi\",\"phone\":\"01604331354\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/167\"}', NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
 ('9848224c-5d7f-4f42-b5f8-a034940b39df', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":122,\"student_name\":\"Sourav\",\"phone\":\"01734298037\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/122\"}', NULL, '2026-06-07 15:50:11', '2026-06-07 15:50:11'),
-('984ce9d9-8155-4d6b-8fa6-c3da3ad4f9d4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":142,\"student_name\":\"\\ud83d\\ude0a\",\"phone\":\"01576906242\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/142\"}', NULL, '2026-06-08 13:35:03', '2026-06-08 13:35:03'),
+('984ce9d9-8155-4d6b-8fa6-c3da3ad4f9d4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":142,\"student_name\":\"\\ud83d\\ude0a\",\"phone\":\"01576906242\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/142\"}', NULL, '2026-06-08 13:35:03', '2026-06-08 13:35:03');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('984f6905-767b-4245-94ab-20a59d919a3b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":84,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/84\"}', NULL, '2026-06-06 09:17:35', '2026-06-06 09:17:35'),
 ('98578483-596c-4b38-a186-9a32a961eb44', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":123,\"student_name\":\"Sourav\",\"phone\":\"01734298037\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/123\"}', NULL, '2026-06-07 15:50:12', '2026-06-07 15:50:12'),
 ('985b5cd0-cf19-46ed-b6c3-c7914bd9f4b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":94,\"student_name\":\"Shafin Ahmed\",\"phone\":\"01308082479\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/94\"}', NULL, '2026-06-07 08:26:41', '2026-06-07 08:26:41'),
-('989563fd-8ede-408a-805f-8b5701c46fe7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":79,\"student_name\":\"Nahar Talukder\",\"phone\":\"01856186597\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/79\"}', NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('989563fd-8ede-408a-805f-8b5701c46fe7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":79,\"student_name\":\"Nahar Talukder\",\"phone\":\"01856186597\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/79\"}', NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00'),
 ('98d00225-3a17-45e9-853c-c3e815fb9bb7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":166,\"student_name\":\"Abdusshokkor\",\"phone\":\"\\u202a+880\\u00a01860\\u2011931360\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/166\"}', NULL, '2026-06-08 15:44:04', '2026-06-08 15:44:04'),
 ('98d7cf42-7d5a-4457-ab8a-14d2afd4a12a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":156,\"student_name\":\"Ak\",\"phone\":\"01714341235\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/156\"}', NULL, '2026-06-08 15:33:37', '2026-06-08 15:33:37'),
 ('98eedbe1-c05f-45d9-b4b7-78ab11c42182', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":22,\"student_name\":\"MD Sagor Sikder\",\"phone\":\"+8801314-676498\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/22\"}', NULL, '2026-06-03 23:31:50', '2026-06-03 23:31:50'),
@@ -3329,6 +3340,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('9def0f44-abe2-4bcb-a06d-99adcfc10d15', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":109,\"student_name\":\"Siam Hossain\",\"phone\":\"01756264736\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/109\"}', NULL, '2026-06-07 09:24:58', '2026-06-07 09:24:58'),
 ('9e0bbdad-7cb9-425a-856b-400d094235ab', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":66,\"student_name\":\"Akash howlader\",\"phone\":\"01923453235\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/66\"}', NULL, '2026-06-04 14:09:12', '2026-06-04 14:09:12'),
 ('9e17afca-1bdd-4d8f-a694-ef6f4a03b3f8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":12,\"student_name\":\"Md Hasan 2\",\"phone\":\"0000000000000\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/12\"}', NULL, '2026-05-22 19:10:24', '2026-05-22 19:10:24'),
+('9e1d8d1e-7bec-475a-b464-0a7c8a662a5c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('9e395ec3-eb99-4280-95de-3e8133f3c314', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":193,\"student_name\":\"Shihab\",\"phone\":\"01851395387\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/193\"}', NULL, '2026-06-09 14:39:03', '2026-06-09 14:39:03'),
 ('9e3f4990-a13c-4712-8313-844d612a8876', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":176,\"student_name\":\"..\",\"phone\":\"+8801948-100198\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/176\"}', NULL, '2026-06-09 01:13:45', '2026-06-09 01:13:45'),
 ('9e3ffa6d-2504-46c9-939c-3f34f036aebb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":192,\"student_name\":\"Sagor\",\"phone\":\"01677477120\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/192\"}', NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21'),
@@ -3379,13 +3391,13 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('a27d4d4d-b344-4569-ba93-f60f7292be33', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":100,\"student_name\":\"Md Ashik\",\"phone\":\"01921910703\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/100\"}', NULL, '2026-06-07 08:45:27', '2026-06-07 08:45:27'),
 ('a2800b5e-bc59-4644-bf55-61d6d0cb2f4a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":181,\"student_name\":\"Tanvir Ahmed Ridoy\",\"phone\":\"+8801833-957600\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/181\"}', NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26'),
 ('a286b160-31ca-4a27-ad94-7bebc84df182', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":138,\"student_name\":\"Unknown\",\"phone\":\"01760805401\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/138\"}', NULL, '2026-06-07 19:34:23', '2026-06-07 19:34:23'),
-('a29e4866-a011-40af-a52c-c55d787306a7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":97,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/97\"}', NULL, '2026-06-07 08:38:01', '2026-06-07 08:38:01'),
+('a29e4866-a011-40af-a52c-c55d787306a7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":97,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/97\"}', NULL, '2026-06-07 08:38:01', '2026-06-07 08:38:01');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('a2a0729e-9d08-42ca-881d-5393b549528a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":48,\"student_name\":\"Asma\",\"phone\":\"01610918778\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/48\"}', NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26'),
 ('a2a7f0c6-e527-485a-8a76-62e99b102bfc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":155,\"student_name\":\"MD Asif Ikbal Leion\",\"phone\":\"+880 1817-452040\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/155\"}', NULL, '2026-06-08 15:33:04', '2026-06-08 15:33:04'),
 ('a2f752fb-46a8-4cf2-905d-6558242fb06d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":96,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/96\"}', NULL, '2026-06-07 08:38:00', '2026-06-07 08:38:00'),
 ('a30c9c0f-6c40-4bf3-9e04-1a28395c6cfc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":167,\"student_name\":\"Rafi\",\"phone\":\"01604331354\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/167\"}', NULL, '2026-06-08 15:44:16', '2026-06-08 15:44:16'),
-('a30de3ae-6e48-49d6-90ec-7545be1ec628', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":192,\"student_name\":\"Sagor\",\"phone\":\"01677477120\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/192\"}', NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('a30de3ae-6e48-49d6-90ec-7545be1ec628', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":192,\"student_name\":\"Sagor\",\"phone\":\"01677477120\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/192\"}', NULL, '2026-06-09 14:37:21', '2026-06-09 14:37:21'),
 ('a310e2e2-1874-4bc7-91e6-b8dbaf052875', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":37,\"student_name\":\"Parthib Talukdar\",\"phone\":\"\\u202a+880\\u00a01846\\u2011302793\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/37\"}', NULL, '2026-06-04 08:03:20', '2026-06-04 08:03:20'),
 ('a31600bb-1000-485b-abb7-92eacc755fb5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":206,\"student_name\":\"Avoy\",\"phone\":\"\\u202a+880\\u00a01647\\u2011635261\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/206\"}', NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57'),
 ('a368f681-450b-4cc3-953f-d119f4363193', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":112,\"student_name\":\"Ahmed akash\",\"phone\":\"01860160338\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/112\"}', NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
@@ -3411,6 +3423,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('a4fd38c4-14d5-48cf-8b8d-007ac84e1a4b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":77,\"student_name\":\"Jishan\",\"phone\":\"01764667215\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/77\"}', NULL, '2026-06-04 18:02:54', '2026-06-04 18:02:54'),
 ('a512d812-a253-4a71-928c-ab71f6c68221', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":117,\"student_name\":\"Rofik\",\"phone\":\"01960672211\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/117\"}', NULL, '2026-06-07 15:48:17', '2026-06-07 15:48:17'),
 ('a519a8a0-0aa3-4671-b510-39bb9d04ee9f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12'),
+('a53db1ee-e2f6-488b-8537-dd6bf66e7e67', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('a54bc4e9-27b6-4091-94a2-6b0d28ea46a6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":71,\"student_name\":\"Sagor\",\"phone\":\"01780416313\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/71\"}', NULL, '2026-06-04 15:40:52', '2026-06-04 15:40:52'),
 ('a54cca4e-d487-4a28-83ac-fd2578f025b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":35,\"student_name\":\"Rinkon Barua\",\"phone\":\"\\u202a+880\\u00a01879\\u2011546661\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/35\"}', NULL, '2026-06-04 07:56:10', '2026-06-04 07:56:10'),
 ('a5903441-7f92-48ce-9b5b-4924a32724e3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":113,\"student_name\":\"Tipu sultan\",\"phone\":\"+880 1960-603376\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/113\"}', NULL, '2026-06-07 12:28:08', '2026-06-07 12:28:08'),
@@ -3475,6 +3488,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('aa77a03f-c578-4daf-8756-3c794386cbeb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":67,\"student_name\":\"Sukti\",\"phone\":\"01706137438\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/67\"}', NULL, '2026-06-04 14:09:52', '2026-06-04 14:09:52'),
 ('aa852160-550c-49bd-b055-79912fdc5371', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":181,\"student_name\":\"Tanvir Ahmed Ridoy\",\"phone\":\"+8801833-957600\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/181\"}', NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26'),
 ('aa90a21b-d721-4fa2-aed0-96303e20cda8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":84,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/84\"}', NULL, '2026-06-06 09:17:35', '2026-06-06 09:17:35'),
+('aa99c48c-25d7-4d19-a7c1-110e5b092c9e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('aaa23fed-8e0a-42b7-85c7-5e59fb9798e4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":65,\"student_name\":\"Erick\",\"phone\":\"01975088890\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/65\"}', NULL, '2026-06-04 14:08:32', '2026-06-04 14:08:32'),
 ('aaa3b0cc-1c0e-40ff-be31-363c0fc46365', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":43,\"student_name\":\"Sami\",\"phone\":\"01624787406\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/43\"}', NULL, '2026-06-04 11:12:41', '2026-06-04 11:12:41'),
 ('aac10c1d-7014-4305-954f-9c278b295393', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":119,\"student_name\":\"Rofik\",\"phone\":\"01960672211\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/119\"}', NULL, '2026-06-07 15:48:18', '2026-06-07 15:48:18'),
@@ -3497,15 +3511,15 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('ac02bbf7-af24-4944-abe1-84fc73008717', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":39,\"student_name\":\"Atiur Rahman\",\"phone\":\"01757719689\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/39\"}', NULL, '2026-06-04 10:47:03', '2026-06-04 10:47:03'),
 ('ac076a41-56b7-4ec4-a216-5d931b7ea000', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":118,\"student_name\":\"Rofik\",\"phone\":\"01960672211\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/118\"}', NULL, '2026-06-07 15:48:17', '2026-06-07 15:48:17'),
 ('ac117a45-eb2f-4249-9459-c5420a635ae5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":207,\"student_name\":\"Nasrin sultanaa\",\"phone\":\"\\u202a+880\\u00a01740\\u2011242575\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/207\"}', '2026-06-11 11:43:12', '2026-06-11 10:20:56', '2026-06-11 11:43:12'),
-('ac5cf957-b438-455e-bda6-540474b1e8d5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":85,\"student_name\":\"Nila\",\"phone\":\"+880 1773-816383\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/85\"}', NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46'),
+('ac5cf957-b438-455e-bda6-540474b1e8d5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":85,\"student_name\":\"Nila\",\"phone\":\"+880 1773-816383\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/85\"}', NULL, '2026-06-06 09:19:46', '2026-06-06 09:19:46');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('ac619778-4e40-40f8-8525-f8493672c518', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":186,\"student_name\":\"Megh\",\"phone\":\"+8801329-901329\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/186\"}', NULL, '2026-06-09 01:43:43', '2026-06-09 01:43:43'),
 ('ac6f51e8-5f0a-4798-9c5e-9bb2d5cc52d5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":122,\"student_name\":\"Sourav\",\"phone\":\"01734298037\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/122\"}', NULL, '2026-06-07 15:50:11', '2026-06-07 15:50:11'),
 ('ac9ea0ff-330c-4f0c-ae9d-38b777fe7dad', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":96,\"student_name\":\"Walid khan\",\"phone\":\"01714957393\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/96\"}', NULL, '2026-06-07 08:38:00', '2026-06-07 08:38:00'),
 ('acc963cc-7dc1-4eff-886d-66209ee1da76', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":122,\"student_name\":\"Sourav\",\"phone\":\"01734298037\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/122\"}', NULL, '2026-06-07 15:50:11', '2026-06-07 15:50:11'),
 ('acdef18b-c6f4-4304-b970-96b406021b7f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":135,\"student_name\":\"Unknown\",\"phone\":\"01614935058\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/135\"}', NULL, '2026-06-07 19:31:25', '2026-06-07 19:31:25'),
 ('ace1672f-70cf-413d-abcd-0674d0bf1f67', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":91,\"student_name\":\"Md. Nayeem Bhuiyan\",\"phone\":\"01863805035\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/91\"}', NULL, '2026-06-07 08:15:39', '2026-06-07 08:15:39'),
-('ace6fed2-c245-4d88-90c4-13385a6341fe', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":112,\"student_name\":\"Ahmed akash\",\"phone\":\"01860160338\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/112\"}', NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('ace6fed2-c245-4d88-90c4-13385a6341fe', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":112,\"student_name\":\"Ahmed akash\",\"phone\":\"01860160338\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/112\"}', NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
 ('ad0db352-59a7-4c81-8467-7b2620c106ab', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":157,\"student_name\":\"Zishan\",\"phone\":\"01787550490\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/157\"}', NULL, '2026-06-08 15:35:00', '2026-06-08 15:35:00'),
 ('ad2449fa-685a-46e5-bbf9-fcfc04fbf430', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":197,\"student_name\":\"Mahfuz\",\"phone\":\"01993465694\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/197\"}', NULL, '2026-06-10 12:11:44', '2026-06-10 12:11:44'),
 ('ad36d846-ab19-4b5f-baf0-de43887fee9e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":88,\"student_name\":\"Lupin\",\"phone\":\"+880 1640-830008\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/88\"}', NULL, '2026-06-06 11:45:47', '2026-06-06 11:45:47'),
@@ -3617,15 +3631,15 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('b4c5e553-d25b-4a09-ae68-c90269f3fe93', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":182,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/182\"}', NULL, '2026-06-09 01:37:25', '2026-06-09 01:37:25'),
 ('b4d442f3-11e1-410a-8645-46924baa99ef', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":63,\"student_name\":\"Umme Salma Dina\",\"phone\":\"01603453048\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/63\"}', NULL, '2026-06-04 14:04:35', '2026-06-04 14:04:35'),
 ('b4e4eed3-4c44-4c81-9678-b63b3dd6f145', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":132,\"student_name\":\"Kaosar\",\"phone\":\"01969418997\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/132\"}', NULL, '2026-06-07 19:24:29', '2026-06-07 19:24:29'),
-('b5086750-e145-49e2-bea8-3150dfdc0d14', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":139,\"student_name\":\"Arafat Islam\",\"phone\":\"01533362825\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/139\"}', NULL, '2026-06-08 13:05:24', '2026-06-08 13:05:24'),
+('b5086750-e145-49e2-bea8-3150dfdc0d14', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":139,\"student_name\":\"Arafat Islam\",\"phone\":\"01533362825\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/139\"}', NULL, '2026-06-08 13:05:24', '2026-06-08 13:05:24');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('b53940b4-c757-45d2-9459-6c4124269080', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":204,\"student_name\":\"Polash\",\"phone\":\"\\u202a+880\\u00a01782\\u2011238891\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/204\"}', NULL, '2026-06-11 09:32:46', '2026-06-11 09:32:46'),
 ('b53e873a-6257-48a2-a7c0-6efda85278ef', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":110,\"student_name\":\"Alif mahmud ove\",\"phone\":\"+880 1961-837195\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/110\"}', NULL, '2026-06-07 09:40:53', '2026-06-07 09:40:53'),
 ('b55ba911-78b3-4227-ad6b-169704010b9d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":145,\"student_name\":\"Sayema majumder\",\"phone\":\"01763580853\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/145\"}', NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
 ('b569d110-0c34-4514-856b-92ab8ad1ba39', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":143,\"student_name\":\"Tamal Sharma\",\"phone\":\"01836126261\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/143\"}', NULL, '2026-06-08 13:42:45', '2026-06-08 13:42:45'),
 ('b58e9c95-c05e-4666-a37a-0e7015d017b8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":86,\"student_name\":\"Mahim\",\"phone\":\"01977293345\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/86\"}', NULL, '2026-06-06 09:33:24', '2026-06-06 09:33:24'),
 ('b598323d-9220-42a4-ad36-595b22af0578', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":21,\"student_name\":\"Rubel\",\"phone\":\"01775335639\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/21\"}', NULL, '2026-06-03 18:52:06', '2026-06-03 18:52:06'),
-('b5da434a-ab1a-4f1f-98ce-78457b38519b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":68,\"student_name\":\"Akib (Mirpur)\",\"phone\":\"01705908198\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/68\"}', NULL, '2026-06-04 14:12:19', '2026-06-04 14:12:19');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('b5da434a-ab1a-4f1f-98ce-78457b38519b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":68,\"student_name\":\"Akib (Mirpur)\",\"phone\":\"01705908198\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/68\"}', NULL, '2026-06-04 14:12:19', '2026-06-04 14:12:19'),
 ('b5fe08ab-ce6c-4151-b59e-0a1c945d28e2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":188,\"student_name\":\"Md omor faruk\",\"phone\":\"01771889317\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/188\"}', NULL, '2026-06-09 08:27:45', '2026-06-09 08:27:45'),
 ('b61b1f6d-db38-41b2-aee4-10f70ba74a6b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":203,\"student_name\":\"Momengir\",\"phone\":\"01889904945\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/203\"}', NULL, '2026-06-10 16:31:47', '2026-06-10 16:31:47'),
 ('b62fb073-108d-48bb-bbe3-5cc278ddc452', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":105,\"student_name\":\"Durjoy\",\"phone\":\"+880 1303-051588\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/105\"}', NULL, '2026-06-07 09:04:26', '2026-06-07 09:04:26'),
@@ -3737,15 +3751,15 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('be23fba6-9d8f-4fd9-9a57-7448b0ac1266', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":148,\"student_name\":\"Md Riyad\",\"phone\":\"01848390374\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/148\"}', NULL, '2026-06-08 15:09:43', '2026-06-08 15:09:43'),
 ('be2fbd9d-a0a1-451a-8fff-3302ceb608b9', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":136,\"student_name\":\"Sharmin\",\"phone\":\"01708913292\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/136\"}', NULL, '2026-06-07 19:32:38', '2026-06-07 19:32:38'),
 ('be345bc9-0d42-4b94-a94b-ac98f52a079b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":38,\"student_name\":\"Md Redwan\",\"phone\":\"01308759316\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/38\"}', NULL, '2026-06-04 09:01:04', '2026-06-04 09:01:04'),
-('be39ebc4-f267-4be7-be8c-2186ff90316b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":33,\"student_name\":\"Ahnaf Azmain\",\"phone\":\"\\u202a+880\\u00a01717\\u2011866704\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/33\"}', NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49'),
+('be39ebc4-f267-4be7-be8c-2186ff90316b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":33,\"student_name\":\"Ahnaf Azmain\",\"phone\":\"\\u202a+880\\u00a01717\\u2011866704\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/33\"}', NULL, '2026-06-04 07:52:49', '2026-06-04 07:52:49');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('be3f00aa-56fc-49cf-ad61-6691cba48b28', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":26,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/26\"}', NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
 ('be4470a4-33ba-48de-bfc1-c34a2b8daa44', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":19,\"student_name\":\"Tonmoy Ahmmed\",\"phone\":\"01834413145\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/19\"}', NULL, '2026-06-03 16:58:56', '2026-06-03 16:58:56'),
 ('be54fe68-068d-4ad7-8517-bd67912f603e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":152,\"student_name\":\"SB\",\"phone\":\"01340430870\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/152\"}', NULL, '2026-06-08 15:29:20', '2026-06-08 15:29:20'),
 ('be67fa99-86de-4f4a-a893-357bbb0bc999', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":157,\"student_name\":\"Zishan\",\"phone\":\"01787550490\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/157\"}', NULL, '2026-06-08 15:35:00', '2026-06-08 15:35:00'),
 ('be6b2a60-7d3f-4e2a-94ff-133677d2a773', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":83,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/83\"}', NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
 ('be84e1f1-af14-4cf0-a934-6177364ebc96', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":171,\"student_name\":\"Mir Rabby Hasan\",\"phone\":\"+8801799-287158\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/171\"}', NULL, '2026-06-09 01:05:22', '2026-06-09 01:05:22'),
-('be8c9702-8810-4109-82d8-408de66708b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":59,\"student_name\":\"Sumitra\",\"phone\":\"01637158805\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/59\"}', NULL, '2026-06-04 13:51:38', '2026-06-04 13:51:38');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('be8c9702-8810-4109-82d8-408de66708b5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":59,\"student_name\":\"Sumitra\",\"phone\":\"01637158805\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/59\"}', NULL, '2026-06-04 13:51:38', '2026-06-04 13:51:38'),
 ('be9c0dfd-c258-42d0-b746-86f3130e290a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":178,\"student_name\":\"Ridoy Talukder\",\"phone\":\"+8801308-912154\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/178\"}', NULL, '2026-06-09 01:24:37', '2026-06-09 01:24:37'),
 ('beb07f89-0e4b-4049-b510-3e7a471bfe11', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":23,\"student_name\":\"Shuvo Raj\",\"phone\":\"+8801400-0502318\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/23\"}', NULL, '2026-06-03 23:34:33', '2026-06-03 23:34:33'),
 ('bec97692-020c-4806-b49c-e86fdd81d0df', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":29,\"student_name\":\"Harun\",\"phone\":\"+8801776-330510\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/29\"}', NULL, '2026-06-03 23:47:56', '2026-06-03 23:47:56'),
@@ -3790,6 +3804,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('c1a6b4cc-ac7c-476a-9ef4-72a6de3f2362', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":193,\"student_name\":\"Shihab\",\"phone\":\"01851395387\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/193\"}', NULL, '2026-06-09 14:39:03', '2026-06-09 14:39:03'),
 ('c1cdf369-aa2b-422c-aedc-46a8a60015d5', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":65,\"student_name\":\"Erick\",\"phone\":\"01975088890\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/65\"}', NULL, '2026-06-04 14:08:32', '2026-06-04 14:08:32'),
 ('c1de0e64-35f7-4b31-8094-0fd61b885bc8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":145,\"student_name\":\"Sayema majumder\",\"phone\":\"01763580853\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/145\"}', NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
+('c1e6d735-6cc4-41cd-bb10-b82e45cfdced', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('c1fed1f5-ad00-4e3a-8728-4336448d6e42', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":79,\"student_name\":\"Nahar Talukder\",\"phone\":\"01856186597\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/79\"}', NULL, '2026-06-05 09:21:00', '2026-06-05 09:21:00'),
 ('c203676c-4eaf-46be-8681-9a3fa705e8eb', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":201,\"student_name\":\"Mursalin\",\"phone\":\"\\u202a+880\\u00a01786\\u2011056068\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/201\"}', NULL, '2026-06-10 16:18:46', '2026-06-10 16:18:46'),
 ('c2093725-34a7-405c-9da9-3b7b0cd589dc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":207,\"student_name\":\"Nasrin sultanaa\",\"phone\":\"\\u202a+880\\u00a01740\\u2011242575\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/207\"}', NULL, '2026-06-11 10:20:56', '2026-06-11 10:20:56'),
@@ -3856,7 +3871,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('c685fd20-5e18-4365-93a6-fac3c01f7b0d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":125,\"student_name\":\"Sojib\",\"phone\":\"01782419492\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/125\"}', NULL, '2026-06-07 15:54:21', '2026-06-07 15:54:21'),
 ('c6ab657a-3677-4c73-8a4e-7c6968a36a22', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":195,\"student_name\":\"Ohide\",\"phone\":\"01837374462\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/195\"}', NULL, '2026-06-09 14:44:23', '2026-06-09 14:44:23'),
 ('c6bc80bd-de1f-412c-96f6-ea6f9032b371', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":52,\"student_name\":\"Miraj\",\"phone\":\"+880 1717-437913\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/52\"}', NULL, '2026-06-04 13:41:14', '2026-06-04 13:41:14'),
-('c6d0345c-1548-4dbf-9f0f-4d8fd5986a7a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":168,\"student_name\":\"Ratul\",\"phone\":\"01308223514\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/168\"}', NULL, '2026-06-08 15:45:01', '2026-06-08 15:45:01'),
+('c6d0345c-1548-4dbf-9f0f-4d8fd5986a7a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":168,\"student_name\":\"Ratul\",\"phone\":\"01308223514\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/168\"}', NULL, '2026-06-08 15:45:01', '2026-06-08 15:45:01');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('c6d3cf3f-ece6-4ea4-a773-f2ebeeb8233f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":173,\"student_name\":\"Engr. Shreekanto\",\"phone\":\"+8801827-411613\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/173\"}', NULL, '2026-06-09 01:10:51', '2026-06-09 01:10:51'),
 ('c6ddd1eb-96b9-4c98-b427-603ca23a28e7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":89,\"student_name\":\"RESEARCH BARUA\",\"phone\":\"01630-701484\",\"created_by\":\"Sakib Hasan\",\"message\":\"New lead submitted by Sakib Hasan\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/89\"}', NULL, '2026-06-06 15:18:34', '2026-06-06 15:18:34'),
 ('c6ee545d-7c6a-496a-bf49-1ddcfd71b749', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":83,\"student_name\":\"Shohan rahman\",\"phone\":\"01710989858\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/83\"}', NULL, '2026-06-06 09:17:34', '2026-06-06 09:17:34'),
@@ -3864,8 +3880,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('c71561a0-4083-4fc9-aab3-ecabe1123d70', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":134,\"student_name\":\"Siam\",\"phone\":\"01963752996\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/134\"}', NULL, '2026-06-07 19:27:36', '2026-06-07 19:27:36'),
 ('c747e357-0506-46ad-81d8-a828ecd11f47', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":81,\"student_name\":\"Mohammad Alamin\",\"phone\":\"01775734389\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/81\"}', NULL, '2026-06-06 09:10:30', '2026-06-06 09:10:30'),
 ('c75312a1-d4a3-4f7a-8ecb-fe9ba565b026', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":27,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/27\"}', NULL, '2026-06-03 23:45:24', '2026-06-03 23:45:24'),
-('c753808b-f9f6-4889-9ddc-9fa1513f8d83', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":110,\"student_name\":\"Alif mahmud ove\",\"phone\":\"+880 1961-837195\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/110\"}', NULL, '2026-06-07 09:40:53', '2026-06-07 09:40:53');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('c753808b-f9f6-4889-9ddc-9fa1513f8d83', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":110,\"student_name\":\"Alif mahmud ove\",\"phone\":\"+880 1961-837195\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/110\"}', NULL, '2026-06-07 09:40:53', '2026-06-07 09:40:53'),
 ('c77b82a1-0329-4de6-abcf-054af91b2040', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":194,\"student_name\":\"****\",\"phone\":\"01985741618\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/194\"}', NULL, '2026-06-09 14:41:51', '2026-06-09 14:41:51'),
 ('c7858fba-e47d-44db-8231-2e5e19b0e346', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":18,\"student_name\":\"Rakibur Islam Sohag\",\"phone\":\"01798992091\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/18\"}', NULL, '2026-06-03 16:12:16', '2026-06-03 16:12:16'),
 ('c7a0992e-1b68-40ca-bce8-7f85033f3876', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":170,\"student_name\":\"Unknown\",\"phone\":\"01518321023\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/170\"}', NULL, '2026-06-08 15:47:12', '2026-06-08 15:47:12'),
@@ -3890,6 +3905,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('c90b206b-56a4-4c89-8b50-e3aefbf7de73', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":191,\"student_name\":\"Biddut\",\"phone\":\"01778115060\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/191\"}', NULL, '2026-06-09 14:36:32', '2026-06-09 14:36:32'),
 ('c9213d39-c8d5-4c32-bc21-ef37cfb81cc8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":145,\"student_name\":\"Sayema majumder\",\"phone\":\"01763580853\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/145\"}', NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
 ('c93dba22-796d-464f-8992-2b09cf2f2572', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":144,\"student_name\":\"Sajid\",\"phone\":\"01570249576\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/144\"}', NULL, '2026-06-08 14:01:54', '2026-06-08 14:01:54'),
+('c94d1166-29d7-4827-b942-337e603d8393', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('c96b8271-6410-4860-a86c-cb3ea8d82ead', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":106,\"student_name\":\"Nandita\",\"phone\":\"01881876534\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/106\"}', NULL, '2026-06-07 09:04:44', '2026-06-07 09:04:44'),
 ('c98a6811-4627-4204-9bf4-3e33d3d99318', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":140,\"student_name\":\"Yousuf Ali Rifat\",\"phone\":\"01855775808\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/140\"}', NULL, '2026-06-08 13:25:39', '2026-06-08 13:25:39'),
 ('c99c3d42-7831-43f2-833f-f10dd38a218c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":48,\"student_name\":\"Asma\",\"phone\":\"01610918778\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/48\"}', NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26'),
@@ -3975,7 +3991,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('d0e61b16-c24c-41c0-9a18-411b38da06f4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":196,\"student_name\":\"**\",\"phone\":\"01344926864\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/196\"}', NULL, '2026-06-10 12:08:58', '2026-06-10 12:08:58'),
 ('d0e762d4-1d82-494b-b173-6e73fedcf60c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":152,\"student_name\":\"SB\",\"phone\":\"01340430870\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/152\"}', NULL, '2026-06-08 15:29:20', '2026-06-08 15:29:20'),
 ('d0f1df44-a035-4174-93af-59df00e08779', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":121,\"student_name\":\"Jahid hasan\",\"phone\":\"01960965378\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/121\"}', NULL, '2026-06-07 15:49:10', '2026-06-07 15:49:10'),
-('d1064d36-07c2-4381-b166-42a95e0acc71', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":184,\"student_name\":\"Sayma\",\"phone\":\"+8801951-197117\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/184\"}', NULL, '2026-06-09 01:39:01', '2026-06-09 01:39:01'),
+('d1064d36-07c2-4381-b166-42a95e0acc71', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":184,\"student_name\":\"Sayma\",\"phone\":\"+8801951-197117\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/184\"}', NULL, '2026-06-09 01:39:01', '2026-06-09 01:39:01');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('d121d6be-a522-48f7-88c6-e8c1324c00fd', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":159,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/159\"}', NULL, '2026-06-08 15:40:04', '2026-06-08 15:40:04'),
 ('d1434dc2-eabc-4940-a1dd-879dc90e95f3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":47,\"student_name\":\"Kawar miah\",\"phone\":\"01770280267\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/47\"}', NULL, '2026-06-04 13:02:57', '2026-06-04 13:02:57'),
 ('d149e159-eea6-4d23-85a1-e0288c42e147', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":146,\"student_name\":\"Rakib\",\"phone\":\"+880 1794-397567\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/146\"}', NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
@@ -3984,8 +4001,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('d14f8599-8ccd-4548-a504-5237529196b4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":52,\"student_name\":\"Miraj\",\"phone\":\"+880 1717-437913\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/52\"}', NULL, '2026-06-04 13:41:14', '2026-06-04 13:41:14'),
 ('d15de0fa-4737-4ad9-befa-07f2b8f9cc87', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":54,\"student_name\":\"Mohiuddin Gazi\",\"phone\":\"+880 1911-611208\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/54\"}', NULL, '2026-06-04 13:45:19', '2026-06-04 13:45:19'),
 ('d15e2f4e-f723-4459-aae7-afa8a06a10a2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":164,\"student_name\":\"Khalil\",\"phone\":\"01823642583\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/164\"}', NULL, '2026-06-08 15:42:27', '2026-06-08 15:42:27'),
-('d17a0f0b-ddd8-4626-95a5-09efce7b6717', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":205,\"student_name\":\"MD Yeasin\",\"phone\":\"\\u202a+880\\u00a01858\\u2011023208\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/205\"}', NULL, '2026-06-11 09:34:59', '2026-06-11 09:34:59');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('d17a0f0b-ddd8-4626-95a5-09efce7b6717', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":205,\"student_name\":\"MD Yeasin\",\"phone\":\"\\u202a+880\\u00a01858\\u2011023208\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/205\"}', NULL, '2026-06-11 09:34:59', '2026-06-11 09:34:59'),
 ('d1841537-4e50-4e3c-b803-d2b77750e1f3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":204,\"student_name\":\"Polash\",\"phone\":\"\\u202a+880\\u00a01782\\u2011238891\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/204\"}', NULL, '2026-06-11 09:32:46', '2026-06-11 09:32:46'),
 ('d18d71af-4b53-4506-89d2-60fe55b60bcd', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":160,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/160\"}', NULL, '2026-06-08 15:40:05', '2026-06-08 15:40:05'),
 ('d191cd19-8773-4dbb-8cb3-93ad5c8bd39c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":162,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/162\"}', NULL, '2026-06-08 15:40:06', '2026-06-08 15:40:06'),
@@ -4028,6 +4044,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('d540069c-f8f1-4f0f-8dfe-f96a4f1fedde', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":155,\"student_name\":\"MD Asif Ikbal Leion\",\"phone\":\"+880 1817-452040\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/155\"}', NULL, '2026-06-08 15:33:04', '2026-06-08 15:33:04'),
 ('d5460383-0144-4bb0-868f-a3f105057e7a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":146,\"student_name\":\"Rakib\",\"phone\":\"+880 1794-397567\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/146\"}', NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
 ('d565b502-4c36-4de4-9631-1165370c2454', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":199,\"student_name\":\"Mahabub\",\"phone\":\"01572910961\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/199\"}', NULL, '2026-06-10 15:48:02', '2026-06-10 15:48:02'),
+('d5690f6c-de78-47d3-930b-4ea7acf85623', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('d596e245-c192-44c9-821d-f2963a58a99b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":28,\"student_name\":\"Nusrat Jahan Refat\",\"phone\":\"+8801731-556512`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/28\"}', NULL, '2026-06-03 23:46:54', '2026-06-03 23:46:54'),
 ('d597d667-2ef3-4a23-9948-de27a1edbfd3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":127,\"student_name\":\"Nazim\",\"phone\":\"01783088599\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/127\"}', NULL, '2026-06-07 15:56:32', '2026-06-07 15:56:32'),
 ('d59c3238-2e80-4fc5-8f4d-ff5c5651f8e4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":130,\"student_name\":\"Sahab\",\"phone\":\"01303176607\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/130\"}', NULL, '2026-06-07 19:21:24', '2026-06-07 19:21:24'),
@@ -4044,6 +4061,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('d6e74737-6ff7-4d40-9fb9-9e9cfac0089c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12'),
 ('d70b63f3-c87d-4687-b2c3-9d9c33f3ca23', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":17,\"student_name\":\"HAIDER\",\"phone\":\"01889532005\",\"created_by\":\"Abu Haider\",\"message\":\"New lead submitted by Abu Haider\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/17\"}', NULL, '2026-06-03 16:08:30', '2026-06-03 16:08:30'),
 ('d71bb3d5-e01e-4c1d-8e75-e8aa23693436', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":58,\"student_name\":\"Muhammad Entiaz\",\"phone\":\"01701055928\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/58\"}', NULL, '2026-06-04 13:49:54', '2026-06-04 13:49:54'),
+('d7281bf6-2fc2-4794-89c3-728ff0ab452e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('d75352f6-9c4c-40d7-8edf-c6ed6248653a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12'),
 ('d75f7339-535a-4a4d-9a1a-68a9fa288778', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":200,\"student_name\":\"Sahriar\",\"phone\":\"\\u202a+880\\u00a01337\\u2011165367\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/200\"}', NULL, '2026-06-10 16:16:37', '2026-06-10 16:16:37'),
 ('d75fbe9e-24f9-4840-8fb3-f89e6549eb2e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":205,\"student_name\":\"MD Yeasin\",\"phone\":\"\\u202a+880\\u00a01858\\u2011023208\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/205\"}', NULL, '2026-06-11 09:34:59', '2026-06-11 09:34:59'),
@@ -4093,7 +4111,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('dc3b30cc-5360-4f8a-8b07-0ce2168d9357', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":174,\"student_name\":\"Engr. Shreekanto\",\"phone\":\"+8801827-411613\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/174\"}', NULL, '2026-06-09 01:10:53', '2026-06-09 01:10:53'),
 ('dc3bf882-b221-47c7-b308-d4f063a06977', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":80,\"student_name\":\"Unknown\",\"phone\":\"01742128109\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/80\"}', NULL, '2026-06-05 09:27:00', '2026-06-05 09:27:00'),
 ('dc4030a7-f347-49cc-9637-175464bb6261', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":92,\"student_name\":\"Tashfia Jahin\",\"phone\":\"01805762213\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/92\"}', NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49'),
-('dc43c1cc-2dca-4cd7-ad76-44401a840c3c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":28,\"student_name\":\"Nusrat Jahan Refat\",\"phone\":\"+8801731-556512`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/28\"}', NULL, '2026-06-03 23:46:54', '2026-06-03 23:46:54'),
+('dc43c1cc-2dca-4cd7-ad76-44401a840c3c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":28,\"student_name\":\"Nusrat Jahan Refat\",\"phone\":\"+8801731-556512`\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/28\"}', NULL, '2026-06-03 23:46:54', '2026-06-03 23:46:54');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('dc6c4cb3-9450-4d80-b348-b5d2015af09d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":188,\"student_name\":\"Md omor faruk\",\"phone\":\"01771889317\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/188\"}', NULL, '2026-06-09 08:27:45', '2026-06-09 08:27:45'),
 ('dcafc1a9-3b9b-4e49-9205-9de54ba07ae6', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":200,\"student_name\":\"Sahriar\",\"phone\":\"\\u202a+880\\u00a01337\\u2011165367\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/200\"}', NULL, '2026-06-10 16:16:37', '2026-06-10 16:16:37'),
 ('dcbd3a79-6e78-48ac-ab05-45feab2dff9c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":35,\"student_name\":\"Rinkon Barua\",\"phone\":\"\\u202a+880\\u00a01879\\u2011546661\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/35\"}', NULL, '2026-06-04 07:56:10', '2026-06-04 07:56:10'),
@@ -4104,8 +4123,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('dcdfdcfc-4265-4b73-9c23-05a9b00d9306', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":126,\"student_name\":\"Jihad\",\"phone\":\"01704964131\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/126\"}', NULL, '2026-06-07 15:55:19', '2026-06-07 15:55:19'),
 ('dce7679c-2612-46c2-ac97-77c0e6776bc2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":157,\"student_name\":\"Zishan\",\"phone\":\"01787550490\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/157\"}', NULL, '2026-06-08 15:35:00', '2026-06-08 15:35:00'),
 ('dcf61ede-66ea-4b58-b741-b79a8469bf92', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":157,\"student_name\":\"Zishan\",\"phone\":\"01787550490\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/157\"}', NULL, '2026-06-08 15:35:00', '2026-06-08 15:35:00'),
-('dd081f46-e0b0-4b75-b23c-bc5f031e3e9a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":72,\"student_name\":\"Arib Mahmud\",\"phone\":\"01301608705\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/72\"}', NULL, '2026-06-04 15:58:53', '2026-06-04 15:58:53');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('dd081f46-e0b0-4b75-b23c-bc5f031e3e9a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":72,\"student_name\":\"Arib Mahmud\",\"phone\":\"01301608705\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/72\"}', NULL, '2026-06-04 15:58:53', '2026-06-04 15:58:53'),
 ('dd0deffa-4604-4606-a8ce-351fcd005c09', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":207,\"student_name\":\"Nasrin sultanaa\",\"phone\":\"\\u202a+880\\u00a01740\\u2011242575\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/207\"}', NULL, '2026-06-11 10:20:56', '2026-06-11 10:20:56'),
 ('dd0ffd7d-d086-4f42-bb59-ea9e5dd3fdff', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":95,\"student_name\":\"Shanto\",\"phone\":\"01616270028\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/95\"}', NULL, '2026-06-07 08:29:03', '2026-06-07 08:29:03'),
 ('dd21595c-15f4-46f4-a082-ca3300a8e009', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":21,\"student_name\":\"Rubel\",\"phone\":\"01775335639\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/21\"}', NULL, '2026-06-03 18:52:06', '2026-06-03 18:52:06'),
@@ -4213,7 +4231,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('e640d9ee-1581-4f4f-aedd-ded0d7a8ea5e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":12,\"student_name\":\"Md Hasan 2\",\"phone\":\"0000000000000\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/12\"}', NULL, '2026-05-22 19:10:24', '2026-05-22 19:10:24'),
 ('e65d4aa1-5edf-43df-83f4-44504a9fe873', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":87,\"student_name\":\"Md nadim\",\"phone\":\"01301622441\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/87\"}', NULL, '2026-06-06 09:41:39', '2026-06-06 09:41:39'),
 ('e6617bab-3eaf-4308-a36b-eb0f79a08666', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":114,\"student_name\":\"Ariful\",\"phone\":\"01822952622\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/114\"}', NULL, '2026-06-07 13:29:39', '2026-06-07 13:29:39'),
-('e66236c5-775e-4596-b702-96a9380f0cab', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":183,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/183\"}', NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35'),
+('e66236c5-775e-4596-b702-96a9380f0cab', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":183,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/183\"}', NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('e681d812-42e6-4962-b4ac-3700ff99fe32', 'App\\Notifications\\NewApplicationNotification', 'App\\Models\\User', 9, '{\"application_id\":17,\"application_number\":\"APP-2026-00005\",\"student_name\":\"Al Amin Akash\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New application APP-2026-00005 created by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/applications\\/17\\/edit\"}', NULL, '2026-06-06 15:08:23', '2026-06-06 15:08:23'),
 ('e6e50d74-5226-4c33-add0-b1f8ed31202a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":190,\"student_name\":\"Aamol\",\"phone\":\"+8618182744746\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/190\"}', NULL, '2026-06-09 14:35:54', '2026-06-09 14:35:54'),
 ('e7750b2e-a55e-4407-bbd3-5841a482d412', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":162,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/162\"}', NULL, '2026-06-08 15:40:06', '2026-06-08 15:40:06'),
@@ -4225,8 +4244,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('e7f56677-c189-4429-abcc-c46601f60dd0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":202,\"student_name\":\"Saimul islam\",\"phone\":\"01819113688\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/202\"}', NULL, '2026-06-10 16:30:41', '2026-06-10 16:30:41'),
 ('e8236f26-6e7d-4d1d-97e4-16e3a5b512fe', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":129,\"student_name\":\"Jannat\",\"phone\":\"01850622832\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/129\"}', NULL, '2026-06-07 19:19:56', '2026-06-07 19:19:56'),
 ('e8400683-8ca3-4d3b-9743-432bde6866e8', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":56,\"student_name\":\"Mahabub\",\"phone\":\"01522105646\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/56\"}', NULL, '2026-06-04 13:47:08', '2026-06-04 13:47:08'),
-('e8510db9-1660-4251-9a54-707848479b08', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":46,\"student_name\":\"Pithun Mia\",\"phone\":\"01772588197\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/46\"}', NULL, '2026-06-04 12:59:27', '2026-06-04 12:59:27');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('e8510db9-1660-4251-9a54-707848479b08', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":46,\"student_name\":\"Pithun Mia\",\"phone\":\"01772588197\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/46\"}', NULL, '2026-06-04 12:59:27', '2026-06-04 12:59:27'),
 ('e857d758-ff63-4ba7-9d8e-bea3463e337c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":36,\"student_name\":\"Tanim Ahmed\",\"phone\":\"\\u202a+880\\u00a01869\\u2011873115\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/36\"}', NULL, '2026-06-04 08:00:31', '2026-06-04 08:00:31'),
 ('e872158a-1a84-4c8c-9986-40dd13f58a0e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14'),
 ('e8746e11-5a37-4cb3-817e-d1e6b83185e1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":54,\"student_name\":\"Mohiuddin Gazi\",\"phone\":\"+880 1911-611208\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/54\"}', NULL, '2026-06-04 13:45:19', '2026-06-04 13:45:19'),
@@ -4276,6 +4294,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('ec116721-4674-417f-8b17-793f99a6840d', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":76,\"student_name\":\"Akib\",\"phone\":\"01407825696\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/76\"}', NULL, '2026-06-04 17:59:56', '2026-06-04 17:59:56'),
 ('ec2d63b5-9b81-4834-96fb-d22f1cecbdec', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":171,\"student_name\":\"Mir Rabby Hasan\",\"phone\":\"+8801799-287158\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/171\"}', NULL, '2026-06-09 01:05:22', '2026-06-09 01:05:22'),
 ('ec3eabce-c359-4b7c-95f7-9cc6ea4fb268', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":159,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/159\"}', NULL, '2026-06-08 15:40:04', '2026-06-08 15:40:04'),
+('ec3f3900-debe-411e-9924-3fd0f72e9d97', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('ec50e8f4-aac1-489a-8598-d408999a26ca', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":159,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/159\"}', NULL, '2026-06-08 15:40:04', '2026-06-08 15:40:04'),
 ('ec5e446a-7ec7-4c7a-a42c-622d9145eac7', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":140,\"student_name\":\"Yousuf Ali Rifat\",\"phone\":\"01855775808\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/140\"}', NULL, '2026-06-08 13:25:39', '2026-06-08 13:25:39'),
 ('ec6b42c2-4b8b-41ea-b2b5-259c2d7d6d4f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":149,\"student_name\":\"Shakil\",\"phone\":\"01746165680\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/149\"}', NULL, '2026-06-08 15:10:15', '2026-06-08 15:10:15'),
@@ -4332,7 +4351,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('f0f4b0fe-3ab0-4a43-8072-72daf0cd5e4b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":15,\"student_name\":\"Laila Afrin\",\"phone\":\"01611165740\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/15\"}', NULL, '2026-06-03 15:01:14', '2026-06-03 15:01:14'),
 ('f103e3f9-87d3-4c1c-91a1-2c07753cce6e', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":19,\"student_name\":\"Tonmoy Ahmmed\",\"phone\":\"01834413145\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/19\"}', NULL, '2026-06-03 16:58:56', '2026-06-03 16:58:56'),
 ('f109dc9c-075e-4ebe-a34f-c247bebd962c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":11,\"student_name\":\"Md Hasan\",\"phone\":\"01234567890\",\"created_by\":\"barsha saha\",\"message\":\"New lead submitted by barsha saha\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/11\"}', '2026-05-22 19:42:58', '2026-05-22 19:07:10', '2026-05-22 19:42:58'),
-('f10a9d59-19a6-4d6e-be46-f62cbf423119', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":206,\"student_name\":\"Avoy\",\"phone\":\"\\u202a+880\\u00a01647\\u2011635261\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/206\"}', NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57'),
+('f10a9d59-19a6-4d6e-be46-f62cbf423119', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":206,\"student_name\":\"Avoy\",\"phone\":\"\\u202a+880\\u00a01647\\u2011635261\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/206\"}', NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('f10f62f9-7a0b-4b29-b44d-ff4b9080be69', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":51,\"student_name\":\"Fahad Mahmud\",\"phone\":\"01874818128\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/51\"}', NULL, '2026-06-04 13:40:45', '2026-06-04 13:40:45'),
 ('f12e8164-79d5-4377-8988-17788cbc6afa', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":50,\"student_name\":\"Moin Ali\",\"phone\":\"01568675578\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/50\"}', NULL, '2026-06-04 13:37:20', '2026-06-04 13:37:20'),
 ('f1301bd1-c82c-481f-84c7-3005551e57fd', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 35, '{\"lead_id\":138,\"student_name\":\"Unknown\",\"phone\":\"01760805401\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/138\"}', NULL, '2026-06-07 19:34:23', '2026-06-07 19:34:23'),
@@ -4345,8 +4365,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('f1d118bf-70a8-43a8-bcca-e5ced1a4f3c0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 37, '{\"lead_id\":155,\"student_name\":\"MD Asif Ikbal Leion\",\"phone\":\"+880 1817-452040\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/155\"}', NULL, '2026-06-08 15:33:04', '2026-06-08 15:33:04'),
 ('f1da7dce-a019-439e-a162-c906809e326b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":119,\"student_name\":\"Rofik\",\"phone\":\"01960672211\",\"created_by\":\"Mumtahana Mamtaj Swanon\",\"message\":\"New lead submitted by Mumtahana Mamtaj Swanon\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/119\"}', NULL, '2026-06-07 15:48:18', '2026-06-07 15:48:18'),
 ('f1ec167a-353a-4faa-ab51-c4649156f73f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":89,\"student_name\":\"RESEARCH BARUA\",\"phone\":\"01630-701484\",\"created_by\":\"Sakib Hasan\",\"message\":\"New lead submitted by Sakib Hasan\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/89\"}', NULL, '2026-06-06 15:18:34', '2026-06-06 15:18:34'),
-('f1fc0b27-ff49-4df2-b1d6-b1ef49cbc812', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":48,\"student_name\":\"Asma\",\"phone\":\"01610918778\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/48\"}', NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('f1fc0b27-ff49-4df2-b1d6-b1ef49cbc812', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":48,\"student_name\":\"Asma\",\"phone\":\"01610918778\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/48\"}', NULL, '2026-06-04 13:32:26', '2026-06-04 13:32:26'),
 ('f20a1181-a290-4ded-9f02-0f0aa206e27a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":148,\"student_name\":\"Md Riyad\",\"phone\":\"01848390374\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/148\"}', NULL, '2026-06-08 15:09:43', '2026-06-08 15:09:43'),
 ('f229e84b-394a-401f-bb0f-c93fe459ffd0', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":45,\"student_name\":\"Md Farhan Rashid\",\"phone\":\"01601015632\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/45\"}', NULL, '2026-06-04 12:29:12', '2026-06-04 12:29:12'),
 ('f2328e18-7cd1-4062-91ae-f9aa06215da2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":36,\"student_name\":\"Tanim Ahmed\",\"phone\":\"\\u202a+880\\u00a01869\\u2011873115\\u202c\",\"created_by\":\"saif rahman joy\",\"message\":\"New lead submitted by saif rahman joy\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/36\"}', NULL, '2026-06-04 08:00:31', '2026-06-04 08:00:31'),
@@ -4422,6 +4441,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('f8e94b75-1ea1-4d91-9ac0-c1b58a7754c4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":206,\"student_name\":\"Avoy\",\"phone\":\"\\u202a+880\\u00a01647\\u2011635261\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/206\"}', NULL, '2026-06-11 10:18:57', '2026-06-11 10:18:57'),
 ('f8e95805-a4a3-4f69-af87-3eb154e50ef3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":155,\"student_name\":\"MD Asif Ikbal Leion\",\"phone\":\"+880 1817-452040\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/155\"}', NULL, '2026-06-08 15:33:04', '2026-06-08 15:33:04'),
 ('f8e99d42-b25c-4abd-8b6b-ad7808484bc1', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":155,\"student_name\":\"MD Asif Ikbal Leion\",\"phone\":\"+880 1817-452040\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/155\"}', NULL, '2026-06-08 15:33:04', '2026-06-08 15:33:04'),
+('f9067108-cd5f-4b62-80a8-5f9d54974a4a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('f91ffb80-57c3-4ac6-b27f-a2e05ceaf5da', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 33, '{\"lead_id\":145,\"student_name\":\"Sayema majumder\",\"phone\":\"01763580853\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/145\"}', NULL, '2026-06-08 14:03:51', '2026-06-08 14:03:51'),
 ('f94c3f44-0f99-4374-b263-f19c6db7af00', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 11, '{\"lead_id\":153,\"student_name\":\"Murad\",\"phone\":\"01721243588\",\"created_by\":\"MST SHIRAZAM MONIRA\",\"message\":\"New lead submitted by MST SHIRAZAM MONIRA\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/153\"}', NULL, '2026-06-08 15:30:29', '2026-06-08 15:30:29'),
 ('f962632a-82ff-4d75-b7b2-c1ed3c799289', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":112,\"student_name\":\"Ahmed akash\",\"phone\":\"01860160338\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/112\"}', NULL, '2026-06-07 12:24:28', '2026-06-07 12:24:28'),
@@ -4451,7 +4471,8 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('fc2f65e6-5a3a-483d-a359-39692558a51b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 27, '{\"lead_id\":101,\"student_name\":\"Md Abdul Aziz\",\"phone\":\"01757661407\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/101\"}', NULL, '2026-06-07 08:49:48', '2026-06-07 08:49:48'),
 ('fc31674b-4742-45c7-8e8c-f041db10a1a4', 'App\\Notifications\\NewApplicationNotification', 'App\\Models\\User', 39, '{\"application_id\":15,\"application_number\":\"APP-2026-00003\",\"student_name\":\"Md Karim\",\"created_by\":\"Sharafat Ullah Mohim\",\"message\":\"New application APP-2026-00003 created by Sharafat Ullah Mohim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/applications\\/15\\/edit\"}', NULL, '2026-05-22 21:13:56', '2026-05-22 21:13:56'),
 ('fc38c3bc-74b5-4575-8c70-9767ed65e9fa', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":177,\"student_name\":\"Alamgir\",\"phone\":\"+8801322-839468\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/177\"}', NULL, '2026-06-09 01:17:33', '2026-06-09 01:17:33'),
-('fc4450fb-5266-483d-9c45-30b83c330683', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":132,\"student_name\":\"Kaosar\",\"phone\":\"01969418997\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/132\"}', NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28'),
+('fc4450fb-5266-483d-9c45-30b83c330683', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":132,\"student_name\":\"Kaosar\",\"phone\":\"01969418997\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/132\"}', NULL, '2026-06-07 19:24:28', '2026-06-07 19:24:28');
+INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
 ('fc4726e1-adf3-4840-ab28-28ca06bd343f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":160,\"student_name\":\"Amit\",\"phone\":\"01607394700\",\"created_by\":\"hira mony\",\"message\":\"New lead submitted by hira mony\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/160\"}', NULL, '2026-06-08 15:40:05', '2026-06-08 15:40:05'),
 ('fc77b1bf-fef7-4cd5-b894-7dcbfdb5ba60', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":189,\"student_name\":\"MInhaz Uddin Sabbir\",\"phone\":\"01833999286\",\"created_by\":\"Mahabub Hossain Alif\",\"message\":\"New lead submitted by Mahabub Hossain Alif\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/189\"}', NULL, '2026-06-09 10:01:42', '2026-06-09 10:01:42'),
 ('fc7aff86-f2c7-4c52-8037-2e847bd5d308', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 45, '{\"lead_id\":90,\"student_name\":\"Hasan\",\"phone\":\"01630581970\",\"created_by\":\"Emelia Ani Areng\",\"message\":\"New lead submitted by Emelia Ani Areng\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/90\"}', NULL, '2026-06-06 16:30:18', '2026-06-06 16:30:18'),
@@ -4465,8 +4486,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('fcfee4f8-d6e4-4893-b3db-28ae7fed3e12', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 9, '{\"lead_id\":23,\"student_name\":\"Shuvo Raj\",\"phone\":\"+8801400-0502318\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/23\"}', NULL, '2026-06-03 23:34:33', '2026-06-03 23:34:33'),
 ('fd64c77f-8382-491a-874d-dfb154431bf4', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":144,\"student_name\":\"Sajid\",\"phone\":\"01570249576\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/144\"}', NULL, '2026-06-08 14:01:54', '2026-06-08 14:01:54'),
 ('fd87e2cd-356e-4a1a-9429-646c0adae132', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":207,\"student_name\":\"Nasrin sultanaa\",\"phone\":\"\\u202a+880\\u00a01740\\u2011242575\\u202c\",\"created_by\":\"Abdullah\",\"message\":\"New lead submitted by Abdullah\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/207\"}', NULL, '2026-06-11 10:20:56', '2026-06-11 10:20:56'),
-('fdc04cfd-10f8-49e2-8326-0067f7196259', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":181,\"student_name\":\"Tanvir Ahmed Ridoy\",\"phone\":\"+8801833-957600\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/181\"}', NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26');
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
+('fdc04cfd-10f8-49e2-8326-0067f7196259', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 26, '{\"lead_id\":181,\"student_name\":\"Tanvir Ahmed Ridoy\",\"phone\":\"+8801833-957600\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/181\"}', NULL, '2026-06-09 01:34:26', '2026-06-09 01:34:26'),
 ('fdc31ac9-b4cf-4ae6-8384-3c9b79d8de2f', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 3, '{\"lead_id\":121,\"student_name\":\"Jahid hasan\",\"phone\":\"01960965378\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/121\"}', NULL, '2026-06-07 15:49:10', '2026-06-07 15:49:10'),
 ('fdd5e40e-699a-430c-953f-01f2bfa6dbbc', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":146,\"student_name\":\"Rakib\",\"phone\":\"+880 1794-397567\",\"created_by\":\"Md. Masud Rana\",\"message\":\"New lead submitted by Md. Masud Rana\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/146\"}', NULL, '2026-06-08 14:06:24', '2026-06-08 14:06:24'),
 ('fddb8de8-4833-4ac1-ba90-af34fc58e6a2', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":26,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/26\"}', NULL, '2026-06-03 23:45:23', '2026-06-03 23:45:23'),
@@ -4480,6 +4500,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 ('fe63721b-908a-4ebe-b78c-0df2bab8517c', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 8, '{\"lead_id\":27,\"student_name\":\"Monika Khatun\",\"phone\":\"+8801959-784997\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/27\"}', NULL, '2026-06-03 23:45:24', '2026-06-03 23:45:24'),
 ('fe728746-52cf-4b19-817c-4dee9e9243ca', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":92,\"student_name\":\"Tashfia Jahin\",\"phone\":\"01805762213\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/92\"}', NULL, '2026-06-07 08:21:49', '2026-06-07 08:21:49'),
 ('fe82bb33-23c1-43a5-9a81-3e6294f0c728', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 12, '{\"lead_id\":42,\"student_name\":\"Israt Jahan\",\"phone\":\"01893861571\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/42\"}', NULL, '2026-06-04 11:06:05', '2026-06-04 11:06:05'),
+('fe8d3390-293f-491d-a506-72c4762707ab', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 46, '{\"lead_id\":208,\"student_name\":\"Clementia decum\",\"phone\":\"282-210-7117\",\"created_by\":\"Inoodex\",\"message\":\"New lead submitted by Inoodex\",\"link\":\"http:\\/\\/127.0.0.1:8000\\/dashboard\\/marketing\\/leads\\/208\"}', NULL, '2026-08-16 01:20:02', '2026-08-16 01:20:02'),
 ('fe947e70-e8b7-45b4-8965-50ab288c58f3', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 38, '{\"lead_id\":183,\"student_name\":\"??\",\"phone\":\"+8801616-081408\",\"created_by\":\"Nur Alam (Shuvo)\",\"message\":\"New lead submitted by Nur Alam (Shuvo)\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/183\"}', NULL, '2026-06-09 01:37:35', '2026-06-09 01:37:35'),
 ('fe96f4af-d792-45ea-819c-b0187cc2c98b', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 43, '{\"lead_id\":136,\"student_name\":\"Sharmin\",\"phone\":\"01708913292\",\"created_by\":\"syeda asia mim\",\"message\":\"New lead submitted by syeda asia mim\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/136\"}', NULL, '2026-06-07 19:32:38', '2026-06-07 19:32:38'),
 ('fe9e3bcd-500c-4d66-acc4-b90252d8031a', 'App\\Notifications\\NewLeadSubmitted', 'App\\Models\\User', 41, '{\"lead_id\":102,\"student_name\":\"Mahfuz Sheikh\",\"phone\":\"01828054901\",\"created_by\":\"Chelsi Rema\",\"message\":\"New lead submitted by Chelsi Rema\",\"link\":\"https:\\/\\/crm.insafimmigration.com\\/dashboard\\/marketing\\/leads\\/102\"}', NULL, '2026-06-07 08:55:49', '2026-06-07 08:55:49'),
@@ -4508,17 +4529,17 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 --
 
 CREATE TABLE `office_accounts` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `account_name` varchar(255) NOT NULL,
-  `account_type` enum('bank','mfs','cash') NOT NULL,
-  `provider_name` varchar(255) DEFAULT NULL,
-  `account_number` varchar(255) NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `opening_balance` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `branch_name` varchar(255) DEFAULT NULL,
-  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `account_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `account_type` enum('bank','mfs','cash') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `provider_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `account_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED DEFAULT NULL,
+  `opening_balance` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `branch_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('active','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `created_by` bigint UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4539,8 +4560,8 @@ INSERT INTO `office_accounts` (`id`, `account_name`, `account_type`, `provider_n
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -4551,21 +4572,21 @@ CREATE TABLE `password_reset_tokens` (
 --
 
 CREATE TABLE `payments` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `student_id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `invoice_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `student_id` bigint UNSIGNED NOT NULL,
+  `application_id` bigint UNSIGNED DEFAULT NULL,
+  `invoice_id` bigint UNSIGNED DEFAULT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `payment_type` enum('advance','partial','final') NOT NULL,
+  `payment_type` enum('advance','partial','final') COLLATE utf8mb4_unicode_ci NOT NULL,
   `payment_date` datetime NOT NULL,
-  `collected_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `receipt_number` varchar(50) DEFAULT NULL,
-  `payment_status` enum('pending','completed') NOT NULL DEFAULT 'pending',
-  `office_account_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `journal_entry_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `collected_by` bigint UNSIGNED DEFAULT NULL,
+  `receipt_number` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_status` enum('pending','completed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `office_account_id` bigint UNSIGNED DEFAULT NULL,
+  `journal_entry_id` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `notes` text DEFAULT NULL
+  `notes` text COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -4574,7 +4595,7 @@ CREATE TABLE `payments` (
 
 INSERT INTO `payments` (`id`, `student_id`, `application_id`, `invoice_id`, `amount`, `payment_type`, `payment_date`, `collected_by`, `receipt_number`, `payment_status`, `office_account_id`, `journal_entry_id`, `created_at`, `updated_at`, `notes`) VALUES
 (28, 14, 18, 14, 10000.00, 'advance', '2026-06-08 00:00:00', 9, 'REC-20260608-0001', 'completed', 4, NULL, '2026-06-08 16:35:35', '2026-06-08 16:35:35', NULL),
-(29, 13, 17, 16, 50000.00, 'partial', '2026-06-10 00:00:00', 9, 'REC-20260610-0001', 'completed', 4, NULL, '2026-06-10 16:00:57', '2026-06-10 16:00:57', NULL);
+(29, 13, 17, 16, 50000.00, 'partial', '2026-06-10 00:00:00', 9, 'REC-20260610-0001', 'completed', 5, NULL, '2026-06-10 16:00:57', '2026-06-11 07:21:29', NULL);
 
 -- --------------------------------------------------------
 
@@ -4583,12 +4604,12 @@ INSERT INTO `payments` (`id`, `student_id`, `application_id`, `invoice_id`, `amo
 --
 
 CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` text NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint UNSIGNED NOT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -4602,10 +4623,10 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 CREATE TABLE `privileges` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4637,9 +4658,9 @@ INSERT INTO `privileges` (`id`, `name`, `slug`, `description`, `created_at`, `up
 --
 
 CREATE TABLE `privilege_role` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL,
-  `privilege_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL,
+  `privilege_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4674,10 +4695,10 @@ INSERT INTO `privilege_role` (`id`, `role_id`, `privilege_id`, `created_at`, `up
 --
 
 CREATE TABLE `roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4704,31 +4725,31 @@ INSERT INTO `roles` (`id`, `name`, `slug`, `is_active`, `created_at`, `updated_a
 --
 
 CREATE TABLE `salaries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `employee_name` varchar(255) NOT NULL,
-  `month` varchar(7) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `employee_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `month` varchar(7) COLLATE utf8mb4_unicode_ci NOT NULL,
   `basic_salary` decimal(12,2) NOT NULL,
-  `overtime_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `bonus` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `allowances` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `overtime_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `bonus` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `allowances` decimal(10,2) NOT NULL DEFAULT '0.00',
   `gross_salary` decimal(12,2) NOT NULL,
-  `tax_deduction` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `insurance_deduction` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `other_deductions` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `tax_deduction` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `insurance_deduction` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `other_deductions` decimal(10,2) NOT NULL DEFAULT '0.00',
   `net_salary` decimal(12,2) NOT NULL,
-  `paid_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `payment_status` enum('pending','partial','paid') NOT NULL DEFAULT 'pending',
+  `paid_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `payment_status` enum('pending','partial','paid') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `payment_date` date DEFAULT NULL,
-  `payment_method` enum('cash','bank_transfer','mobile_banking','cheque') DEFAULT NULL,
-  `account_number` varchar(255) DEFAULT NULL,
-  `bank_name` varchar(255) DEFAULT NULL,
-  `bank_branch` varchar(255) DEFAULT NULL,
-  `routing_number` varchar(255) DEFAULT NULL,
-  `transaction_id` varchar(255) DEFAULT NULL,
-  `journal_entry_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `notes` text DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `payment_method` enum('cash','bank_transfer','mobile_banking','cheque') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `account_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `routing_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `journal_entry_id` bigint UNSIGNED DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4771,12 +4792,12 @@ INSERT INTO `salaries` (`id`, `user_id`, `employee_name`, `month`, `basic_salary
 --
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -4784,9 +4805,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('A44TNspF06tN1S2YiYHYvoBdNY9fgHS4nLJlV6y1', 16, '202.83.124.80', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTEloaktYYTNJaVVwdHpsb2pOTWhZZkpVS2s0Qm5selNYWFVTZ3hpNiI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTY7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjI6Imh0dHBzOi8vY3JtLmluc2FmaW1taWdyYXRpb24uY29tL2Rhc2hib2FyZC9ub3RpZmljYXRpb25zL2NvdW50IjtzOjU6InJvdXRlIjtzOjI1OiJhZG1pbi5ub3RpZmljYXRpb25zLmNvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1781174056),
-('hZf1J1Xvpl0c8mwT8chHlrVniVOvUcdVzTh7963r', NULL, '35.228.184.202', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibmsyc25MMXVTRVNVRkpaY3puYVN4UlVNM1F2aVlTWjJOQ0MyeTJWdCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHBzOi8vd3d3LmNybS5pbnNhZmltbWlncmF0aW9uLmNvbSI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1781170588),
-('xGvjxJerx82YTs6XcCWdy8YhCHFUFokgjD3NeIQr', NULL, '35.228.184.202', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiYlNxZjUyeXNweWZ2YWVvYnNiOFloaU1uUXhHQmYweGRDS2wwZ21oNSI7czoxMDoidHlyby1sb2dpbiI7YToxOntzOjc6ImNhcHRjaGEiO2E6MTp7czo1OiJsb2dpbiI7aToxO319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDI6Imh0dHBzOi8vd3d3LmNybS5pbnNhZmltbWlncmF0aW9uLmNvbS9sb2dpbiI7czo1OiJyb3V0ZSI7czoxNjoidHlyby1sb2dpbi5sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1781170589);
+('Nqe20B1w5a85StyFYcabLVuYCJLlH71xfO9Ctms8', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRkJpc3N5Z0NrUEpRVWhCWGwzd0JRSGtrV3RPbHFYd2lVWGtPeXB0QyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYXNoYm9hcmQvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7czoyNToiYWRtaW4ubm90aWZpY2F0aW9ucy5jb3VudCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MTA6InR5cm8tbG9naW4iO2E6MTp7czo3OiJjYXB0Y2hhIjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1786865470);
 
 -- --------------------------------------------------------
 
@@ -4795,9 +4814,9 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 --
 
 CREATE TABLE `settings` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `key` varchar(255) NOT NULL,
-  `value` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4807,7 +4826,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
-(1, 'app_name', 'Insaf Immigration', '2026-02-16 03:20:28', '2026-05-11 16:44:52'),
+(1, 'app_name', 'Inoodex', '2026-02-16 03:20:28', '2026-07-06 03:45:27'),
 (2, 'contact_email', 'insafimmigration@gmail.com', '2026-02-16 03:20:28', '2026-05-11 16:45:43'),
 (3, 'contact_phone', '+8801880-942457', '2026-02-16 03:20:28', '2026-05-11 16:45:43'),
 (4, 'address', 'Haque Tower (Opposite of BRB Hospital), Floor - 6, Panthapath, Dhaka - 1205', '2026-02-16 03:20:28', '2026-05-11 16:45:43'),
@@ -4821,8 +4840,8 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
 (12, 'meta_title', NULL, '2026-02-16 03:20:28', '2026-02-16 03:20:28'),
 (13, 'meta_description', NULL, '2026-02-16 03:20:28', '2026-02-16 03:20:28'),
 (14, 'meta_keywords', NULL, '2026-02-16 03:20:28', '2026-02-16 03:20:28'),
-(15, 'app_logo', 'uploads/settings/PDx2nE4G3aFENBViu35ygW72xKjoZgRqJPCJlukI.png', '2026-02-17 22:37:17', '2026-05-11 16:44:52'),
-(16, 'app_favicon', 'uploads/settings/WedveqiFaGu7piKDoArFjou9iXOhfDn5LpzDLBzc.png', '2026-02-17 22:37:17', '2026-05-11 16:44:52');
+(15, 'app_logo', 'uploads/settings/flq2AR4SzZ5UBXie4BpmksYedGWIEBSHtiHy5YBR.png', '2026-02-17 22:37:17', '2026-07-06 03:45:27'),
+(16, 'app_favicon', 'uploads/settings/btplHIPZ0HIADphCqK52KXAWrpjZcnGAhwHjUrie.png', '2026-02-17 22:37:17', '2026-07-06 03:45:27');
 
 -- --------------------------------------------------------
 
@@ -4831,14 +4850,14 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
 --
 
 CREATE TABLE `social_accounts` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `provider` varchar(255) NOT NULL,
-  `provider_user_id` varchar(255) NOT NULL,
-  `provider_email` varchar(255) DEFAULT NULL,
-  `provider_avatar` varchar(255) DEFAULT NULL,
-  `access_token` text DEFAULT NULL,
-  `refresh_token` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `provider` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `provider_user_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `provider_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `provider_avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `access_token` text COLLATE utf8mb4_unicode_ci,
+  `refresh_token` text COLLATE utf8mb4_unicode_ci,
   `token_expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -4851,39 +4870,39 @@ CREATE TABLE `social_accounts` (
 --
 
 CREATE TABLE `students` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
-  `father_name` varchar(255) DEFAULT NULL,
-  `mother_name` varchar(255) DEFAULT NULL,
-  `passport_number` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `father_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mother_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `passport_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `passport_validity` date DEFAULT NULL,
-  `translation_documents` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`translation_documents`)),
-  `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `plain_password` varchar(255) DEFAULT NULL,
-  `phone` varchar(255) NOT NULL,
-  `sponsor_phone` varchar(255) DEFAULT NULL,
-  `address` text DEFAULT NULL,
+  `translation_documents` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `plain_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sponsor_phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci,
   `dob` date DEFAULT NULL,
-  `ssc_result` varchar(255) DEFAULT NULL,
-  `hsc_result` varchar(255) DEFAULT NULL,
-  `ielts_score` varchar(255) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
-  `country_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `university_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `course_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `course_intake_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `current_stage` enum('lead','counseling','payment','application','offer','visa','enrolled') DEFAULT NULL,
-  `current_status` enum('pending','applied','rejected','withdrawn','visa_processing','enrolled') DEFAULT NULL,
-  `assigned_marketing_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `assigned_consultant_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `assigned_application_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `documents` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`documents`)),
+  `ssc_result` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hsc_result` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ielts_score` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country_id` bigint UNSIGNED DEFAULT NULL,
+  `university_id` bigint UNSIGNED DEFAULT NULL,
+  `course_id` bigint UNSIGNED DEFAULT NULL,
+  `course_intake_id` bigint UNSIGNED DEFAULT NULL,
+  `current_stage` enum('lead','counseling','payment','application','offer','visa','enrolled') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `current_status` enum('pending','applied','rejected','withdrawn','visa_processing','enrolled') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `assigned_marketing_id` bigint UNSIGNED DEFAULT NULL,
+  `assigned_consultant_id` bigint UNSIGNED DEFAULT NULL,
+  `assigned_application_id` bigint UNSIGNED DEFAULT NULL,
+  `created_by` bigint UNSIGNED DEFAULT NULL,
+  `documents` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `students`
@@ -4904,11 +4923,11 @@ INSERT INTO `students` (`id`, `first_name`, `last_name`, `father_name`, `mother_
 --
 
 CREATE TABLE `taxes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `chart_of_account_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `chart_of_account_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `rate` decimal(5,2) NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -4920,16 +4939,16 @@ CREATE TABLE `taxes` (
 --
 
 CREATE TABLE `tyro_audit_logs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `event` varchar(255) NOT NULL,
-  `auditable_type` varchar(255) DEFAULT NULL,
-  `auditable_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `old_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`old_values`)),
-  `new_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`new_values`)),
-  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`metadata`)),
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `event` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `auditable_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `auditable_id` bigint UNSIGNED DEFAULT NULL,
+  `old_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `new_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ;
 
 --
 -- Dumping data for table `tyro_audit_logs`
@@ -5734,7 +5753,25 @@ INSERT INTO `tyro_audit_logs` (`id`, `user_id`, `event`, `auditable_type`, `audi
 (792, 13, 'user.login', 'App\\Models\\User', 13, NULL, '{\"email\":\"abdullahalvee404@gmail.com\"}', '{\"ip\":\"202.83.124.80\",\"user_agent\":\"Mozilla\\/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit\\/605.1.15 (KHTML, like Gecko) Version\\/26.5 Mobile\\/15E148 Safari\\/604.1\",\"is_console\":false}', '2026-06-11 05:31:08'),
 (793, 13, 'user.login', 'App\\Models\\User', 13, NULL, '{\"email\":\"abdullahalvee404@gmail.com\"}', '{\"ip\":\"202.83.124.80\",\"user_agent\":\"Mozilla\\/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit\\/605.1.15 (KHTML, like Gecko) Version\\/26.5 Mobile\\/15E148 Safari\\/604.1\",\"is_console\":false}', '2026-06-11 06:16:58'),
 (794, 12, 'user.login', 'App\\Models\\User', 12, NULL, '{\"email\":\"sharafatullahmohim@gmail.com\"}', '{\"ip\":\"202.83.124.80\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-11 07:42:06'),
-(795, 16, 'user.login', 'App\\Models\\User', 16, NULL, '{\"email\":\"emeliaareng90@gmail.com\"}', '{\"ip\":\"202.83.124.80\",\"user_agent\":\"Mozilla\\/5.0 (Linux; Android 10; K) AppleWebKit\\/537.36 (KHTML, like Gecko) SamsungBrowser\\/30.0 Chrome\\/143.0.0.0 Mobile Safari\\/537.36\",\"is_console\":false}', '2026-06-11 10:30:19');
+(795, 16, 'user.login', 'App\\Models\\User', 16, NULL, '{\"email\":\"emeliaareng90@gmail.com\"}', '{\"ip\":\"202.83.124.80\",\"user_agent\":\"Mozilla\\/5.0 (Linux; Android 10; K) AppleWebKit\\/537.36 (KHTML, like Gecko) SamsungBrowser\\/30.0 Chrome\\/143.0.0.0 Mobile Safari\\/537.36\",\"is_console\":false}', '2026-06-11 10:30:19'),
+(796, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-11 11:18:29'),
+(797, 1, 'user.logout', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-11 11:20:03'),
+(798, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-11 11:28:27'),
+(799, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-11 12:24:35'),
+(800, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-14 05:46:35'),
+(801, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-14 06:43:58'),
+(802, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/149.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-06-22 12:57:48'),
+(803, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:39:57'),
+(804, 1, 'user.logout', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:40:46'),
+(805, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:40:55'),
+(806, 1, 'user.logout', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:43:19'),
+(807, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:44:11'),
+(808, 1, 'user.logout', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:44:23'),
+(809, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:44:46'),
+(810, 1, 'user.logout', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 09:46:06'),
+(811, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/150.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-07-06 10:15:23'),
+(812, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/151.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-08-15 12:14:01'),
+(813, 1, 'user.login', 'App\\Models\\User', 1, NULL, '{\"email\":\"hello@inoodex.com\"}', '{\"ip\":\"127.0.0.1\",\"user_agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/151.0.0.0 Safari\\/537.36\",\"is_console\":false}', '2026-08-16 06:34:58');
 
 -- --------------------------------------------------------
 
@@ -5743,15 +5780,15 @@ INSERT INTO `tyro_audit_logs` (`id`, `user_id`, `event`, `auditable_type`, `audi
 --
 
 CREATE TABLE `universities` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `country_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `short_name` varchar(255) DEFAULT NULL,
-  `website` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(255) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `id` bigint UNSIGNED NOT NULL,
+  `country_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `short_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `website` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -5804,78 +5841,79 @@ INSERT INTO `universities` (`id`, `country_id`, `name`, `short_name`, `website`,
 --
 
 CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `designation` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `designation` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `two_factor_secret` text DEFAULT NULL,
-  `two_factor_recovery_codes` text DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `plain_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `two_factor_secret` text COLLATE utf8mb4_unicode_ci,
+  `two_factor_recovery_codes` text COLLATE utf8mb4_unicode_ci,
   `two_factor_confirmed_at` timestamp NULL DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `suspended_at` timestamp NULL DEFAULT NULL,
-  `suspension_reason` text DEFAULT NULL,
-  `profile_photo_path` varchar(2048) DEFAULT NULL,
-  `use_gravatar` tinyint(1) NOT NULL DEFAULT 0
+  `suspension_reason` text COLLATE utf8mb4_unicode_ci,
+  `profile_photo_path` varchar(2048) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `use_gravatar` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `username`, `designation`, `email_verified_at`, `password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `remember_token`, `created_at`, `updated_at`, `suspended_at`, `suspension_reason`, `profile_photo_path`, `use_gravatar`) VALUES
-(1, 'Inoodex', 'hello@inoodex.com', 'UID000001', NULL, NULL, '$2y$12$bZ9YAxTXRcahQbLiZ6d8q.cXUkxAbriZ.WtNmnNPrwcOA0PppnPJO', NULL, NULL, NULL, NULL, '2026-02-16 03:09:49', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
-(2, 'Marketing', 'marketing@example.com', 'UID000002', NULL, NULL, '$2y$12$ei9LSrLrIhng1FNUsEZztOnKxDIZ3stVVswIXvKK8Dvphk3pTs5BO', NULL, NULL, NULL, NULL, '2026-02-17 12:46:55', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
-(3, 'Consultant', 'consultant@example.com', 'UID000003', 'senior', NULL, '$2y$12$m3ZggFrGDw7maLPG1tU8DuKDOTSWUUeSzEFcW1fSfK7xCHJmwJTVW', NULL, NULL, NULL, NULL, '2026-02-17 12:49:33', '2026-05-11 16:46:07', NULL, NULL, NULL, 0),
-(4, 'Accountant', 'accountant@example.com', 'UID000004', NULL, NULL, '$2y$12$eF1/DUs.OmbYrUHoLL0Z.uO5HCJSsdaYSknKdu6Sl1tnYF.dhRC.G', NULL, NULL, NULL, NULL, '2026-02-17 23:01:58', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
-(5, 'Editor', 'editor@example.com', 'editor1', 'junior', NULL, '$2y$12$cmDPJgBl7B/V8acxTv3Ej.15/p9DkpiY/G/cSFL9j2iwTkKmbbjXW', NULL, NULL, NULL, NULL, '2026-02-18 02:45:29', '2026-05-11 16:46:20', NULL, NULL, NULL, 0),
-(6, 'Application', 'application@example.com', 'UID000006', 'senior', NULL, '$2y$12$vZrAn3nHsyH1FOtRvuBW4elSdagHiBA4YnoI2.QdnHkYqeI6MmL1e', NULL, NULL, NULL, NULL, '2026-02-18 22:39:12', '2026-05-10 23:15:44', NULL, NULL, NULL, 0),
-(7, 'Digital Marketing', 'digital_marketing@example.com', 'dm007', NULL, NULL, '$2y$12$fo/Cfa7sIDcLK6ytXcZD.uCVPwMxTVYzEGuUecSP.RctWeKBlIkqi', NULL, NULL, NULL, NULL, '2026-04-25 22:33:19', '2026-05-06 04:11:43', NULL, NULL, NULL, 0),
-(8, 'Abu Haider', 'abu221haider@gmail.com', '1213', NULL, NULL, '$2y$12$JurhMB6CMjYvzuoYrupjkO/wHejdXrwlOQdbOraotCOFw2HmHLZFW', NULL, NULL, NULL, 'wXB1VaSgdazMrEXcB5pORrzE39k1Wyk386Q3rVWrlEdY08tKF6gAdHOhMYz5', '2026-05-13 09:57:40', '2026-05-18 15:32:05', NULL, NULL, NULL, 0),
-(9, 'Mohammad Faisal', 'mdfoysal103545@gmail.com', '1203', NULL, NULL, '$2y$12$/sf73.XGRKyDmdNc/fPCnOJiGBMVly57lEjBUNf/at755nRc5fehm', NULL, NULL, NULL, 'y38UHYUqKe6NrhhlxoWWZrYKuIe87Vo9pey6Ft32sToBON6JpsW9y2u6Ir5G', '2026-05-13 10:19:56', '2026-05-13 10:19:56', NULL, NULL, NULL, 0),
-(10, 'Arif Hossain Nayan', 'nayanarifhossain@gmail.com', '1210', 'senior', NULL, '$2y$12$fNijc0aPPlEoBYNfsRDlVOuzgNGQRIKCrQ.WYFXwbspILhVx.VwIu', NULL, NULL, NULL, 'Cd68bwEiUHW9TysLoGSuwpUal3XNmcsqLglvWFFkg4XaHLvxrvh0s9CCjmOJ', '2026-05-13 10:45:50', '2026-05-18 15:13:33', NULL, NULL, NULL, 0),
-(11, 'Mosharaful Islam', 'mosharafulislam5490@gmail.com', '12012', NULL, NULL, '$2y$12$o37wSC5/qEjZpXF8crOLUuGcq/eYqP.7Rg0Ip13/4VVhFfsewAXlq', NULL, NULL, NULL, NULL, '2026-05-13 11:00:43', '2026-05-13 11:00:43', NULL, NULL, NULL, 0),
-(12, 'Sharafat Ullah Mohim', 'sharafatullahmohim@gmail.com', '1207', NULL, NULL, '$2y$12$FnoCJzXusXDhPf2sqgprb.hpOHml/fvCbktpSN3l2/6YUvhXV5RQa', NULL, NULL, NULL, 'biuvHRBkbJxmiEydTmEYrvtJ3VTzjO9y5Y1hYPWl4hJ49h6ZWg3NrurMvcJ9', '2026-05-13 11:49:46', '2026-05-17 09:13:12', NULL, NULL, NULL, 0),
-(13, 'Abdullah', 'abdullahalvee404@gmail.com', '1225', NULL, NULL, '$2y$12$NMFQRJ/JL2i0KWhPbC6jKuH8zWQsPLSBtoHYwplYnI2dHazShwOjO', NULL, NULL, NULL, 'pUtKBqQIQL4oDzujP9KOkuKu5FWzPU6xJONG1rXgXnLAIZKUDC1YYr81l2YI', '2026-05-13 11:58:40', '2026-06-10 16:06:35', NULL, NULL, NULL, 0),
-(14, 'Tanim', 'mdtanimalmahmud0198@gmail.com', '1247', 'junior', NULL, '$2y$12$hS9c8H3FAQDkRNUpcrTYbuxPd.zJa1cWh2I09EF.MS1PRFn9Yrt92', NULL, NULL, NULL, 'WlIjVPtzT3odETsk2togHvVD1pDMOPk5gTvvikp2wln3G34McYRdhXO56FgA', '2026-05-13 12:11:15', '2026-05-18 15:00:24', NULL, NULL, NULL, 0),
-(15, 'Chelsi Rema', 'chelsirema305@gmail.com', '1226', NULL, NULL, '$2y$12$KYsPj3PGABw7csQR3XoLpOdZgioQvWO3K56KCd2Bty.24/SzsoKR.', NULL, NULL, NULL, NULL, '2026-05-18 13:59:27', '2026-05-18 13:59:27', NULL, NULL, NULL, 0),
-(16, 'Emelia Ani Areng', 'emeliaareng90@gmail.com', '1227', NULL, NULL, '$2y$12$v74JZDXzUZHay1Wx5Wybq.q0WCFP7pDoZ0eK3Vj3J/8INcQLZod1K', NULL, NULL, NULL, 'CnbT008gGETkQbVKKibjmZf1oOKraTSOdno9HCCjaewSCJ0iyDv89qyQIEut', '2026-05-18 14:04:27', '2026-05-18 14:04:27', NULL, NULL, NULL, 0),
-(17, 'hira mony', 'hiramony422@gmail.com', '1231', NULL, NULL, '$2y$12$Y6Pger5MOZxL7GjjCSa8y.0kaeBS0/GXt0/q2NZ6M9JcZEx479r7C', NULL, NULL, NULL, NULL, '2026-05-18 14:08:40', '2026-05-18 14:08:40', NULL, NULL, NULL, 0),
-(18, 'Radmanul haque apon', 'aponhaque20@gmail.com', '1239', NULL, NULL, '$2y$12$BX8BikeAjmjwxGafB1witOe3wzkZS0rUs4xsYYjVCJZkYlmMeDQHG', NULL, NULL, NULL, 'r1UBYZ85hmzVelAq14Bz5TkSq7O88NJjge4LO5DR3ANQzXTjYyxCVP9a7ShH', '2026-05-18 14:11:42', '2026-05-18 14:11:42', NULL, NULL, NULL, 0),
-(19, 'Nur Alam (Shuvo)', 'shuvoalam246@gmail.com', '1235', NULL, NULL, '$2y$12$vv5Nj9dMP328NdyxKCAjM.7OhFwwpkD5SG8I4FB4aS6.Qzq4VoDTO', NULL, NULL, NULL, 'jVCvXYMXlYLmgnIw54gLUxQziaEKOY4fJ9EYu5r6aWdBLritt9srb5nvR6Hm', '2026-05-18 14:16:18', '2026-05-18 14:16:18', NULL, NULL, NULL, 0),
-(20, 'Mohammad Omar Sheikh', 'sonchoy154@gmail.com', '1238', NULL, NULL, '$2y$12$nIRKnk7Am0OC7IEaAesZ7ekPWVa25ubhm9HxRBJM1fgUxCCW82G7q', NULL, NULL, NULL, '9WHCvHbib1APrSP6SDnoGzMn55lna2r4POiEGC3bApgvXRWsJZ9svTEFs3t3', '2026-05-18 14:19:36', '2026-05-18 14:19:36', NULL, NULL, NULL, 0),
-(21, 'Md. Masud Rana', 'mr8874509@gmail.com', '1237', NULL, NULL, '$2y$12$XfL4Ao2H7ele8nRGRwsONeRRbSWlqtwpVMX8qKP3CXOFKuYAJWKbm', NULL, NULL, NULL, 'FquM3dh6gnP6m2DZUOlaqIkRxNp09F6vxFRmYdGFhywhhdnFvClpKQcHystC', '2026-05-18 14:22:20', '2026-05-18 14:22:20', NULL, NULL, NULL, 0),
-(22, 'saif rahman joy', 'saifrahman0808@gmail.com', '1248', NULL, NULL, '$2y$12$S5bHChlQ/Yl7bfIu4YMto.B2LKqTUVEE0YcXUh441wVJgATAlJvra', NULL, NULL, NULL, NULL, '2026-05-18 14:23:56', '2026-05-18 14:23:56', NULL, NULL, NULL, 0),
-(23, 'Hasnat Talukder', 'hasnattalukder02@gmail.com', '1240', NULL, NULL, '$2y$12$s9LyKblpNJEgdzYEQ0jEL..y8pufnr7Zkstz3CZxk2GXl3oyF8NmC', NULL, NULL, NULL, '6UBHjij5uJkRFGinrWHQIkWV0ZHZFMA1kEcK7QxX0wEZ7ISiJXmGeTX28s9O', '2026-05-18 14:26:01', '2026-05-18 14:26:01', NULL, NULL, NULL, 0),
-(24, 'Mashruf Hossain Rohan', 'rohan.gxd@gmail.com', '1234', NULL, NULL, '$2y$12$lyS8Bl1tliucRKSgMagFiutwrlmjnWDYRFyH8E7LsOrazCxlMlhTu', NULL, NULL, NULL, 'OcNu7XPx7MIMkTmI08mPAHKnKeDbrYAZAZAPYgOiQy7dDbxosdzh7MJIFz5w', '2026-05-18 14:27:23', '2026-05-18 14:27:23', NULL, NULL, NULL, 0),
-(25, 'Mumtahana Mamtaj Swanon', 'mumtahanaswapan@gmail.com', '1232', NULL, NULL, '$2y$12$0p8mMQZOy22a/kW4G.F6MuD64umvVmKGWplxuK12tXQ9mq2VfQZEy', NULL, NULL, NULL, 'f5eZY3nNeURXT00CGi3HMxysJeOI7jSjzejgdFpdlkCA1VEqDsE6jyPCENQn', '2026-05-18 14:31:50', '2026-05-18 14:31:50', NULL, NULL, NULL, 0),
-(26, 'MST SHIRAZAM MONIRA', 'monirasadika7744@gmail.com', '1244', NULL, NULL, '$2y$12$8JnWoqD6FbtJbUonpP7P6ONwk2LQmOU7YENYCm19..pDj4YyZYM0O', NULL, NULL, NULL, 'yzcTlWZ698u57M5IxHH5has82HXVokCJjQi4GjoZ7o9NEpXK8ekQbPrUr8M9', '2026-05-18 14:35:14', '2026-05-18 14:35:14', NULL, NULL, NULL, 0),
-(27, 'MD.MOSHAROF HOSSAIN BHUIYAN RONY', 'rony0158075@gmail.com', '1224', NULL, NULL, '$2y$12$qwev2CzDCBROJ1mEuiMUyOQ9TYdYkVA7Z5aUDBuDl6l88gog/jHL6', NULL, NULL, NULL, '2Zkz9npldikEFWLUIG1r9z8BGbj37PXdeb7vGyNpGALW4jnu3OsYYlaFXWBR', '2026-05-18 14:40:11', '2026-05-18 14:40:11', NULL, NULL, NULL, 0),
-(28, 'al amin hossain sakib', 'alaminhossainsakib7@gmail.com', '1246', NULL, NULL, '$2y$12$kz3hvDynFzRo553sVMEKsORm2clITZbyOANeb6FR95MJ//zSFVx8u', NULL, NULL, NULL, 'Unh4OwKp2TuuGolDt5mLieIgI1y3EHueeChyHXBiYpWaAh2RmLClz2Wg0TsE', '2026-05-18 14:46:00', '2026-05-18 14:46:00', NULL, NULL, NULL, 0),
-(29, 'mizanur rahman rohit', 'rohitmizanur@gmail.com', '1242', NULL, NULL, '$2y$12$piU19Q38oldXbq54V3J.FOOzZJhwA.8mzTppaBtyGco6f96MES1l.', NULL, NULL, NULL, 'fzA5YX5A0763CEeKpxvp5hIYKqw87WPz6TSibTOZvPVOPAevJq6KwESNorwF', '2026-05-18 14:48:09', '2026-05-18 15:01:11', NULL, NULL, NULL, 0),
-(30, 'Thengna Shrabonti Rema', 'thengnarema@gmail.com', '1243', NULL, NULL, '$2y$12$2xj2dTdWSkLlr4.o88ApQuUArtRj4SKYbxthgN7I5CRcMZkC3t/tW', NULL, NULL, NULL, 'SIYtHl6UkXJFFMsJu8vQlgxudFmHl3Fja1dxGJr7hApBjWkAPmq1tQo3EGPE', '2026-05-18 14:52:20', '2026-05-18 14:52:20', NULL, NULL, NULL, 0),
-(31, 'MD Abu Hurira', 'dm.abuhurira@gmail.com', '1249', NULL, NULL, '$2y$12$T.nrCLWVPFFqJQu9xJind.2cvOvZSDW.JCgQB43QdNamoEn2vunTS', NULL, NULL, NULL, 'QkMmzbJVyd3HEQNCPNXnEHltm8AwKud7kwLPbE5yBokOrsUEhUoJDRZhaCe5', '2026-05-18 15:09:29', '2026-05-18 15:09:29', NULL, NULL, NULL, 0),
-(32, 'syeda asia mim', 'marshiyameem@gmail.com', '1241', NULL, NULL, '$2y$12$wiyf7Qdu0p2hDsi0/R8hlOSaMBZ7p8pcVzYot5m..5fSLcHl.slLu', NULL, NULL, NULL, 'RN8r95r1bBDEvz7t3Tf1iItQLfHRsaEqLEeftcyCMbuMwfL8pfcrs4N1SGR4', '2026-05-18 15:12:47', '2026-05-18 15:12:47', NULL, NULL, NULL, 0),
-(33, 'Anta Tasnim Rafa', 'anta.tasnim.rafa@gmail.com', '12024', NULL, NULL, '$2y$12$OQWRBSn/nEoJ9UthHDsUyupxdNAUYeOgPGcaduRcX339zx3IorIjW', NULL, NULL, NULL, 'L2hbasbMYoimvfZRtirTUcmRnRMUkK4RGJn1dYiUSAvNWTGJy4e1kIJxOtfy', '2026-05-18 15:17:31', '2026-05-18 15:17:31', NULL, NULL, NULL, 0),
-(34, 'Rakesh Saha', 'rakesh.saha0090@gmail.com', '1251', NULL, NULL, '$2y$12$Kvq8lHRnD2pg935u5XP8QOXqanimvSbkspwZu9qmzzhvvSqVfudhy', NULL, NULL, NULL, 'twwvbkNKybt907VX6jnjMvqftFydyaAaq0xwurCSliHdRiY4POg82dQiotSu', '2026-05-18 15:19:08', '2026-05-18 15:19:08', NULL, NULL, NULL, 0),
-(35, 'Lutfur Kabir Rana', 'lutfurkabirrana@gmail.com', '1206', NULL, NULL, '$2y$12$qaEKMtqzU3synmjhAJAbRuejhVUPv06lOUpiuRCNXR5NoLoeVsGS.', NULL, NULL, NULL, 'xsKDS2vO0iGBZv1aRHvxwGkVQNkqXdGQhLJHJPbd9AnIRLyRDvXb9tcbaHo0', '2026-05-18 15:24:23', '2026-05-18 15:24:23', NULL, NULL, NULL, 0),
-(36, 'Fakhrun Nahar Poly', 'queenpoly03@gmail.com', '1250', NULL, NULL, '$2y$12$0dcIXsB0QHcZsus3ZgYojeSJPWvt4PErbioEH1oahYrIFYTovSE5C', NULL, NULL, NULL, NULL, '2026-05-18 15:27:23', '2026-05-18 15:27:23', NULL, NULL, NULL, 0),
-(37, 'Mahabub Hossain Alif', 'insafalif2025@gmail.com', '1218', NULL, NULL, '$2y$12$Bk35dMmw1L6NAat0p5WWcOYKWZJSzlaBfQf7jahtsvr5MgkHlM0I2', NULL, NULL, NULL, 'Br6nrukOI22DuyhNf5GJFK7YQIxncQfKHrli7HYWdieJ8QNrYJz9Qk53g0lg', '2026-05-18 15:30:23', '2026-06-04 12:12:33', NULL, NULL, NULL, 0),
-(38, 'Sakib Hasan', 'sakib15802@gmail.com', '1204', NULL, NULL, '$2y$12$olsZuZJGwqfN1HTiMe5tR.ev5reK/Rk9vPPueMTLRfVTirp3sMtli', NULL, NULL, NULL, NULL, '2026-05-18 15:39:48', '2026-05-18 15:39:48', NULL, NULL, NULL, 0),
-(39, 'Mainul Hasan', 'mhmoino99@gmail.com', '1208', NULL, NULL, '$2y$12$v5feN0NPgdq0oA8RwhetgOrwDnVmOa3UwnRQnbYAlGoFxa1mq9J.W', NULL, NULL, NULL, '4dPAL2eXDNX8O9l0xfvd1LzcLNcwVixpjiIeJ17MEnuj0pbzCPUpwFL2infd', '2026-05-18 15:41:30', '2026-05-18 15:41:30', NULL, NULL, NULL, 0),
-(40, 'Md Shohan', 'arifulshohan31@gmail.com', '1219', NULL, NULL, '$2y$12$edHGTUl8BgUDGkDuUNMcbOP5dWxgsuj3.qPDV0nfVGb5MDFCEEVRy', NULL, NULL, NULL, 'ZyKX96nGNFBiVqJcJpH1klaj8tYZsoqeLLzhGcnEbiCcuhIDo8bvWtRhjPnF', '2026-05-18 16:10:50', '2026-05-18 16:10:50', NULL, NULL, NULL, 0),
-(41, 'Sayeed Hasan', 'insafimmigrarion.malaysia@gmail.com', '1202', NULL, NULL, '$2y$12$OIa4xQwmnGA.yG2ek1m1uOxxRY9crX5qr4M/c5fGuWk8.nTn3M.Wi', NULL, NULL, NULL, NULL, '2026-05-18 16:46:38', '2026-05-18 16:47:12', NULL, NULL, NULL, 0),
-(42, 'SIJAN MIA', 'miasijan037@gmail.com', '1236', NULL, NULL, '$2y$12$rWqYbD9aTTA15yI8NkJcOesx00qiy9JWekY0ZlTTPtlg/KkNkS8B6', NULL, NULL, NULL, NULL, '2026-05-18 16:52:20', '2026-05-18 16:52:20', NULL, NULL, NULL, 0),
-(43, 'abdul alim shezan', 'aashezan8@gmail.com', '1211', NULL, NULL, '$2y$12$FLOREaZC0/TNfCHJhjEnAOth8YThT3qc0/oz5zWJYgcPTqZdySjv2', NULL, NULL, NULL, 'UDOb4UY5JngUnOeyl7EU58vKhqyRXqastTO9woJOa4bOG4K2liijHK4qlFxL', '2026-05-19 10:41:22', '2026-05-19 10:41:22', NULL, NULL, NULL, 0),
-(44, 'MD.Miraj Uddin', 'miraj44815@gmail.com', '1255', NULL, NULL, '$2y$12$pzXwSx.9PgoqPdFzjE1/FOe5vxhBFB8WiAJgN0KnNK8vSk4CHXbAu', NULL, NULL, NULL, NULL, '2026-05-20 14:13:17', '2026-05-20 14:13:50', NULL, NULL, NULL, 0),
-(45, 'Md.Mijanur Rohman', 'rahmanmiy26@gmail.com', '1254', NULL, NULL, '$2y$12$lcPMvy7rI7LSYACDuYxpQu2Q19wU81ckTzgP9JrgWjHZUuwDvcmkG', NULL, NULL, NULL, 'SXIJVX4yQkIEZLtrmkVdhieTo22r0sWaJNMrfCVZ54lwbe8Brg4uy6GxRKee', '2026-05-20 14:21:12', '2026-05-20 14:21:12', NULL, NULL, NULL, 0),
-(46, 'Insan Kamal Safat', 'iksafat924@gmail.com', '1205', 'senior', NULL, '$2y$12$aBQ/mWLtoCI1uEsesBCqSufLLux6/arp8Ujrt3W7uVGSxA17H980S', NULL, NULL, NULL, NULL, '2026-05-20 14:23:51', '2026-05-20 14:23:51', NULL, NULL, NULL, 0),
-(47, 'Chai Nu Prue Marma', 'chainuprue95@gmail.com', '1233', NULL, NULL, '$2y$12$ebNyOHdLqecrv302prO2E.l/6v8Gnixgl1/2Yw3EKmLucMv6FYms2', NULL, NULL, NULL, NULL, '2026-05-20 15:19:53', '2026-05-20 15:19:53', NULL, NULL, NULL, 0),
-(48, 'barsha saha', 'borshasaha2021@gmail.com', '1252', NULL, NULL, '$2y$12$WMYhJc3.gT1GAHMvx5HU0O5C6DXCml3erwm2zR3B67aHwG.TZb38a', NULL, NULL, NULL, 'XgnZMXzx4poIg2yE11WL1c3qj4dQyIG7qdquI1ZW92J57ernTKDfQNxILG30', '2026-05-21 11:22:53', '2026-05-21 11:22:53', NULL, NULL, NULL, 0);
+INSERT INTO `users` (`id`, `name`, `email`, `username`, `designation`, `email_verified_at`, `password`, `plain_password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `remember_token`, `created_at`, `updated_at`, `suspended_at`, `suspension_reason`, `profile_photo_path`, `use_gravatar`) VALUES
+(1, 'Inoodex', 'hello@inoodex.com', 'UID000001', NULL, NULL, '$2y$12$bZ9YAxTXRcahQbLiZ6d8q.cXUkxAbriZ.WtNmnNPrwcOA0PppnPJO', NULL, NULL, NULL, NULL, NULL, '2026-02-16 03:09:49', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
+(2, 'Marketing', 'marketing@example.com', 'UID000002', NULL, NULL, '$2y$12$ei9LSrLrIhng1FNUsEZztOnKxDIZ3stVVswIXvKK8Dvphk3pTs5BO', NULL, NULL, NULL, NULL, NULL, '2026-02-17 12:46:55', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
+(3, 'Consultant', 'consultant@example.com', 'UID000003', 'senior', NULL, '$2y$12$m3ZggFrGDw7maLPG1tU8DuKDOTSWUUeSzEFcW1fSfK7xCHJmwJTVW', NULL, NULL, NULL, NULL, NULL, '2026-02-17 12:49:33', '2026-05-11 16:46:07', NULL, NULL, NULL, 0),
+(4, 'Accountant', 'accountant@example.com', 'UID000004', NULL, NULL, '$2y$12$eF1/DUs.OmbYrUHoLL0Z.uO5HCJSsdaYSknKdu6Sl1tnYF.dhRC.G', NULL, NULL, NULL, NULL, NULL, '2026-02-17 23:01:58', '2026-04-30 01:11:07', NULL, NULL, NULL, 0),
+(5, 'Editor', 'editor@example.com', 'editor1', 'junior', NULL, '$2y$12$cmDPJgBl7B/V8acxTv3Ej.15/p9DkpiY/G/cSFL9j2iwTkKmbbjXW', NULL, NULL, NULL, NULL, NULL, '2026-02-18 02:45:29', '2026-05-11 16:46:20', NULL, NULL, NULL, 0),
+(6, 'Application', 'application@example.com', 'UID000006', 'senior', NULL, '$2y$12$vZrAn3nHsyH1FOtRvuBW4elSdagHiBA4YnoI2.QdnHkYqeI6MmL1e', NULL, NULL, NULL, NULL, NULL, '2026-02-18 22:39:12', '2026-05-10 23:15:44', NULL, NULL, NULL, 0),
+(7, 'Digital Marketing', 'digital_marketing@example.com', 'dm007', NULL, NULL, '$2y$12$fo/Cfa7sIDcLK6ytXcZD.uCVPwMxTVYzEGuUecSP.RctWeKBlIkqi', NULL, NULL, NULL, NULL, NULL, '2026-04-25 22:33:19', '2026-05-06 04:11:43', NULL, NULL, NULL, 0),
+(8, 'Abu Haider', 'abu221haider@gmail.com', '1213', NULL, NULL, '$2y$12$JurhMB6CMjYvzuoYrupjkO/wHejdXrwlOQdbOraotCOFw2HmHLZFW', NULL, NULL, NULL, NULL, 'wXB1VaSgdazMrEXcB5pORrzE39k1Wyk386Q3rVWrlEdY08tKF6gAdHOhMYz5', '2026-05-13 09:57:40', '2026-05-18 15:32:05', NULL, NULL, NULL, 0),
+(9, 'Mohammad Faisal', 'mdfoysal103545@gmail.com', '1203', NULL, NULL, '$2y$12$/sf73.XGRKyDmdNc/fPCnOJiGBMVly57lEjBUNf/at755nRc5fehm', NULL, NULL, NULL, NULL, 'y38UHYUqKe6NrhhlxoWWZrYKuIe87Vo9pey6Ft32sToBON6JpsW9y2u6Ir5G', '2026-05-13 10:19:56', '2026-05-13 10:19:56', NULL, NULL, NULL, 0),
+(10, 'Arif Hossain Nayan', 'nayanarifhossain@gmail.com', '1210', 'senior', NULL, '$2y$12$fNijc0aPPlEoBYNfsRDlVOuzgNGQRIKCrQ.WYFXwbspILhVx.VwIu', NULL, NULL, NULL, NULL, 'Cd68bwEiUHW9TysLoGSuwpUal3XNmcsqLglvWFFkg4XaHLvxrvh0s9CCjmOJ', '2026-05-13 10:45:50', '2026-05-18 15:13:33', NULL, NULL, NULL, 0),
+(11, 'Mosharaful Islam', 'mosharafulislam5490@gmail.com', '12012', NULL, NULL, '$2y$12$o37wSC5/qEjZpXF8crOLUuGcq/eYqP.7Rg0Ip13/4VVhFfsewAXlq', NULL, NULL, NULL, NULL, NULL, '2026-05-13 11:00:43', '2026-05-13 11:00:43', NULL, NULL, NULL, 0),
+(12, 'Sharafat Ullah Mohim', 'sharafatullahmohim@gmail.com', '1207', NULL, NULL, '$2y$12$FnoCJzXusXDhPf2sqgprb.hpOHml/fvCbktpSN3l2/6YUvhXV5RQa', NULL, NULL, NULL, NULL, 'biuvHRBkbJxmiEydTmEYrvtJ3VTzjO9y5Y1hYPWl4hJ49h6ZWg3NrurMvcJ9', '2026-05-13 11:49:46', '2026-05-17 09:13:12', NULL, NULL, NULL, 0),
+(13, 'Abdullah', 'abdullahalvee404@gmail.com', '1225', NULL, NULL, '$2y$12$NMFQRJ/JL2i0KWhPbC6jKuH8zWQsPLSBtoHYwplYnI2dHazShwOjO', NULL, NULL, NULL, NULL, 'pUtKBqQIQL4oDzujP9KOkuKu5FWzPU6xJONG1rXgXnLAIZKUDC1YYr81l2YI', '2026-05-13 11:58:40', '2026-06-10 16:06:35', NULL, NULL, NULL, 0),
+(14, 'Tanim', 'mdtanimalmahmud0198@gmail.com', '1247', 'junior', NULL, '$2y$12$hS9c8H3FAQDkRNUpcrTYbuxPd.zJa1cWh2I09EF.MS1PRFn9Yrt92', NULL, NULL, NULL, NULL, 'WlIjVPtzT3odETsk2togHvVD1pDMOPk5gTvvikp2wln3G34McYRdhXO56FgA', '2026-05-13 12:11:15', '2026-05-18 15:00:24', NULL, NULL, NULL, 0),
+(15, 'Chelsi Rema', 'chelsirema305@gmail.com', '1226', NULL, NULL, '$2y$12$KYsPj3PGABw7csQR3XoLpOdZgioQvWO3K56KCd2Bty.24/SzsoKR.', NULL, NULL, NULL, NULL, NULL, '2026-05-18 13:59:27', '2026-05-18 13:59:27', NULL, NULL, NULL, 0),
+(16, 'Emelia Ani Areng', 'emeliaareng90@gmail.com', '1227', NULL, NULL, '$2y$12$v74JZDXzUZHay1Wx5Wybq.q0WCFP7pDoZ0eK3Vj3J/8INcQLZod1K', NULL, NULL, NULL, NULL, 'CnbT008gGETkQbVKKibjmZf1oOKraTSOdno9HCCjaewSCJ0iyDv89qyQIEut', '2026-05-18 14:04:27', '2026-05-18 14:04:27', NULL, NULL, NULL, 0),
+(17, 'hira mony', 'hiramony422@gmail.com', '1231', NULL, NULL, '$2y$12$Y6Pger5MOZxL7GjjCSa8y.0kaeBS0/GXt0/q2NZ6M9JcZEx479r7C', NULL, NULL, NULL, NULL, NULL, '2026-05-18 14:08:40', '2026-05-18 14:08:40', NULL, NULL, NULL, 0),
+(18, 'Radmanul haque apon', 'aponhaque20@gmail.com', '1239', NULL, NULL, '$2y$12$BX8BikeAjmjwxGafB1witOe3wzkZS0rUs4xsYYjVCJZkYlmMeDQHG', NULL, NULL, NULL, NULL, 'r1UBYZ85hmzVelAq14Bz5TkSq7O88NJjge4LO5DR3ANQzXTjYyxCVP9a7ShH', '2026-05-18 14:11:42', '2026-05-18 14:11:42', NULL, NULL, NULL, 0),
+(19, 'Nur Alam (Shuvo)', 'shuvoalam246@gmail.com', '1235', NULL, NULL, '$2y$12$vv5Nj9dMP328NdyxKCAjM.7OhFwwpkD5SG8I4FB4aS6.Qzq4VoDTO', NULL, NULL, NULL, NULL, 'jVCvXYMXlYLmgnIw54gLUxQziaEKOY4fJ9EYu5r6aWdBLritt9srb5nvR6Hm', '2026-05-18 14:16:18', '2026-05-18 14:16:18', NULL, NULL, NULL, 0),
+(20, 'Mohammad Omar Sheikh', 'sonchoy154@gmail.com', '1238', NULL, NULL, '$2y$12$nIRKnk7Am0OC7IEaAesZ7ekPWVa25ubhm9HxRBJM1fgUxCCW82G7q', NULL, NULL, NULL, NULL, '9WHCvHbib1APrSP6SDnoGzMn55lna2r4POiEGC3bApgvXRWsJZ9svTEFs3t3', '2026-05-18 14:19:36', '2026-05-18 14:19:36', NULL, NULL, NULL, 0),
+(21, 'Md. Masud Rana', 'mr8874509@gmail.com', '1237', NULL, NULL, '$2y$12$XfL4Ao2H7ele8nRGRwsONeRRbSWlqtwpVMX8qKP3CXOFKuYAJWKbm', NULL, NULL, NULL, NULL, 'FquM3dh6gnP6m2DZUOlaqIkRxNp09F6vxFRmYdGFhywhhdnFvClpKQcHystC', '2026-05-18 14:22:20', '2026-05-18 14:22:20', NULL, NULL, NULL, 0),
+(22, 'saif rahman joy', 'saifrahman0808@gmail.com', '1248', NULL, NULL, '$2y$12$S5bHChlQ/Yl7bfIu4YMto.B2LKqTUVEE0YcXUh441wVJgATAlJvra', NULL, NULL, NULL, NULL, NULL, '2026-05-18 14:23:56', '2026-05-18 14:23:56', NULL, NULL, NULL, 0),
+(23, 'Hasnat Talukder', 'hasnattalukder02@gmail.com', '1240', NULL, NULL, '$2y$12$s9LyKblpNJEgdzYEQ0jEL..y8pufnr7Zkstz3CZxk2GXl3oyF8NmC', NULL, NULL, NULL, NULL, '6UBHjij5uJkRFGinrWHQIkWV0ZHZFMA1kEcK7QxX0wEZ7ISiJXmGeTX28s9O', '2026-05-18 14:26:01', '2026-05-18 14:26:01', NULL, NULL, NULL, 0),
+(24, 'Mashruf Hossain Rohan', 'rohan.gxd@gmail.com', '1234', NULL, NULL, '$2y$12$lyS8Bl1tliucRKSgMagFiutwrlmjnWDYRFyH8E7LsOrazCxlMlhTu', NULL, NULL, NULL, NULL, 'OcNu7XPx7MIMkTmI08mPAHKnKeDbrYAZAZAPYgOiQy7dDbxosdzh7MJIFz5w', '2026-05-18 14:27:23', '2026-05-18 14:27:23', NULL, NULL, NULL, 0),
+(25, 'Mumtahana Mamtaj Swanon', 'mumtahanaswapan@gmail.com', '1232', NULL, NULL, '$2y$12$0p8mMQZOy22a/kW4G.F6MuD64umvVmKGWplxuK12tXQ9mq2VfQZEy', NULL, NULL, NULL, NULL, 'f5eZY3nNeURXT00CGi3HMxysJeOI7jSjzejgdFpdlkCA1VEqDsE6jyPCENQn', '2026-05-18 14:31:50', '2026-05-18 14:31:50', NULL, NULL, NULL, 0),
+(26, 'MST SHIRAZAM MONIRA', 'monirasadika7744@gmail.com', '1244', NULL, NULL, '$2y$12$8JnWoqD6FbtJbUonpP7P6ONwk2LQmOU7YENYCm19..pDj4YyZYM0O', NULL, NULL, NULL, NULL, 'yzcTlWZ698u57M5IxHH5has82HXVokCJjQi4GjoZ7o9NEpXK8ekQbPrUr8M9', '2026-05-18 14:35:14', '2026-05-18 14:35:14', NULL, NULL, NULL, 0),
+(27, 'MD.MOSHAROF HOSSAIN BHUIYAN RONY', 'rony0158075@gmail.com', '1224', NULL, NULL, '$2y$12$qwev2CzDCBROJ1mEuiMUyOQ9TYdYkVA7Z5aUDBuDl6l88gog/jHL6', NULL, NULL, NULL, NULL, '2Zkz9npldikEFWLUIG1r9z8BGbj37PXdeb7vGyNpGALW4jnu3OsYYlaFXWBR', '2026-05-18 14:40:11', '2026-05-18 14:40:11', NULL, NULL, NULL, 0),
+(28, 'al amin hossain sakib', 'alaminhossainsakib7@gmail.com', '1246', NULL, NULL, '$2y$12$kz3hvDynFzRo553sVMEKsORm2clITZbyOANeb6FR95MJ//zSFVx8u', NULL, NULL, NULL, NULL, 'Unh4OwKp2TuuGolDt5mLieIgI1y3EHueeChyHXBiYpWaAh2RmLClz2Wg0TsE', '2026-05-18 14:46:00', '2026-05-18 14:46:00', NULL, NULL, NULL, 0),
+(29, 'mizanur rahman rohit', 'rohitmizanur@gmail.com', '1242', NULL, NULL, '$2y$12$piU19Q38oldXbq54V3J.FOOzZJhwA.8mzTppaBtyGco6f96MES1l.', NULL, NULL, NULL, NULL, 'fzA5YX5A0763CEeKpxvp5hIYKqw87WPz6TSibTOZvPVOPAevJq6KwESNorwF', '2026-05-18 14:48:09', '2026-05-18 15:01:11', NULL, NULL, NULL, 0),
+(30, 'Thengna Shrabonti Rema', 'thengnarema@gmail.com', '1243', NULL, NULL, '$2y$12$2xj2dTdWSkLlr4.o88ApQuUArtRj4SKYbxthgN7I5CRcMZkC3t/tW', NULL, NULL, NULL, NULL, 'SIYtHl6UkXJFFMsJu8vQlgxudFmHl3Fja1dxGJr7hApBjWkAPmq1tQo3EGPE', '2026-05-18 14:52:20', '2026-05-18 14:52:20', NULL, NULL, NULL, 0),
+(31, 'MD Abu Hurira', 'dm.abuhurira@gmail.com', '1249', NULL, NULL, '$2y$12$T.nrCLWVPFFqJQu9xJind.2cvOvZSDW.JCgQB43QdNamoEn2vunTS', NULL, NULL, NULL, NULL, 'QkMmzbJVyd3HEQNCPNXnEHltm8AwKud7kwLPbE5yBokOrsUEhUoJDRZhaCe5', '2026-05-18 15:09:29', '2026-05-18 15:09:29', NULL, NULL, NULL, 0),
+(32, 'syeda asia mim', 'marshiyameem@gmail.com', '1241', NULL, NULL, '$2y$12$wiyf7Qdu0p2hDsi0/R8hlOSaMBZ7p8pcVzYot5m..5fSLcHl.slLu', NULL, NULL, NULL, NULL, 'RN8r95r1bBDEvz7t3Tf1iItQLfHRsaEqLEeftcyCMbuMwfL8pfcrs4N1SGR4', '2026-05-18 15:12:47', '2026-05-18 15:12:47', NULL, NULL, NULL, 0),
+(33, 'Anta Tasnim Rafa', 'anta.tasnim.rafa@gmail.com', '12024', NULL, NULL, '$2y$12$OQWRBSn/nEoJ9UthHDsUyupxdNAUYeOgPGcaduRcX339zx3IorIjW', NULL, NULL, NULL, NULL, 'L2hbasbMYoimvfZRtirTUcmRnRMUkK4RGJn1dYiUSAvNWTGJy4e1kIJxOtfy', '2026-05-18 15:17:31', '2026-05-18 15:17:31', NULL, NULL, NULL, 0),
+(34, 'Rakesh Saha', 'rakesh.saha0090@gmail.com', '1251', NULL, NULL, '$2y$12$Kvq8lHRnD2pg935u5XP8QOXqanimvSbkspwZu9qmzzhvvSqVfudhy', NULL, NULL, NULL, NULL, 'twwvbkNKybt907VX6jnjMvqftFydyaAaq0xwurCSliHdRiY4POg82dQiotSu', '2026-05-18 15:19:08', '2026-05-18 15:19:08', NULL, NULL, NULL, 0),
+(35, 'Lutfur Kabir Rana', 'lutfurkabirrana@gmail.com', '1206', NULL, NULL, '$2y$12$qaEKMtqzU3synmjhAJAbRuejhVUPv06lOUpiuRCNXR5NoLoeVsGS.', NULL, NULL, NULL, NULL, 'xsKDS2vO0iGBZv1aRHvxwGkVQNkqXdGQhLJHJPbd9AnIRLyRDvXb9tcbaHo0', '2026-05-18 15:24:23', '2026-05-18 15:24:23', NULL, NULL, NULL, 0),
+(36, 'Fakhrun Nahar Poly', 'queenpoly03@gmail.com', '1250', NULL, NULL, '$2y$12$0dcIXsB0QHcZsus3ZgYojeSJPWvt4PErbioEH1oahYrIFYTovSE5C', NULL, NULL, NULL, NULL, NULL, '2026-05-18 15:27:23', '2026-05-18 15:27:23', NULL, NULL, NULL, 0),
+(37, 'Mahabub Hossain Alif', 'insafalif2025@gmail.com', '1218', NULL, NULL, '$2y$12$Bk35dMmw1L6NAat0p5WWcOYKWZJSzlaBfQf7jahtsvr5MgkHlM0I2', NULL, NULL, NULL, NULL, 'Br6nrukOI22DuyhNf5GJFK7YQIxncQfKHrli7HYWdieJ8QNrYJz9Qk53g0lg', '2026-05-18 15:30:23', '2026-06-04 12:12:33', NULL, NULL, NULL, 0),
+(38, 'Sakib Hasan', 'sakib15802@gmail.com', '1204', NULL, NULL, '$2y$12$olsZuZJGwqfN1HTiMe5tR.ev5reK/Rk9vPPueMTLRfVTirp3sMtli', NULL, NULL, NULL, NULL, NULL, '2026-05-18 15:39:48', '2026-05-18 15:39:48', NULL, NULL, NULL, 0),
+(39, 'Mainul Hasan', 'mhmoino99@gmail.com', '1208', NULL, NULL, '$2y$12$v5feN0NPgdq0oA8RwhetgOrwDnVmOa3UwnRQnbYAlGoFxa1mq9J.W', NULL, NULL, NULL, NULL, '4dPAL2eXDNX8O9l0xfvd1LzcLNcwVixpjiIeJ17MEnuj0pbzCPUpwFL2infd', '2026-05-18 15:41:30', '2026-05-18 15:41:30', NULL, NULL, NULL, 0),
+(40, 'Md Shohan', 'arifulshohan31@gmail.com', '1219', NULL, NULL, '$2y$12$edHGTUl8BgUDGkDuUNMcbOP5dWxgsuj3.qPDV0nfVGb5MDFCEEVRy', NULL, NULL, NULL, NULL, 'ZyKX96nGNFBiVqJcJpH1klaj8tYZsoqeLLzhGcnEbiCcuhIDo8bvWtRhjPnF', '2026-05-18 16:10:50', '2026-05-18 16:10:50', NULL, NULL, NULL, 0),
+(41, 'Sayeed Hasan', 'insafimmigrarion.malaysia@gmail.com', '1202', NULL, NULL, '$2y$12$OIa4xQwmnGA.yG2ek1m1uOxxRY9crX5qr4M/c5fGuWk8.nTn3M.Wi', NULL, NULL, NULL, NULL, NULL, '2026-05-18 16:46:38', '2026-05-18 16:47:12', NULL, NULL, NULL, 0),
+(42, 'SIJAN MIA', 'miasijan037@gmail.com', '1236', NULL, NULL, '$2y$12$rWqYbD9aTTA15yI8NkJcOesx00qiy9JWekY0ZlTTPtlg/KkNkS8B6', NULL, NULL, NULL, NULL, NULL, '2026-05-18 16:52:20', '2026-05-18 16:52:20', NULL, NULL, NULL, 0),
+(43, 'abdul alim shezan', 'aashezan8@gmail.com', '1211', NULL, NULL, '$2y$12$FLOREaZC0/TNfCHJhjEnAOth8YThT3qc0/oz5zWJYgcPTqZdySjv2', NULL, NULL, NULL, NULL, 'UDOb4UY5JngUnOeyl7EU58vKhqyRXqastTO9woJOa4bOG4K2liijHK4qlFxL', '2026-05-19 10:41:22', '2026-05-19 10:41:22', NULL, NULL, NULL, 0),
+(44, 'MD.Miraj Uddin', 'miraj44815@gmail.com', '1255', NULL, NULL, '$2y$12$pzXwSx.9PgoqPdFzjE1/FOe5vxhBFB8WiAJgN0KnNK8vSk4CHXbAu', NULL, NULL, NULL, NULL, NULL, '2026-05-20 14:13:17', '2026-05-20 14:13:50', NULL, NULL, NULL, 0),
+(45, 'Md.Mijanur Rohman', 'rahmanmiy26@gmail.com', '1254', NULL, NULL, '$2y$12$lcPMvy7rI7LSYACDuYxpQu2Q19wU81ckTzgP9JrgWjHZUuwDvcmkG', NULL, NULL, NULL, NULL, 'SXIJVX4yQkIEZLtrmkVdhieTo22r0sWaJNMrfCVZ54lwbe8Brg4uy6GxRKee', '2026-05-20 14:21:12', '2026-05-20 14:21:12', NULL, NULL, NULL, 0),
+(46, 'Insan Kamal Safat', 'iksafat924@gmail.com', '1205', 'senior', NULL, '$2y$12$aBQ/mWLtoCI1uEsesBCqSufLLux6/arp8Ujrt3W7uVGSxA17H980S', NULL, NULL, NULL, NULL, NULL, '2026-05-20 14:23:51', '2026-05-20 14:23:51', NULL, NULL, NULL, 0),
+(47, 'Chai Nu Prue Marma', 'chainuprue95@gmail.com', '1233', NULL, NULL, '$2y$12$ebNyOHdLqecrv302prO2E.l/6v8Gnixgl1/2Yw3EKmLucMv6FYms2', NULL, NULL, NULL, NULL, NULL, '2026-05-20 15:19:53', '2026-05-20 15:19:53', NULL, NULL, NULL, 0),
+(48, 'barsha saha', 'borshasaha2021@gmail.com', '1252', NULL, NULL, '$2y$12$WMYhJc3.gT1GAHMvx5HU0O5C6DXCml3erwm2zR3B67aHwG.TZb38a', NULL, NULL, NULL, NULL, 'XgnZMXzx4poIg2yE11WL1c3qj4dQyIG7qdquI1ZW92J57ernTKDfQNxILG30', '2026-05-21 11:22:53', '2026-05-21 11:22:53', NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -5884,9 +5922,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `username`, `designation`, `email_ve
 --
 
 CREATE TABLE `user_roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -5980,13 +6018,13 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `created_at`, `updated_at`
 --
 
 CREATE TABLE `vfs_checklists` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `application_id` bigint(20) UNSIGNED NOT NULL,
-  `checklist_item` varchar(255) NOT NULL,
-  `is_checked` tinyint(1) NOT NULL DEFAULT 0,
-  `checked_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `application_id` bigint UNSIGNED NOT NULL,
+  `checklist_item` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_checked` tinyint(1) NOT NULL DEFAULT '0',
+  `checked_by` bigint UNSIGNED DEFAULT NULL,
   `checked_at` timestamp NULL DEFAULT NULL,
-  `notes` text DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -6031,11 +6069,11 @@ INSERT INTO `vfs_checklists` (`id`, `application_id`, `checklist_item`, `is_chec
 --
 
 CREATE TABLE `vfs_checklist_templates` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `item_name` varchar(255) NOT NULL,
-  `country_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT 0,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `id` bigint UNSIGNED NOT NULL,
+  `item_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country_id` bigint UNSIGNED DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT '0',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -6481,259 +6519,259 @@ ALTER TABLE `vfs_checklist_templates`
 -- AUTO_INCREMENT for table `accounting_periods`
 --
 ALTER TABLE `accounting_periods`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `applications`
 --
 ALTER TABLE `applications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `bank_reconciliations`
 --
 ALTER TABLE `bank_reconciliations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `bank_reconciliation_items`
 --
 ALTER TABLE `bank_reconciliation_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `budgets`
 --
 ALTER TABLE `budgets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `chart_of_accounts`
 --
 ALTER TABLE `chart_of_accounts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `commissions`
 --
 ALTER TABLE `commissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `countries`
 --
 ALTER TABLE `countries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=354;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=354;
 
 --
 -- AUTO_INCREMENT for table `course_intakes`
 --
 ALTER TABLE `course_intakes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `currencies`
 --
 ALTER TABLE `currencies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invitation_links`
 --
 ALTER TABLE `invitation_links`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invitation_referrals`
 --
 ALTER TABLE `invitation_referrals`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `journal_entries`
 --
 ALTER TABLE `journal_entries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `journal_entry_items`
 --
 ALTER TABLE `journal_entry_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `leads`
 --
 ALTER TABLE `leads`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `marketing_campaigns`
 --
 ALTER TABLE `marketing_campaigns`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `marketing_documents`
 --
 ALTER TABLE `marketing_documents`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `marketing_posters`
 --
 ALTER TABLE `marketing_posters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `marketing_videos`
 --
 ALTER TABLE `marketing_videos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `office_accounts`
 --
 ALTER TABLE `office_accounts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `privileges`
 --
 ALTER TABLE `privileges`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `privilege_role`
 --
 ALTER TABLE `privilege_role`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `social_accounts`
 --
 ALTER TABLE `social_accounts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `taxes`
 --
 ALTER TABLE `taxes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tyro_audit_logs`
 --
 ALTER TABLE `tyro_audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=796;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `universities`
 --
 ALTER TABLE `universities`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `vfs_checklists`
 --
 ALTER TABLE `vfs_checklists`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
 
 --
 -- AUTO_INCREMENT for table `vfs_checklist_templates`
 --
 ALTER TABLE `vfs_checklist_templates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Constraints for dumped tables

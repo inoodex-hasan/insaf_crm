@@ -175,11 +175,11 @@
                         <hr class="border-white-light dark:border-[#1b2e4b]">
                         <div class="flex justify-between">
                             <span class="text-white-dark">Created At:</span>
-                            <span>{{ $lead->created_at->format('M d, Y H:i') }}</span>
+                            <span>{{ $lead->created_at->format('M d, Y') }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-white-dark">Last Updated:</span>
-                            <span>{{ $lead->updated_at->format('M d, Y H:i') }}</span>
+                            <span>{{ $lead->updated_at->format('M d, Y') }}</span>
                         </div>
                     </div>
                 </div>
