@@ -65,9 +65,8 @@ class LeadController extends Controller
             });
         }
 
-        // Order by latest follow-up date first (nulls last), then newest created
-        $leads = $query->orderByRaw('ISNULL(next_follow_up_at), next_follow_up_at DESC')
-            ->latest()
+        // Order by created date (newest first)
+        $leads = $query->latest()
             ->paginate(15)
             ->withQueryString();
 
