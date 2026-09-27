@@ -49,12 +49,32 @@ class LeadController extends Controller
             $query->where('created_by', $request->collected_by);
         }
 
-        // Filter by follow-up date range
-        if ($request->has('follow_up_from') && $request->follow_up_from != '') {
-            $query->whereDate('next_follow_up_at', '>=', $request->follow_up_from);
-        }
-        if ($request->has('follow_up_to') && $request->follow_up_to != '') {
-            $query->whereDate('next_follow_up_at', '<=', $request->follow_up_to);
+        // Date Range Filter (Created Date or Follow-up Date)
+        $dateType = in_array($request->input('date_type'), ['created_at', 'next_follow_up_at'])
+            ? $request->input('date_type')
+            : 'created_at';
+
+        if ($request->filled('from_date') || $request->filled('to_date')) {
+            if ($request->filled('from_date')) {
+                $query->whereDate($dateType, '>=', $request->from_date);
+            }
+            if ($request->filled('to_date')) {
+                $query->whereDate($dateType, '<=', $request->to_date);
+            }
+        } elseif ($request->filled('created_from') || $request->filled('created_to')) {
+            if ($request->filled('created_from')) {
+                $query->whereDate('created_at', '>=', $request->created_from);
+            }
+            if ($request->filled('created_to')) {
+                $query->whereDate('created_at', '<=', $request->created_to);
+            }
+        } elseif ($request->filled('follow_up_from') || $request->filled('follow_up_to')) {
+            if ($request->filled('follow_up_from')) {
+                $query->whereDate('next_follow_up_at', '>=', $request->follow_up_from);
+            }
+            if ($request->filled('follow_up_to')) {
+                $query->whereDate('next_follow_up_at', '<=', $request->follow_up_to);
+            }
         }
 
         // Search by name or phone
@@ -65,9 +85,14 @@ class LeadController extends Controller
             });
         }
 
-        // Order by created date (newest first)
-        $leads = $query->latest()
-            ->paginate(15)
+        // Dynamic Ordering
+        if ($request->filled('from_date') || $request->filled('created_from') || $request->filled('follow_up_from')) {
+            $query->orderBy($dateType, 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $leads = $query->paginate(15)
             ->withQueryString();
 
         $collectors = $canViewAllLeads

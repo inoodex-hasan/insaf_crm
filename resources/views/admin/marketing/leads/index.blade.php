@@ -41,7 +41,7 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <select name="source" class="form-select w-full md:w-auto" style="width: 100px;">
                         <option value="">Sources</option>
                         <option value="Phone" {{ request('source') == 'Phone' ? 'selected' : '' }}>Phone Call</option>
@@ -68,10 +68,14 @@
                             @endforeach
                         </select>
                     @endif -->
-                    <input type="date" name="follow_up_from" value="{{ request('follow_up_from') }}"
-                        class="form-input w-full md:w-40" placeholder="Follow-up From" title="Follow-up From" />
-                    <input type="date" name="follow_up_to" value="{{ request('follow_up_to') }}"
-                        class="form-input w-full md:w-40" placeholder="Follow-up To" title="Follow-up To" />
+                    <select name="date_type" class="form-select w-full md:w-auto" style="width: 140px;">
+                        <option value="created_at" {{ request('date_type', 'created_at') == 'created_at' ? 'selected' : '' }}>Created Date</option>
+                        <option value="next_follow_up_at" {{ request('date_type') == 'next_follow_up_at' ? 'selected' : '' }}>Follow-up Date</option>
+                    </select>
+                    <input type="date" name="from_date" value="{{ request('from_date', request('created_date', request('created_from', request('follow_up_from')))) }}"
+                        class="form-input w-full md:w-auto" style="width: 135px;" title="From Date" />
+                    <input type="date" name="to_date" value="{{ request('to_date', request('created_to', request('follow_up_to'))) }}"
+                        class="form-input w-full md:w-auto" style="width: 135px;" title="To Date" />
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('admin.marketing.leads.index') }}" class="btn btn-outline-danger">Reset</a>
                 </div>
