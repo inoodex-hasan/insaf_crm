@@ -296,4 +296,122 @@ public function downloadPdf(Application $application)
             'service_charge' => number_format($application->service_charge ?? 0, 2, '.', ''),
         ]);
     }
+
+    /**
+     * Country-wise & University-wise Student Applications Report
+     */
+    public function countryReport(Request $request)
+    {
+        $query = Application::with(['student', 'university.country', 'course', 'intake', 'creator']);
+
+        // Filter by Date Range (created_at)
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
+        // Filter by Country
+        if ($request->filled('country_id')) {
+            $query->whereHas('university', function ($q) use ($request) {
+                $q->where('country_id', $request->country_id);
+            });
+        }
+
+        // Filter by University
+        if ($request->filled('university_id')) {
+            $query->where('university_id', $request->university_id);
+        }
+
+        // Filter by Application Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by Visa Status
+        if ($request->filled('visa_status')) {
+            $query->where('visa_status', $request->visa_status);
+        }
+
+        // Search by student name, passport, application ID, or university name
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('application_id', 'like', "%{$search}%")
+                    ->orWhereHas('student', function ($sq) use ($search) {
+                        $sq->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('passport_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('university', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('short_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $applications = $query->latest()->get();
+
+        // High-level KPIs
+        $totalApplications = $applications->count();
+        $uniqueStudents = $applications->pluck('student_id')->filter()->unique()->count();
+
+        // Group by Country
+        $countryGroups = $applications->groupBy(function ($app) {
+            return $app->university && $app->university->country 
+                ? $app->university->country->name 
+                : 'Unassigned Country';
+        })->map(function ($countryApps, $countryName) use ($totalApplications) {
+            // Group by University under Country
+            $universityGroups = $countryApps->groupBy(function ($app) {
+                return $app->university ? $app->university->name : 'Unassigned University';
+            })->map(function ($uniApps, $uniName) {
+                $firstApp = $uniApps->first();
+                $university = $firstApp->university ?? null;
+
+                return [
+                    'university_id' => $university ? $university->id : null,
+                    'university_name' => $uniName,
+                    'short_name' => $university ? $university->short_name : null,
+                    'total_applications' => $uniApps->count(),
+                    'unique_students' => $uniApps->pluck('student_id')->filter()->unique()->count(),
+                    'pending_count' => $uniApps->where('status', 'pending')->count(),
+                    'approved_count' => $uniApps->where('status', 'approved')->count(),
+                    'offer_letter_count' => $uniApps->where('offer_letter_received', true)->count(),
+                    'visa_approved_count' => $uniApps->where('visa_status', 'approved')->count(),
+                    'applications' => $uniApps,
+                ];
+            })->sortByDesc('total_applications');
+
+            $firstApp = $countryApps->first();
+            $country = $firstApp->university->country ?? null;
+
+            return [
+                'country_id' => $country ? $country->id : null,
+                'country_name' => $countryName,
+                'total_applications' => $countryApps->count(),
+                'unique_students' => $countryApps->pluck('student_id')->filter()->unique()->count(),
+                'universities_count' => $universityGroups->count(),
+                'percentage' => $totalApplications > 0 ? round(($countryApps->count() / $totalApplications) * 100, 1) : 0,
+                'universities' => $universityGroups,
+            ];
+        })->sortByDesc('total_applications');
+
+        $totalCountries = $countryGroups->filter(fn($c) => $c['country_name'] !== 'Unassigned Country')->count();
+        $totalUniversities = $applications->pluck('university_id')->filter()->unique()->count();
+
+        // Filter dropdown lists
+        $filterCountries = Country::orderBy('name')->get(['id', 'name']);
+        $filterUniversities = University::orderBy('name')->get(['id', 'name', 'country_id']);
+
+        return view('admin.applications.country_report', compact(
+            'countryGroups',
+            'totalApplications',
+            'uniqueStudents',
+            'totalCountries',
+            'totalUniversities',
+            'filterCountries',
+            'filterUniversities'
+        ));
+    }
 }

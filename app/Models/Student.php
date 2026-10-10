@@ -37,6 +37,7 @@ class Student extends Model
         'course_id',
         'course_intake_id',
         'subject',
+        'package_amount',
         'created_by',
         'documents',
     ];
@@ -46,6 +47,7 @@ class Student extends Model
         'passport_validity' => 'date',
         'documents' => 'array',
         'translation_documents' => 'array',
+        'package_amount' => 'decimal:2',
     ];
 
     protected $appends = ['full_name'];

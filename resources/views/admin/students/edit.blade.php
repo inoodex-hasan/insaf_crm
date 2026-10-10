@@ -236,11 +236,18 @@
                     @error('course_intake_id') <span class="text-danger text-sm">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="form-group md:col-span-2">
+                <div class="form-group">
                     <label for="subject">Subject</label>
                     <input type="text" name="subject" id="subject" class="form-input"
                         value="{{ old('subject', $student->subject) }}" />
                     @error('subject') <span class="text-danger text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="package_amount">Package Amount (Optional)</label>
+                    <input type="number" step="0.01" min="0" name="package_amount" id="package_amount" class="form-input"
+                        placeholder="Enter package amount (e.g. 50000.00)" value="{{ old('package_amount', $student->package_amount) }}" />
+                    @error('package_amount') <span class="text-danger text-sm">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="form-group md:col-span-2">

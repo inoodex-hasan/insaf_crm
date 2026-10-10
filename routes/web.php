@@ -347,7 +347,7 @@ Route::prefix('dashboard/applications')->name('admin.applications.')->group(func
     Route::get('/{application}/download-pdf', [ApplicationController::class, 'downloadPdf'])->name('download-pdf')->middleware('can:*consultant|*application');
     Route::get('/{application}/invoice-data', [ApplicationController::class, 'invoiceData'])->name('invoice-data');
     // Route::get('/{application}/invoice', [ApplicationController::class, 'invoice'])->name('invoice')->middleware('can:*consultant|*application');
-    // Route::get('/invoices', [ApplicationController::class, 'invoiceIndex'])->name('invoice-index')->middleware('can:*consultant|*application');
+    Route::get('/country-report', [ApplicationController::class, 'countryReport'])->name('country-report')->middleware('can:*consultant|*application|*accountant');
     Route::get('/', [ApplicationController::class, 'index'])->name('index')->middleware('can:*consultant|*application|*accountant');
     Route::get('/create', [ApplicationController::class, 'create'])->name('create')->middleware('can:*application|*consultant');
     Route::post('/', [ApplicationController::class, 'store'])->name('store')->middleware('can:*application|*consultant');

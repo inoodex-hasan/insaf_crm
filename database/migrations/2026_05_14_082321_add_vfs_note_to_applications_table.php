@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->text('vfs_note')->nullable()->after('vfs_result');
-        });
+        if (!Schema::hasColumn('applications', 'vfs_note')) {
+            Schema::table('applications', function (Blueprint $table) {
+                $table->text('vfs_note')->nullable()->after('vfs_result');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('vfs_note');
-        });
+        if (Schema::hasColumn('applications', 'vfs_note')) {
+            Schema::table('applications', function (Blueprint $table) {
+                $table->dropColumn('vfs_note');
+            });
+        }
     }
 };

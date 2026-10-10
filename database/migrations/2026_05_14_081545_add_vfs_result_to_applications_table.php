@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->string('vfs_result')->default('pending')->after('vfs_appointment_date');
-        });
+        if (!Schema::hasColumn('applications', 'vfs_result')) {
+            Schema::table('applications', function (Blueprint $table) {
+                $table->string('vfs_result')->default('pending')->after('vfs_appointment_date');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('vfs_result');
-        });
+        if (Schema::hasColumn('applications', 'vfs_result')) {
+            Schema::table('applications', function (Blueprint $table) {
+                $table->dropColumn('vfs_result');
+            });
+        }
     }
 };

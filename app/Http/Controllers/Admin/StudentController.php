@@ -244,6 +244,7 @@ class StudentController extends Controller
             'hsc_result' => ['nullable', 'string', 'max:255'],
             'ielts_score' => ['nullable', 'string', 'max:255'],
             'subject' => ['nullable', 'string', 'max:255'],
+            'package_amount' => ['nullable', 'numeric', 'min:0'],
             'university_id' => ['nullable', 'exists:universities,id'],
             'course_id' => ['nullable', 'exists:courses,id'],
             'course_intake_id' => ['nullable', 'exists:course_intakes,id'],

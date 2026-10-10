@@ -312,6 +312,16 @@
                         <label class="text-white-dark mb-1">Intake</label>
                         <p class="font-semibold">{{ $student->intake->intake_name ?? '-' }}</p>
                     </div>
+                    <div>
+                        <label class="text-white-dark mb-1">Subject</label>
+                        <p class="font-semibold">{{ $student->subject ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-white-dark mb-1">Package Amount</label>
+                        <p class="font-semibold text-success">
+                            {{ $student->package_amount !== null ? 'BDT ' . number_format($student->package_amount, 2) : '-' }}
+                        </p>
+                    </div>
                 </div>
             </div>
 

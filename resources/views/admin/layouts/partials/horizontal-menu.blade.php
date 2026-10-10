@@ -415,6 +415,7 @@
                     @canany(['*consultant', '*application', '*accountant'])
                         <li><a href="{{ route('admin.applications.create') }}">Add Application</a></li>
                         <li><a href="{{ route('admin.applications.index') }}">Application List</a></li>
+                        <li><a href="{{ route('admin.applications.country-report') }}">Country-wise Report</a></li>
                     @endcanany
                 </ul>
             </li>

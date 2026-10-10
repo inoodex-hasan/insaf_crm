@@ -156,6 +156,10 @@
             <div class="detail-label">Subject:</div>
             <div class="detail-value">{{ $student->subject ?? 'N/A' }}</div>
         </div>
+        <div class="detail-row">
+            <div class="detail-label">Package Amount:</div>
+            <div class="detail-value">{{ $student->package_amount !== null ? 'BDT ' . number_format($student->package_amount, 2) : 'N/A' }}</div>
+        </div>
     </div>
 
     @if($student->documents && count($student->documents) > 0)

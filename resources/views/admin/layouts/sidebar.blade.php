@@ -220,6 +220,7 @@
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
                         <li><a href="{{ route('admin.applications.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Add Application</a></li>
                         <li><a href="{{ route('admin.applications.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Application List</a></li>
+                        <li><a href="{{ route('admin.applications.country-report') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Country-wise Report</a></li>
                     </ul>
                 </li>
 

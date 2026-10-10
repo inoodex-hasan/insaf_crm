@@ -252,6 +252,24 @@
                     @enderror
                 </div>
 
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" name="subject" id="subject" class="form-input"
+                        placeholder="Enter subject" value="{{ old('subject') }}" />
+                    @error('subject')
+                        <span class="text-danger text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="package_amount">Package Amount (Optional)</label>
+                    <input type="number" step="0.01" min="0" name="package_amount" id="package_amount" class="form-input"
+                        placeholder="Enter package amount (e.g. 50000.00)" value="{{ old('package_amount') }}" />
+                    @error('package_amount')
+                        <span class="text-danger text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 <div class="form-group md:col-span-2">
                     <label for="documents">Upload Documents</label>
                     <input type="file" name="documents[]" id="documents" class="form-input" multiple />
