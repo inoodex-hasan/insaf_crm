@@ -123,8 +123,7 @@
     </style>
 </head>
 @php
-    $bgPath = public_path('assets/images/Invoice_Insaf.jpeg');
-    $bgSrc = file_exists($bgPath) ? 'file:///' . str_replace('\\', '/', $bgPath) : null;
+    $bgSrc = get_invoice_bg_src();
 @endphp
 
 <body>

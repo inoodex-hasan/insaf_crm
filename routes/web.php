@@ -11,7 +11,7 @@ RateLimiter::for('login', function () {
 });
 
 Route::get('/', function () {
-    return redirect()->route('tyro-login.login');
+    return view('landing');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('tyro-dashboard.index');

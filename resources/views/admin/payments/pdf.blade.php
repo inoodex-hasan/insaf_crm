@@ -133,8 +133,7 @@
     </style>
 </head>
 @php
-    $bgPath = public_path('assets/images/Invoice_Insaf_02.jpg');
-    $bgSrc = file_exists($bgPath) ? 'file:///' . str_replace('\\', '/', $bgPath) : null;
+    $bgSrc = get_report_bg_src();
     $grandTotal = $payments->sum('amount');
     $paymentCount = $payments->count();
     $startDate = request('start_date');

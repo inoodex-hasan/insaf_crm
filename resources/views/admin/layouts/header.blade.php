@@ -5,7 +5,7 @@
             <div class="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
                 <a href="{{ route('tyro-dashboard.index') }}" class="main-logo flex shrink-0 items-center">
                     <img class="inline w-8 ltr:-ml-1 rtl:-mr-1"
-                        src="{{ get_setting('app_logo') ? asset('storage/' . get_setting('app_logo')) : asset('assets/images/logo.svg') }}"
+                        src="{{ (get_setting('app_logo') && file_exists(public_path('storage/' . get_setting('app_logo')))) ? asset('storage/' . get_setting('app_logo')) : asset('assets/images/logo.svg') }}"
                         alt="logo" />
                     <span
                         class="hidden align-middle text-2xl font-semibold transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">{{ get_setting('app_name', config('app.name')) }}</span>

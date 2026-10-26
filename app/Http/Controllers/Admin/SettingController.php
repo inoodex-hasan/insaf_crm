@@ -42,6 +42,10 @@ class SettingController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string|max:500',
+            'invoice_bg_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'report_bg_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'reset_invoice_bg' => 'nullable|boolean',
+            'reset_report_bg' => 'nullable|boolean',
         ]);
 
         $keys = [
@@ -81,6 +85,38 @@ class SettingController extends Controller
             $favicon = $request->file('app_favicon');
             $faviconPath = $favicon->store('uploads/settings', 'public');
             Setting::updateOrCreate(['key' => 'app_favicon'], ['value' => $faviconPath]);
+        }
+
+        // Handle Invoice Background Image
+        if ($request->boolean('reset_invoice_bg')) {
+            $currentInvoiceBg = Setting::where('key', 'invoice_bg_image')->value('value');
+            if ($currentInvoiceBg && Storage::disk('public')->exists($currentInvoiceBg)) {
+                Storage::disk('public')->delete($currentInvoiceBg);
+            }
+            Setting::updateOrCreate(['key' => 'invoice_bg_image'], ['value' => null]);
+        } elseif ($request->hasFile('invoice_bg_image')) {
+            $currentInvoiceBg = Setting::where('key', 'invoice_bg_image')->value('value');
+            if ($currentInvoiceBg && Storage::disk('public')->exists($currentInvoiceBg)) {
+                Storage::disk('public')->delete($currentInvoiceBg);
+            }
+            $invoiceBgPath = $request->file('invoice_bg_image')->store('uploads/settings', 'public');
+            Setting::updateOrCreate(['key' => 'invoice_bg_image'], ['value' => $invoiceBgPath]);
+        }
+
+        // Handle Report Background Image
+        if ($request->boolean('reset_report_bg')) {
+            $currentReportBg = Setting::where('key', 'report_bg_image')->value('value');
+            if ($currentReportBg && Storage::disk('public')->exists($currentReportBg)) {
+                Storage::disk('public')->delete($currentReportBg);
+            }
+            Setting::updateOrCreate(['key' => 'report_bg_image'], ['value' => null]);
+        } elseif ($request->hasFile('report_bg_image')) {
+            $currentReportBg = Setting::where('key', 'report_bg_image')->value('value');
+            if ($currentReportBg && Storage::disk('public')->exists($currentReportBg)) {
+                Storage::disk('public')->delete($currentReportBg);
+            }
+            $reportBgPath = $request->file('report_bg_image')->store('uploads/settings', 'public');
+            Setting::updateOrCreate(['key' => 'report_bg_image'], ['value' => $reportBgPath]);
         }
 
         return redirect()->back()->with('success', 'Settings updated successfully.');

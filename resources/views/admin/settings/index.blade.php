@@ -22,6 +22,11 @@
                                 :class="{ 'text-primary border-primary': activeTab === 'contact', 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'contact' }"
                                 class="inline-block p-4 border-b-2 border-transparent rounded-t-lg">Contact</a>
                         </li>
+                        <li class="mr-2">
+                            <a href="#" @click.prevent="activeTab = 'pdf_templates'"
+                                :class="{ 'text-primary border-primary': activeTab === 'pdf_templates', 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'pdf_templates' }"
+                                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg">PDF Backgrounds</a>
+                        </li>
                         {{-- <li class="mr-2">
                             <a href="#" @click.prevent="activeTab = 'social'"
                                 :class="{ 'text-primary border-primary': activeTab === 'social', 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'social' }"
@@ -95,6 +100,138 @@
                                 <div class="col-span-2">
                                     <label for="address">Address</label>
                                     <textarea id="address" name="address" rows="3" class="form-input">{{ $settings['address'] ?? '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF Backgrounds Tab -->
+                        <div x-show="activeTab === 'pdf_templates'" style="display: none;">
+                            <div style="background-color: rgba(67, 97, 238, 0.08); border-left: 4px solid #4361ee; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                                <p style="margin: 0; font-size: 13px; color: #4361ee; font-weight: 500;">
+                                    <i class="fas fa-info-circle" style="margin-right: 6px;"></i>
+                                    <strong>Recommended format:</strong> A4 portrait orientation (210mm &times; 297mm or 2480 &times; 3508 px at 300 DPI). Supported formats: JPG, PNG, WebP (Max 10MB).
+                                </p>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px;">
+                                <!-- 1. Invoice Background Card -->
+                                <div style="border: 1px solid #e0e6ed; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" class="dark:bg-[#1b2e4b] dark:border-gray-700">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid #f1f2f3;">
+                                        <div>
+                                            <h6 style="font-size: 16px; font-weight: 700; color: #4361ee; margin: 0;">Invoice Background</h6>
+                                            <span style="font-size: 12px; color: #888ea8;">Student Invoices &amp; Payment Receipts</span>
+                                        </div>
+                                        @if(!empty($settings['invoice_bg_image']))
+                                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7;">Custom Active</span>
+                                        @else
+                                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #f4f5f8; color: #515365; border: 1px solid #e0e6ed;">Default Template</span>
+                                        @endif
+                                    </div>
+
+                                    <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 16px;">
+                                        <!-- Thumbnail Column (Fixed Width 140px, A4 Aspect Ratio) -->
+                                        <div style="width: 140px; min-width: 140px; max-width: 140px; flex-shrink: 0;">
+                                            @php $invBg = get_invoice_bg_url(); @endphp
+                                            @if($invBg)
+                                                <div style="border: 1px solid #e0e6ed; border-radius: 6px; overflow: hidden; background: #fafafa; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
+                                                    <img src="{{ $invBg }}" alt="Invoice BG Preview" style="width: 100%; height: 198px; object-fit: cover; object-position: top; display: block;" />
+                                                    <a href="{{ $invBg }}" target="_blank" style="display: block; text-align: center; padding: 5px; background: #3b3f5c; color: #fff; font-size: 11px; text-decoration: none; font-weight: 500;">
+                                                        <i class="fas fa-external-link-alt" style="font-size: 10px; margin-right: 3px;"></i> View Full
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div style="width: 140px; height: 198px; border: 2px dashed #e0e6ed; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888ea8; background: #fafafa;">
+                                                    No Preview
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <!-- Controls Column -->
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div style="margin-bottom: 12px;">
+                                                <label for="invoice_bg_image" style="display: block; font-size: 12px; font-weight: 600; color: #3b3f5c; margin-bottom: 6px;" class="dark:text-white-light">
+                                                    Upload New Background
+                                                </label>
+                                                <input id="invoice_bg_image" type="file" name="invoice_bg_image" accept="image/jpeg,image/png,image/webp"
+                                                    class="form-input" style="font-size: 12px; padding: 6px 10px;" />
+                                            </div>
+
+                                            @if(!empty($settings['invoice_bg_image']))
+                                                <div style="margin-bottom: 12px; padding: 6px 10px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 4px;">
+                                                    <label style="display: flex; align-items: center; font-size: 12px; color: #e53e3e; cursor: pointer; margin: 0;">
+                                                        <input type="checkbox" name="reset_invoice_bg" value="1" style="margin-right: 6px;" />
+                                                        <span>Reset to system default background</span>
+                                                    </label>
+                                                </div>
+                                            @endif
+
+                                            <div style="font-size: 11px; color: #888ea8; line-height: 1.6; background: #f9fafb; padding: 8px 10px; border-radius: 4px; border: 1px solid #f1f2f3;" class="dark:bg-[#0e1726] dark:border-gray-800">
+                                                <div style="font-weight: 600; color: #515365; margin-bottom: 2px;" class="dark:text-gray-400">Used for:</div>
+                                                <div>&bull; Student Fee Invoices</div>
+                                                <div>&bull; Payment Collection Receipts</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Report Background Card -->
+                                <div style="border: 1px solid #e0e6ed; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" class="dark:bg-[#1b2e4b] dark:border-gray-700">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid #f1f2f3;">
+                                        <div>
+                                            <h6 style="font-size: 16px; font-weight: 700; color: #4361ee; margin: 0;">Report Background</h6>
+                                            <span style="font-size: 12px; color: #888ea8;">Financial Reports &amp; Office Statements</span>
+                                        </div>
+                                        @if(!empty($settings['report_bg_image']))
+                                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7;">Custom Active</span>
+                                        @else
+                                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #f4f5f8; color: #515365; border: 1px solid #e0e6ed;">Default Template</span>
+                                        @endif
+                                    </div>
+
+                                    <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 16px;">
+                                        <!-- Thumbnail Column (Fixed Width 140px, A4 Aspect Ratio) -->
+                                        <div style="width: 140px; min-width: 140px; max-width: 140px; flex-shrink: 0;">
+                                            @php $repBg = get_report_bg_url(); @endphp
+                                            @if($repBg)
+                                                <div style="border: 1px solid #e0e6ed; border-radius: 6px; overflow: hidden; background: #fafafa; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
+                                                    <img src="{{ $repBg }}" alt="Report BG Preview" style="width: 100%; height: 198px; object-fit: cover; object-position: top; display: block;" />
+                                                    <a href="{{ $repBg }}" target="_blank" style="display: block; text-align: center; padding: 5px; background: #3b3f5c; color: #fff; font-size: 11px; text-decoration: none; font-weight: 500;">
+                                                        <i class="fas fa-external-link-alt" style="font-size: 10px; margin-right: 3px;"></i> View Full
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div style="width: 140px; height: 198px; border: 2px dashed #e0e6ed; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888ea8; background: #fafafa;">
+                                                    No Preview
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <!-- Controls Column -->
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div style="margin-bottom: 12px;">
+                                                <label for="report_bg_image" style="display: block; font-size: 12px; font-weight: 600; color: #3b3f5c; margin-bottom: 6px;" class="dark:text-white-light">
+                                                    Upload New Background
+                                                </label>
+                                                <input id="report_bg_image" type="file" name="report_bg_image" accept="image/jpeg,image/png,image/webp"
+                                                    class="form-input" style="font-size: 12px; padding: 6px 10px;" />
+                                            </div>
+
+                                            @if(!empty($settings['report_bg_image']))
+                                                <div style="margin-bottom: 12px; padding: 6px 10px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 4px;">
+                                                    <label style="display: flex; align-items: center; font-size: 12px; color: #e53e3e; cursor: pointer; margin: 0;">
+                                                        <input type="checkbox" name="reset_report_bg" value="1" style="margin-right: 6px;" />
+                                                        <span>Reset to system default background</span>
+                                                    </label>
+                                                </div>
+                                            @endif
+
+                                            <div style="font-size: 11px; color: #888ea8; line-height: 1.6; background: #f9fafb; padding: 8px 10px; border-radius: 4px; border: 1px solid #f1f2f3;" class="dark:bg-[#0e1726] dark:border-gray-800">
+                                                <div style="font-weight: 600; color: #515365; margin-bottom: 2px;" class="dark:text-gray-400">Used for:</div>
+                                                <div>&bull; Balance Sheet &amp; Financial Summary</div>
+                                                <div>&bull; Expenses, Payments &amp; Journal Reports</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
