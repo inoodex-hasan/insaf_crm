@@ -38,6 +38,8 @@ class Student extends Model
         'course_intake_id',
         'subject',
         'package_amount',
+        'remarks',
+        'notes',
         'created_by',
         'documents',
     ];
@@ -105,5 +107,38 @@ class Student extends Model
     public function applications()
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function getTotalPaidAmountAttribute(): float
+    {
+        return (float) ($this->relationLoaded('payments') 
+            ? $this->payments->sum('amount') 
+            : $this->payments()->sum('amount'));
+    }
+
+    public function getDueBalanceAttribute(): float
+    {
+        $package = (float) ($this->package_amount ?? 0);
+        return max(0, $package - $this->total_paid_amount);
+    }
+
+    public static function getRemarksForCountry(?string $countryName, ?int $countryId = null): array
+    {
+        return CountryRemark::getRemarksForCountry($countryId, $countryName);
+    }
+
+    public function getAvailableRemarksAttribute(): array
+    {
+        return CountryRemark::getRemarksForCountry($this->country_id, $this->country?->name);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(StudentActivity::class)->latest();
+    }
+
+    public function logActivity(string $type, string $title, ?string $description = null, array $properties = []): StudentActivity
+    {
+        return StudentActivity::log($this->id, $type, $title, $description, $properties);
     }
 }

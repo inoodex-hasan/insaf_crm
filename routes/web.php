@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
-use App\Http\Controllers\Admin\{ApplicationController, CommissionController, CountryController, CourseController, CourseIntakeController, CurrencyController, DashboardController, LeadController, PaymentController, RoleController as LocalRoleController, SettingController, StudentController, UniversityController};
+use App\Http\Controllers\Admin\{ApplicationController, CommissionController, CountryController, CountryRemarkController, CourseController, CourseIntakeController, CurrencyController, DashboardController, LeadController, PaymentController, RoleController as LocalRoleController, SettingController, StudentController, UniversityController};
 
 // Rate limiter for login routes (5 attempts per minute per IP)
 RateLimiter::for('login', function () {
@@ -36,6 +36,15 @@ Route::prefix('dashboard/countries')->name('admin.countries.')->middleware('can:
     Route::get('{country}/edit', [CountryController::class, 'edit'])->name('edit');
     Route::put('{country}', [CountryController::class, 'update'])->name('update');
     Route::delete('{country}', [CountryController::class, 'destroy'])->name('destroy');
+});
+
+// Country Remarks Management (Dynamic Pipeline Milestones)
+Route::prefix('dashboard/country-remarks')->name('admin.country-remarks.')->middleware('can:*editor')->group(function () {
+    Route::get('/', [CountryRemarkController::class, 'index'])->name('index');
+    Route::post('/', [CountryRemarkController::class, 'store'])->name('store');
+    Route::put('{remark}', [CountryRemarkController::class, 'update'])->name('update');
+    Route::delete('{remark}', [CountryRemarkController::class, 'destroy'])->name('destroy');
+    Route::post('{remark}/toggle-status', [CountryRemarkController::class, 'toggleStatus'])->name('toggle-status');
 });
 
 // University Management
@@ -79,6 +88,15 @@ Route::prefix('dashboard/students')->name('admin.students.')->group(function () 
     Route::get('{student}/edit', [StudentController::class, 'edit'])->name('edit')->middleware('can:*consultant|*marketing');
     Route::put('{student}', [StudentController::class, 'update'])->name('update')->middleware('can:*consultant');
     Route::delete('{student}', [StudentController::class, 'destroy'])->name('destroy')->middleware('can:*consultant');
+    Route::post('{student}/activities', [App\Http\Controllers\Admin\StudentActivityController::class, 'store'])->name('activities.store')->middleware('can:*consultant|*application|*marketing');
+    Route::delete('{student}/activities/{activity}', [App\Http\Controllers\Admin\StudentActivityController::class, 'destroy'])->name('activities.destroy')->middleware('can:*consultant|*application|*marketing');
+});
+
+// Search Student Module
+Route::prefix('dashboard/search-student')->name('admin.student-search.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\StudentSearchController::class, 'index'])->name('index')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::post('{student}/quick-update', [App\Http\Controllers\Admin\StudentSearchController::class, 'updateRemarksNotes'])->name('quick-update')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::get('country-remarks', [App\Http\Controllers\Admin\StudentSearchController::class, 'getCountryRemarks'])->name('country-remarks');
 });
 
 // Payment Management

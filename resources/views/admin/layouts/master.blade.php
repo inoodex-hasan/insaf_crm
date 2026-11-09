@@ -28,6 +28,22 @@
         [x-cloak] {
             display: none !important;
         }
+
+        /* Fix for table action dropdowns: ensure active row always floats above subsequent rows */
+        table tbody tr:focus-within,
+        table tbody tr.dropdown-open,
+        table tbody tr:hover:has(.dropdown) {
+            position: relative !important;
+            z-index: 40 !important;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown ul {
+            z-index: 100 !important;
+        }
     </style>
 </head>
 

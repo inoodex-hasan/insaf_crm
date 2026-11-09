@@ -19,4 +19,9 @@ class Country extends Model
     {
         return $this->hasMany(University::class);
     }
+
+    public function remarks()
+    {
+        return $this->hasMany(CountryRemark::class)->ordered();
+    }
 }

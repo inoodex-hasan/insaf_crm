@@ -58,9 +58,37 @@
 
         Alpine.data("dropdown", (initialOpenState = false) => ({
             open: initialOpenState,
+            openUp: false,
+
+            init() {
+                this.$watch("open", (value) => {
+                    const tr = this.$el.closest("tr");
+                    if (tr) {
+                        if (value) {
+                            tr.classList.add("dropdown-open");
+                            tr.style.position = "relative";
+                            tr.style.zIndex = "50";
+                        } else {
+                            tr.classList.remove("dropdown-open");
+                            tr.style.position = "";
+                            tr.style.zIndex = "";
+                        }
+                    }
+                });
+            },
 
             toggle() {
                 this.open = !this.open;
+                if (this.open) {
+                    const rect = this.$el.getBoundingClientRect();
+                    this.openUp = (window.innerHeight - rect.bottom) < 190;
+                    const tr = this.$el.closest("tr");
+                    if (tr) {
+                        tr.classList.add("dropdown-open");
+                        tr.style.position = "relative";
+                        tr.style.zIndex = "50";
+                    }
+                }
             },
         }));
         Alpine.data("modal", (initialOpenState = false) => ({

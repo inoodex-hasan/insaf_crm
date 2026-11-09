@@ -84,6 +84,7 @@
                             <ul x-show="childOpen" x-collapse class="mt-1 space-y-1 rounded-md bg-white p-2 shadow-sm dark:bg-[#0e1726]">
                                 <li><a href="{{ route('admin.countries.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Add Country</a></li>
                                 <li><a href="{{ route('admin.countries.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Country List</a></li>
+                                <li><a href="{{ route('admin.country-remarks.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b] {{ request()->routeIs('admin.country-remarks.*') ? 'font-semibold text-primary' : '' }}">Country Remarks</a></li>
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
@@ -175,6 +176,22 @@
                     </a>
                 </li>
 
+                <!-- Search Student -->
+                @can('*consultant|*application|*marketing|*accountant')
+                <li class="nav-item">
+                    <a href="{{ route('admin.student-search.index') }}" class="group {{ request()->routeIs('admin.student-search.*') ? 'active' : '' }}">
+                        <div class="flex items-center">
+                            <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+                                <path d="M20 20L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M11 8V14M8 11H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                            <span class="px-3">Search Student</span>
+                        </div>
+                    </a>
+                </li>
+                @endcan
+
                 <!-- Consulting -->
                 <li class="nav-item" x-data="{ open: false }">
                     <a href="javascript:;" @click="open = !open" class="group">
@@ -194,6 +211,7 @@
                         </div>
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
+                        <li><a href="{{ route('admin.student-search.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] font-semibold text-primary">Search Student</a></li>
                         <li><a href="{{ route('admin.students.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Add Student</a></li>
                         <li><a href="{{ route('admin.students.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Student List</a></li>
                     </ul>

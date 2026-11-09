@@ -105,7 +105,7 @@ class StudentController extends Controller
     public function show(Student $student)
     {
 
-        $student->load(['marketingAssignee', 'consultantAssignee', 'applicationAssignee', 'creator', 'country', 'university', 'course', 'intake', 'applications.university', 'applications.course', 'applications.intake']);
+        $student->load(['marketingAssignee', 'consultantAssignee', 'applicationAssignee', 'creator', 'country', 'university', 'course', 'intake', 'applications.university', 'applications.course', 'applications.intake', 'payments', 'activities.user']);
 
         return view('admin.students.show', compact('student'));
     }

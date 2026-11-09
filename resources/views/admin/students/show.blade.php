@@ -444,6 +444,26 @@
                                 $student->current_status) }}</span>
                         </div>
                     </div>
+                    <div>
+                        <label class="text-white-dark mb-1">Milestone Remark</label>
+                        <div>
+                            @if($student->remarks)
+                                <span class="badge bg-primary/10 text-primary border border-primary/30 font-semibold text-sm py-1 px-2.5">
+                                    {{ $student->remarks }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400">No remark assigned</span>
+                            @endif
+                        </div>
+                    </div>
+                    @if($student->notes)
+                    <div>
+                        <label class="text-white-dark mb-1">Counselor Notes</label>
+                        <p class="text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#1b2e4b] p-2.5 rounded border border-gray-200 dark:border-gray-700 whitespace-pre-line">
+                            {{ $student->notes }}
+                        </p>
+                    </div>
+                    @endif
                     <hr class="border-white-light dark:border-[#1b2e4b] my-4">
                     <div>
                         <label class="text-white-dark mb-1">Marketing Assignee</label>
