@@ -44,6 +44,25 @@
         .dropdown ul {
             z-index: 100 !important;
         }
+
+        /* Ensure modals always cover the entire viewport including header and sidebar */
+        #modal-portal {
+            position: relative;
+            z-index: 99999 !important;
+        }
+
+        .modal-overlay-full {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            background-color: rgba(0, 0, 0, 0.6) !important;
+            overflow-y: auto !important;
+        }
     </style>
 </head>
 
@@ -129,6 +148,8 @@
         });
     </script>
     @endif
+    <!-- Global Modal Teleport Container (Covers entire screen including header and sidebar) -->
+    <div id="modal-portal"></div>
 </body>
 
 </html>

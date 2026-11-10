@@ -23,6 +23,7 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 project.md
+*.md
 insaf_backend.sql
 .qwen
 .qwen-agent

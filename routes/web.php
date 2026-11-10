@@ -99,6 +99,19 @@ Route::prefix('dashboard/search-student')->name('admin.student-search.')->middle
     Route::get('country-remarks', [App\Http\Controllers\Admin\StudentSearchController::class, 'getCountryRemarks'])->name('country-remarks');
 });
 
+// Learning Resource Module
+Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\LearningResourceController::class, 'index'])->name('index');
+    Route::put('templates/{template}', [App\Http\Controllers\Admin\LearningResourceController::class, 'updateTemplate'])->name('templates.update');
+    Route::get('templates/{template}/preview', [App\Http\Controllers\Admin\LearningResourceController::class, 'previewTemplate'])->name('templates.preview');
+    Route::get('templates/{template}/download-pdf', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadPdf'])->name('templates.download-pdf');
+    Route::get('templates/{template}/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadDocx'])->name('templates.download-docx');
+    Route::post('documents', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeDocument'])->name('documents.store');
+    Route::delete('documents/{resource}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyDocument'])->name('documents.destroy');
+    Route::post('interview-prep', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeInterviewPrep'])->name('interview-prep.store');
+    Route::delete('interview-prep/{resource}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyInterviewPrep'])->name('interview-prep.destroy');
+});
+
 // Payment Management
 Route::prefix('dashboard/payments')->name('admin.payments.')->group(function () {
     Route::get('/', [PaymentController::class, 'index'])->name('index')->middleware('can:*accountant');

@@ -12,11 +12,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Redirect marketing users to their leads page
-        if (auth()->check() && auth()->user()->hasRole('marketing')) {
-            return redirect()->route('admin.marketing.leads.index');
-        }
-
         // Redirect digital marketing users to campaigns page
         if (auth()->check() && auth()->user()->hasRole('digital-marketing')) {
             return redirect()->route('admin.marketing.campaigns.index');

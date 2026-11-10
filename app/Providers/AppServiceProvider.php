@@ -29,22 +29,43 @@ class AppServiceProvider extends ServiceProvider
 
         // echo "Booting AppServiceProvider\n";
         \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
-            // Super-admin bypass
-            if (method_exists($user, 'hasRole') && ($user->hasRole('super-admin') || $user->hasRole('admin'))) {
+            // Super-admin & admin bypass
+            if (method_exists($user, 'hasRole') && ($user->hasRole('super-admin') || $user->hasRole('admin') || $user->hasRole('superadmin'))) {
                 return true;
+            }
+
+            // Unified Operational Triad: strictly Consultant, Marketing, and Application roles have equal access
+            $triadRoles = ['consultant', 'marketing', 'application'];
+            $userHasTriadRole = false;
+            if (method_exists($user, 'hasRole')) {
+                foreach ($triadRoles as $r) {
+                    if ($user->hasRole($r)) {
+                        $userHasTriadRole = true;
+                        break;
+                    }
+                }
             }
 
             // Support multiple abilities/roles separated by pipe |
             $abilities = explode('|', $ability);
 
             foreach ($abilities as $singleAbility) {
+                $cleanAbility = ltrim($singleAbility, '*');
+
+                // If user is part of the operational triad, grant access to triad role checks
+                if ($userHasTriadRole) {
+                    if (in_array($cleanAbility, ['consultant', 'marketing', 'application', 'invoice'], true)) {
+                        return true;
+                    }
+                }
+
                 // Check if Tyro has this privilege
-                if (method_exists($user, 'hasPrivilege') && $user->hasPrivilege($singleAbility)) {
+                if (method_exists($user, 'hasPrivilege') && ($user->hasPrivilege($singleAbility) || $user->hasPrivilege($cleanAbility))) {
                     return true;
                 }
 
                 // Check if Tyro has this role (some checks might use role name as ability)
-                if (method_exists($user, 'hasRole') && $user->hasRole($singleAbility)) {
+                if (method_exists($user, 'hasRole') && ($user->hasRole($singleAbility) || $user->hasRole($cleanAbility))) {
                     return true;
                 }
             }

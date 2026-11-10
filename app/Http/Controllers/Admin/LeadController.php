@@ -97,7 +97,8 @@ class LeadController extends Controller
 
         $collectors = $canViewAllLeads
             ? User::whereHas('roles', function ($q) {
-                $q->where('name', 'marketing');
+                $q->whereIn('slug', ['marketing', 'consultant', 'application'])
+                  ->orWhereIn('name', ['Marketing', 'Consultant', 'Application']);
             })->orderBy('name')->get(['id', 'name'])
             : collect();
 
@@ -134,9 +135,10 @@ class LeadController extends Controller
 
         $lead = Lead::create($this->prepareLeadPayload($validated));
 
-        // Notify Consultants
+        // Notify Operational Team (Consultants, Marketing & Application)
         $consultants = User::whereHas('roles', function ($q) {
-            $q->where('name', 'like', '%consult%');
+            $q->whereIn('slug', ['consultant', 'marketing', 'application'])
+              ->orWhereIn('name', ['Consultant', 'Marketing', 'Application']);
         })->get();
 
         if ($consultants->count() > 0) {

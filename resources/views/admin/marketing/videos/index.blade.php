@@ -116,7 +116,7 @@
                             </tr>
 
                             <!-- Edit Modal -->
-                            <div id="edit-modal-{{ $video->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                            <div id="edit-modal-{{ $video->id }}" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
                                 <div class="panel w-full max-w-md">
                                     <h3 class="text-lg font-bold mb-4">Edit Video</h3>
                                     <form action="{{ route('admin.marketing.videos.update', $video) }}" method="POST">

@@ -111,9 +111,10 @@ class ApplicationController extends Controller
 
         $application = Application::create($validated);
 
-        // Notify Application Team
+        // Notify Application & Operational Team
         $applicationTeam = User::whereHas('roles', function ($q) {
-            $q->where('name', 'like', '%application%');
+            $q->whereIn('slug', ['application', 'consultant', 'marketing'])
+              ->orWhereIn('name', ['Application', 'Consultant', 'Marketing']);
         })->get();
 
         if ($applicationTeam->count() > 0) {

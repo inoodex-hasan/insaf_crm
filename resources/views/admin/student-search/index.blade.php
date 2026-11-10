@@ -351,10 +351,10 @@
     </div>
 
     <!-- Notes Modal -->
-    <template x-teleport="body">
+    <template x-teleport="#modal-portal">
         <div x-cloak
             x-show="isNotesModalOpen"
-            class="fixed inset-0 z-[9999] overflow-y-auto bg-black/60"
+            class="modal-overlay-full"
             style="display: none;">
             <div class="flex min-h-screen items-center justify-center px-4 py-8">
                 <div @click.away="isNotesModalOpen = false"

@@ -42,7 +42,8 @@ class StudentController extends Controller
     public function create(Request $request)
     {
         $users = User::whereHas('roles', function ($q) {
-            $q->where('name', 'marketing');
+            $q->whereIn('slug', ['marketing', 'consultant', 'application'])
+              ->orWhereIn('name', ['Marketing', 'Consultant', 'Application']);
         })->orderBy('name')->get(['id', 'name']);
         $countries = Country::orderBy('name')->get(['id', 'name']);
         $universities = University::where('status', '1')->orderBy('name')->get(['id', 'name', 'country_id']);
@@ -131,7 +132,8 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         $users = User::whereHas('roles', function ($q) {
-            $q->where('name', 'marketing');
+            $q->whereIn('slug', ['marketing', 'consultant', 'application'])
+              ->orWhereIn('name', ['Marketing', 'Consultant', 'Application']);
         })->orderBy('name')->get(['id', 'name']);
         $countries = Country::orderBy('name')->get(['id', 'name']);
         $universities = University::where('status', '1')->orderBy('name')->get(['id', 'name', 'country_id']);
