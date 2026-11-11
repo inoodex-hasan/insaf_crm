@@ -8,11 +8,9 @@ use App\Models\{Course, University};
 
 class CourseController extends Controller
 {
-
     public function index(Request $request)
     {
-
-        $query = Course::with('university');
+        $query = Course::query()->with('university.country');
 
         if ($search = $request->get('search')) {
             $query->where('name', 'like', "%{$search}%");
@@ -20,6 +18,14 @@ class CourseController extends Controller
 
         if ($universityId = $request->get('university_id')) {
             $query->where('university_id', $universityId);
+        }
+
+        if ($studyArea = $request->get('study_area')) {
+            $query->where('study_area', $studyArea);
+        }
+
+        if ($programLevel = $request->get('program_level')) {
+            $query->where('program_level', $programLevel);
         }
 
         $courses = $query->latest()->paginate(15)->withQueryString();
@@ -31,14 +37,20 @@ class CourseController extends Controller
     public function create()
     {
         $universities = University::where('status', 1)->orderBy('name')->get();
+        $programLevels = Course::getProgramLevels();
+        $requirementsList = Course::getRequirementsList();
+        
+        $existingStudyAreas = Course::whereNotNull('study_area')->distinct()->pluck('study_area');
+        $studyAreas = collect(Course::COMMON_STUDY_AREAS)->merge($existingStudyAreas)->filter()->unique()->sort()->values();
 
-        return view('admin.courses.create', compact('universities'));
+        return view('admin.courses.create', compact('universities', 'programLevels', 'requirementsList', 'studyAreas'));
     }
 
     public function store(Request $request)
     {
-
         $validated = $this->validateCourse($request);
+        $validated['esl_available'] = $request->boolean('esl_available');
+        $validated['stem_program'] = $request->boolean('stem_program');
 
         Course::create($validated);
 
@@ -49,22 +61,30 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
-        $course->load('university');
+        $course->load('university.country', 'intakes');
         return view('admin.courses.show', compact('course'));
     }
 
     public function edit(Course $course)
     {
-
         $universities = University::where('status', 1)->orderBy('name')->get();
+        $programLevels = Course::getProgramLevels();
+        $requirementsList = Course::getRequirementsList();
 
-        return view('admin.courses.edit', compact('course', 'universities'));
+        $existingStudyAreas = Course::whereNotNull('study_area')->distinct()->pluck('study_area');
+        $studyAreas = collect(Course::COMMON_STUDY_AREAS)->merge($existingStudyAreas)->filter()->unique()->sort()->values();
+
+        return view('admin.courses.edit', compact('course', 'universities', 'programLevels', 'requirementsList', 'studyAreas'));
     }
 
     public function update(Request $request, Course $course)
     {
-
         $validated = $this->validateCourse($request);
+        $validated['esl_available'] = $request->boolean('esl_available');
+        $validated['stem_program'] = $request->boolean('stem_program');
+        $validated['requirements'] = $request->input('requirements', []);
+        $validated['available_intake_months'] = $request->input('available_intake_months', []);
+        $validated['intake_years'] = $request->input('intake_years', []);
 
         $course->update($validated);
 
@@ -85,8 +105,18 @@ class CourseController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'degree_level' => ['nullable', 'string', 'max:100'],
+            'program_level' => ['nullable', 'string', 'max:50'],
+            'study_area' => ['nullable', 'string', 'max:255'],
+            'discipline_area' => ['nullable', 'string', 'max:255'],
             'duration' => ['nullable', 'string', 'max:100'],
+            'duration_type' => ['nullable', 'string', 'max:50'],
             'tuition_fee' => ['nullable', 'numeric'],
+            'currency' => ['nullable', 'string', 'max:10'],
+            'requirements' => ['nullable', 'array'],
+            'available_intake_months' => ['nullable', 'array'],
+            'intake_years' => ['nullable', 'array'],
+            'esl_available' => ['nullable', 'boolean'],
+            'stem_program' => ['nullable', 'boolean'],
             'status' => ['required', 'boolean'],
         ]);
     }

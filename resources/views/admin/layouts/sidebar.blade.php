@@ -29,11 +29,27 @@
 <nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-[100vh] w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ltr:left-0 rtl:right-0 dark:bg-[#0e1726] dark:text-white-dark"
     :class="$store.app.sidebar ? 'translate-x-0' : '-translate-x-full ltr:ml-[-260px] rtl:mr-[-260px]'">
     <div class="flex h-full flex-col bg-white dark:bg-[#0e1726]">
-        <div class="flex items-center justify-between px-4 py-3">
+        <div class="sidebar-header flex items-center justify-between px-4 py-3">
             <a href="{{ route('tyro-dashboard.index') }}" class="main-logo flex shrink-0 items-center">
                 <img class="ml-[5px] w-8 flex-none" src="{{ get_setting('app_logo') ? asset('storage/' . get_setting('app_logo')) : asset('assets/images/logo.svg') }}" alt="Logo" />
-                <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">{{ get_setting('app_name', config('app.name')) }}</span>
+                <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">Dashboard</span>
             </a>
+
+            <!-- Desktop Pin / Stick Toggle Button -->
+            <button type="button"
+                    class="sidebar-pin-btn hidden lg:flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-gray-500/10 dark:text-white-light dark:hover:bg-dark-light/10 shrink-0"
+                    :class="$store.app.sidebarPinned ? 'text-primary' : 'text-gray-400 hover:text-primary'"
+                    @click="$store.app.toggleSidebarPin()"
+                    :title="$store.app.sidebarPinned ? 'Unpin Sidebar (Mini Hover Mode)' : 'Pin Sidebar (Stick Full)'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                     class="transition-transform duration-300"
+                     :class="$store.app.sidebarPinned ? 'rotate-0' : '-rotate-45 opacity-70'">
+                    <line x1="12" y1="17" x2="12" y2="22"></line>
+                    <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0 0 2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z" :fill="$store.app.sidebarPinned ? 'currentColor' : 'none'"></path>
+                </svg>
+            </button>
+
+            <!-- Mobile Close Button -->
             <button type="button" class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10 lg:hidden" @click="$store.app.toggleSidebar()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="m-auto h-5 w-5">
                     <path d="M11 17L6 12L11 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -107,8 +123,10 @@
                                 </svg>
                             </a>
                             <ul x-show="childOpen" x-collapse class="mt-1 space-y-1 rounded-md bg-white p-2 shadow-sm dark:bg-[#0e1726]">
+                                <li><a href="{{ route('admin.search-program.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b] text-primary font-semibold">Search Programs</a></li>
                                 <li><a href="{{ route('admin.courses.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Add Course</a></li>
                                 <li><a href="{{ route('admin.courses.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Course List</a></li>
+                                <li><a href="{{ route('admin.program-settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Program Settings</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -191,6 +209,21 @@
                     </a>
                 </li>
                 @endcan
+
+                <!-- Search Program -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.search-program.index') }}" class="group {{ request()->routeIs('admin.search-program.*') ? 'active' : '' }}">
+                        <div class="flex items-center">
+                            <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                                <path d="m14.5 12.5 2.5 2.5"/>
+                            </svg>
+                            <span class="px-3">Search Program</span>
+                        </div>
+                    </a>
+                </li>
 
                 <!-- Learning Resources -->
                 <li class="nav-item">
@@ -558,6 +591,7 @@
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
                         <li><a href="{{ route('admin.settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Settings</a></li>
+                        <li><a href="{{ route('admin.program-settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Program Taxonomies</a></li>
                     </ul>
                 </li>
             </ul>

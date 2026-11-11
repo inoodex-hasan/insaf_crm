@@ -31,3 +31,5 @@ insaf_backend.sql
 .qwen-agent.md
 .sql
 .bladeformatterrc.json
+__pycache__/
+*.pyc

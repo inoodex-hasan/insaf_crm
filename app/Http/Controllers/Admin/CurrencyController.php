@@ -25,8 +25,7 @@ class CurrencyController extends Controller
 
     public function create()
     {
-
-        return view('admin.currencies.create');
+        return redirect()->route('admin.currencies.index');
     }
 
     public function store(Request $request)
@@ -48,8 +47,7 @@ class CurrencyController extends Controller
 
     public function edit(Currency $currency)
     {
-
-        return view('admin.currencies.edit', compact('currency'));
+        return redirect()->route('admin.currencies.index');
     }
 
     public function update(Request $request, Currency $currency)

@@ -163,7 +163,7 @@
                                     </div>
                                     @if($otherClaim->review_notes)
                                         <div class="text-sm text-gray-500 mt-1">
-                                            <span class="text-gray-400">Note:</span> {{ Str::limit($otherClaim->review_notes, 50) }}
+                                            <span class="text-gray-400">Note:</span> {{ \Illuminate\Support\Str::limit($otherClaim->review_notes, 50) }}
                                         </div>
                                     @endif
                                 </div>

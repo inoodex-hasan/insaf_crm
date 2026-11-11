@@ -51,18 +51,7 @@ class ChartOfAccountController extends Controller
      */
     public function edit(ChartOfAccount $account)
     {
-        // Get all accounts except this one and its children (to prevent circular reference)
-        $parentAccounts = ChartOfAccount::where('id', '!=', $account->id)
-            ->orderBy('name')
-            ->get();
-
-        $accounts = ChartOfAccount::with('children')
-            ->whereNull('parent_id')
-            ->orderBy('type')
-            ->orderBy('code')
-            ->get();
-
-        return view('admin.accounts.chart-of-accounts.edit', compact('account', 'parentAccounts', 'accounts'));
+        return redirect()->route('admin.chart-of-accounts.index');
     }
 
     /**

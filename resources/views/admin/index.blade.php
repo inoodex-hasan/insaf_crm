@@ -1381,7 +1381,7 @@
                                         alt="image" class="h-5 w-5 rounded-full object-cover" />
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                    class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark ltr:-right-14 rtl:-left-14 dark:text-white-dark dark:text-white-light/90 sm:ltr:-right-2 sm:rtl:-left-2">
+                                    :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="top-11 grid w-[280px] grid-cols-2 gap-y-2 !px-2 font-semibold text-dark ltr:-right-14 rtl:-left-14 dark:text-white-dark dark:text-white-light/90 sm:ltr:-right-2 sm:rtl:-left-2">
                                     <template x-for="item in languages">
                                         <li>
                                             <a href="javascript:;" class="hover:text-primary"
@@ -1413,7 +1413,7 @@
                                     </svg>
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                    class="top-11 w-[300px] !py-0 text-xs text-dark ltr:-right-16 rtl:-left-16 dark:text-white-dark sm:w-[375px] sm:ltr:-right-2 sm:rtl:-left-2">
+                                    :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="top-11 w-[300px] !py-0 text-xs text-dark ltr:-right-16 rtl:-left-16 dark:text-white-dark sm:w-[375px] sm:ltr:-right-2 sm:rtl:-left-2">
                                     <li class="mb-5">
                                         <div class="relative overflow-hidden rounded-t-md !p-5 text-white">
                                             <div
@@ -1512,7 +1512,7 @@
                                     </span>
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                    class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
+                                    :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="top-11 w-[300px] divide-y !py-0 text-dark ltr:-right-2 rtl:-left-2 dark:divide-white/10 dark:text-white-dark sm:w-[350px]">
                                     <li>
                                         <div
                                             class="flex items-center justify-between px-4 py-2 font-semibold hover:!bg-transparent">
@@ -1597,7 +1597,7 @@
                                             src="{{ asset('assets/images/user-profile.jpg') }}" alt="image" /></span>
                                 </a>
                                 <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                    class="top-11 w-[230px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90">
+                                    :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="top-11 w-[230px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90">
                                     <li>
                                         <div class="flex items-center px-4 py-4">
                                             <div class="flex-none">
@@ -2379,7 +2379,7 @@
                                             </svg>
                                         </a>
                                         <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                            class="ltr:right-0 rtl:left-0">
+                                            :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="ltr:right-0 rtl:left-0">
                                             <li><a href="javascript:;" @click="toggle">Weekly</a></li>
                                             <li><a href="javascript:;" @click="toggle">Monthly</a></li>
                                             <li><a href="javascript:;" @click="toggle">Yearly</a></li>
@@ -2466,7 +2466,7 @@
                                             </svg>
                                         </a>
                                         <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                            class="ltr:right-0 rtl:left-0">
+                                            :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="ltr:right-0 rtl:left-0">
                                             <li><a href="javascript:;" @click="toggle">View Report</a></li>
                                             <li><a href="javascript:;" @click="toggle">Edit Report</a></li>
                                             <li><a href="javascript:;" @click="toggle">Mark as Done</a></li>
@@ -2784,7 +2784,7 @@
                                             </svg>
                                         </a>
                                         <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                            class="ltr:right-0 rtl:left-0">
+                                            :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="ltr:right-0 rtl:left-0">
                                             <li><a href="javascript:;" @click="toggle">View Report</a></li>
                                             <li><a href="javascript:;" @click="toggle">Edit Report</a></li>
                                             <li><a href="javascript:;" @click="toggle">Mark as Done</a></li>

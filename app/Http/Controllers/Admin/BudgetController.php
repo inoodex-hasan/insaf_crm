@@ -28,18 +28,17 @@ class BudgetController extends Controller
         }
 
         $budgets = $query->latest()->paginate(15)->withQueryString();
-
-        return view('admin.budgets.index', compact('budgets'));
-    }
-
-    public function create()
-    {
-        $this->authorize('*accountant');
         $accounts = ChartOfAccount::where('is_active', true)
             ->where('type', 'expense')
             ->orderBy('code')
             ->get();
-        return view('admin.budgets.create', compact('accounts'));
+
+        return view('admin.budgets.index', compact('budgets', 'accounts'));
+    }
+
+    public function create()
+    {
+        return redirect()->route('admin.budgets.index');
     }
 
     public function store(Request $request)
@@ -57,12 +56,7 @@ class BudgetController extends Controller
 
     public function edit(Budget $budget)
     {
-        $this->authorize('*accountant');
-        $accounts = ChartOfAccount::where('is_active', true)
-            ->where('type', 'expense')
-            ->orderBy('code')
-            ->get();
-        return view('admin.budgets.edit', compact('budget', 'accounts'));
+        return redirect()->route('admin.budgets.index');
     }
 
     public function update(Request $request, Budget $budget)

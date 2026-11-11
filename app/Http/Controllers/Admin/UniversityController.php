@@ -30,10 +30,7 @@ class UniversityController extends Controller
 
     public function create()
     {
-
-        $countries = Country::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.universities.create', compact('countries'));
+        return redirect()->route('admin.universities.index');
     }
 
     public function store(Request $request)
@@ -50,10 +47,7 @@ class UniversityController extends Controller
 
     public function edit(University $university)
     {
-
-        $countries = Country::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.universities.edit', compact('university', 'countries'));
+        return redirect()->route('admin.universities.index');
     }
 
     public function update(Request $request, University $university)
@@ -77,6 +71,7 @@ class UniversityController extends Controller
     {
         return $request->validate([
             'country_id' => ['required', 'exists:countries,id'],
+            'state_province' => ['nullable', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'short_name' => ['nullable', 'string', 'max:255'],
             'website' => ['nullable', 'url'],

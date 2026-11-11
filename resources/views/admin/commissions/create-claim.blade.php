@@ -6,7 +6,14 @@
     <div class="panel">
         <div class="mb-5 flex items-center justify-between">
             <h5 class="text-lg font-semibold dark:text-white-light">Submit Commission Claim</h5>
-            <a href="{{ route('my-commissions.claimable') }}" class="btn btn-outline-primary">Back to List</a>
+            <a href="{{ route('my-commissions.claimable') }}" class="btn btn-secondary gap-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to List
+            </a>
         </div>
 
         {{-- Application Details --}}

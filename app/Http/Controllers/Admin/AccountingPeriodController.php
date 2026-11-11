@@ -23,8 +23,7 @@ class AccountingPeriodController extends Controller
      */
     public function create()
     {
-        $this->authorize('*accountant');
-        return view('admin.accounts.periods.create');
+        return redirect()->route('admin.accounting-periods.index');
     }
 
     /**
@@ -114,8 +113,7 @@ class AccountingPeriodController extends Controller
      */
     public function edit(AccountingPeriod $period)
     {
-        $this->authorize('*accountant');
-        return view('admin.accounts.periods.edit', compact('period'));
+        return redirect()->route('admin.accounting-periods.index');
     }
 
     /**

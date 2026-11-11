@@ -497,8 +497,28 @@
 
             // sidebar
             sidebar: false,
+            sidebarPinned: Alpine.$persist(false).as("sidebar_pinned"),
+            toggleSidebarPin() {
+                this.sidebarPinned = !this.sidebarPinned;
+                if (this.sidebarPinned) {
+                    document.documentElement.classList.remove("mini-sidebar");
+                    document.documentElement.classList.add("pinned-sidebar");
+                } else {
+                    document.documentElement.classList.remove("pinned-sidebar");
+                    document.documentElement.classList.add("mini-sidebar");
+                }
+            },
             toggleSidebar() {
                 this.sidebar = !this.sidebar;
+            },
+            init() {
+                if (this.sidebarPinned) {
+                    document.documentElement.classList.remove("mini-sidebar");
+                    document.documentElement.classList.add("pinned-sidebar");
+                } else {
+                    document.documentElement.classList.remove("pinned-sidebar");
+                    document.documentElement.classList.add("mini-sidebar");
+                }
             },
         });
     });

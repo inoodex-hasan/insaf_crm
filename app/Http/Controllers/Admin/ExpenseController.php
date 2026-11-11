@@ -47,21 +47,14 @@ class ExpenseController extends Controller
             ->where('type', 'expense')
             ->orderBy('code')
             ->get();
+        $accounts = OfficeAccount::where('status', 'active')->get();
 
-        return view('admin.expenses.index', compact('expenses', 'categories'));
+        return view('admin.expenses.index', compact('expenses', 'categories', 'accounts'));
     }
 
     public function create()
     {
-        $this->authorize('*accountant');
-        $categories = ChartOfAccount::where('is_active', true)
-            ->where('type', 'expense')
-            ->orderBy('code')
-            ->get();
-        $accounts = OfficeAccount::where('status', 'active')->get();
-        $pendings_salaries = Salary::whereIn('payment_status', ['pending', 'partial'])->get();
-
-        return view('admin.expenses.create', compact('categories', 'accounts', 'pendings_salaries'));
+        return redirect()->route('admin.expenses.index');
     }
 
     public function store(Request $request)

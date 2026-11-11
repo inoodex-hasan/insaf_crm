@@ -19,7 +19,12 @@
                 </p>
             </div>
             <div class="flex items-center gap-2 print:hidden">
-                <a href="{{ route('admin.applications.index') }}" class="btn btn-secondary text-xs">
+                <a href="{{ route('admin.applications.index') }}" class="btn btn-secondary text-xs gap-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
                     Back to Applications
                 </a>
             </div>
@@ -241,8 +246,8 @@
                                     {{ $country['country_name'] }}
                                 </h4>
                                 <span class="text-[11px] text-gray-500">
-                                    {{ $country['universities_count'] }} {{ Str::plural('University', $country['universities_count']) }} |
-                                    {{ $country['total_applications'] }} {{ Str::plural('Application', $country['total_applications']) }}
+                                    {{ $country['universities_count'] }} {{ \Illuminate\Support\Str::plural('University', $country['universities_count']) }} |
+                                    {{ $country['total_applications'] }} {{ \Illuminate\Support\Str::plural('Application', $country['total_applications']) }}
                                 </span>
                             </div>
                         </div>
@@ -286,10 +291,10 @@
                                     {{-- Counts and Status Badges --}}
                                     <div class="flex flex-wrap items-center gap-2 text-xs">
                                         <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold dark:bg-blue-900/30 dark:text-blue-300">
-                                            {{ $uni['total_applications'] }} {{ Str::plural('App', $uni['total_applications']) }}
+                                            {{ $uni['total_applications'] }} {{ \Illuminate\Support\Str::plural('App', $uni['total_applications']) }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold dark:bg-emerald-900/30 dark:text-emerald-300">
-                                            {{ $uni['unique_students'] }} {{ Str::plural('Student', $uni['unique_students']) }}
+                                            {{ $uni['unique_students'] }} {{ \Illuminate\Support\Str::plural('Student', $uni['unique_students']) }}
                                         </span>
                                         @if ($uni['offer_letter_count'] > 0)
                                             <span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-medium dark:bg-purple-900/30 dark:text-purple-300">

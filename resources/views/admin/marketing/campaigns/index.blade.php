@@ -3,18 +3,21 @@
 @section('title', 'Marketing Campaigns')
 
 @section('content')
+
+<div x-data="campaignModalHandler()">
+
     <div class="flex flex-wrap items-center justify-between gap-4">
         <h2 class="text-xl font-semibold uppercase">Marketing Campaigns</h2>
         @can('*digital_marketing')
             <div class="flex w-full flex-wrap items-center justify-end gap-4 sm:w-auto">
-                <a href="{{ route('admin.marketing.campaigns.create') }}" class="btn btn-primary gap-2">
+                <button type="button" @click="openCreateModal()" class="btn btn-primary gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                     New Campaign
-                </a>
+                </button>
             </div>
         @endcan
     </div>
@@ -77,13 +80,10 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
-                                        <!-- <div class="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 uppercase">
-                                            {{ substr($campaign->creator->name ?? 'U', 0, 1) }}
-                                        </div> -->
                                         <span class="text-sm">{{ $campaign->creator->name ?? 'System' }}</span>
                                     </div>
                                 </td>
-                                <td x-data="{ 
+                                <td x-data="{
                                     status: '{{ $campaign->boosting_status }}',
                                     toggle() {
                                         fetch('{{ route('admin.marketing.campaigns.toggle-boosting', $campaign->id) }}', {
@@ -109,7 +109,7 @@
                                                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                                             </svg>
                                         </button>
-                                        <ul x-cloak x-show="open" x-transition x-transition.duration.300ms class="ltr:right-0 rtl:left-0 !z-50 whitespace-nowrap shadow-lg">
+                                        <ul x-cloak x-show="open" x-transition x-transition.duration.300ms :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="ltr:right-0 rtl:left-0 !z-50 whitespace-nowrap shadow-lg">
                                             <li>
                                                 <a href="{{ route('admin.marketing.campaigns.show', $campaign->id) }}" @click="toggle">
                                                     <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-info" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -120,13 +120,20 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('admin.marketing.campaigns.edit', $campaign->id) }}" @click="toggle">
+                                                <button type="button" @click="toggle(); openEditModal({
+                                                    id: {{ $campaign->id }},
+                                                    name: @js($campaign->name),
+                                                    start_date: @js($campaign->start_date?->format('Y-m-d') ?? ''),
+                                                    end_date: @js($campaign->end_date?->format('Y-m-d') ?? ''),
+                                                    boosting_status: @js($campaign->boosting_status),
+                                                    notes: @js($campaign->notes ?? '')
+                                                })" class="flex w-full items-center px-4 py-2 text-left hover:!bg-primary/10 hover:!text-primary">
                                                     <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                     </svg>
                                                     Edit
-                                                </a>
+                                                </button>
                                             </li>
                                             <li>
                                                 <form action="{{ route('admin.marketing.campaigns.destroy', $campaign->id) }}" method="POST"
@@ -149,7 +156,6 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-10 text-white-dark">No campaigns found.</td>
-                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -160,4 +166,127 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal --}}
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="modalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="modalOpen = false"
+                     x-show="modalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-lg rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-5 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                        <h5 class="text-base font-bold text-dark dark:text-white-light" x-text="isEdit ? 'Edit Campaign' : 'New Campaign'"></h5>
+                        <button type="button" @click="modalOpen = false" class="text-white-dark hover:text-dark dark:hover:text-white transition">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Body --}}
+                    <form :action="actionUrl" method="POST">
+                        @csrf
+                        <input type="hidden" name="_method" x-show="isEdit" value="PUT">
+
+                        <div class="p-5 space-y-4">
+
+                            @if($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul class="list-disc list-inside text-sm">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div class="form-group">
+                                <label>Campaign Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-input" x-model="form.name" required placeholder="Enter campaign name">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" name="start_date" class="form-input" x-model="form.start_date">
+                                </div>
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" name="end_date" class="form-input" x-model="form.end_date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Boosting Status</label>
+                                <select name="boosting_status" class="form-select" x-model="form.boosting_status">
+                                    <option value="off">OFF</option>
+                                    <option value="on">ON</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Notes</label>
+                                <textarea name="notes" rows="3" class="form-textarea" x-model="form.notes" placeholder="Describe the campaign target audience, budget, or platforms..."></textarea>
+                            </div>
+
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] px-5 py-4 dark:border-[#1b2e4b]">
+                            <button type="button" @click="modalOpen = false" class="btn btn-outline-danger">Cancel</button>
+                            <button type="submit" class="btn btn-primary" x-text="isEdit ? 'Update Campaign' : 'Create Campaign'"></button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+
+<script>
+function campaignModalHandler() {
+    return {
+        modalOpen: {{ (isset($errors) && $errors->any()) ? 'true' : 'false' }},
+        isEdit: {{ old('_method') === 'PUT' ? 'true' : 'false' }},
+        actionUrl: '{{ route('admin.marketing.campaigns.store') }}',
+        form: {
+            name: @js(old('name', '')),
+            start_date: @js(old('start_date', '')),
+            end_date: @js(old('end_date', '')),
+            boosting_status: @js(old('boosting_status', 'off')),
+            notes: @js(old('notes', '')),
+        },
+        openCreateModal() {
+            this.isEdit = false;
+            this.actionUrl = '{{ route('admin.marketing.campaigns.store') }}';
+            this.form = { name: '', start_date: '', end_date: '', boosting_status: 'off', notes: '' };
+            this.modalOpen = true;
+        },
+        openEditModal(item) {
+            this.isEdit = true;
+            this.actionUrl = '{{ url('dashboard/marketing/campaigns') }}/' + item.id;
+            this.form = {
+                name: item.name,
+                start_date: item.start_date,
+                end_date: item.end_date,
+                boosting_status: item.boosting_status,
+                notes: item.notes,
+            };
+            this.modalOpen = true;
+        }
+    };
+}
+</script>
+
 @endsection

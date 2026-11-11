@@ -3,19 +3,22 @@
 @section('title', 'Student Details')
 
 @section('content')
+<div x-data="agreementGeneratorHandler()">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <h2 class="text-xl font-semibold uppercase">Student Details</h2>
-        <div class="flex gap-2">
-            {{-- <a href="{{ route('admin.students.pdf', $student->id) }}" class="btn btn-danger gap-2" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+        <div class="flex flex-wrap items-center gap-2">
+            {{-- Generate Agreement Button --}}
+            <button type="button" @click="openAgreementModal()" class="btn btn-outline-primary gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                     <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="12" y1="18" x2="12" y2="12"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                Download PDF
-            </a> --}}
+                Generate Agreement
+            </button>
+
             <a href="{{ url()->previous() }}" class="btn btn-secondary gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
@@ -490,4 +493,174 @@
             </div> --}}
         </div>
     </div>
+
+    {{-- Interactive Agreement Generator Modal (Auto-fill + Edit) --}}
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="agreementModalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="agreementModalOpen = false"
+                     x-show="agreementModalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-2xl rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+
+                    {{-- Modal Header --}}
+                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                        <div>
+                            <h5 class="text-base font-bold text-dark dark:text-white-light">Generate Student Agreement</h5>
+                            <p class="text-xs text-white-dark mt-0.5">Fields are auto-filled from student profile and completely editable.</p>
+                        </div>
+                        <button type="button" @click="agreementModalOpen = false" class="text-white-dark hover:text-dark dark:hover:text-white transition">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Modal Form --}}
+                    <form action="{{ route('admin.learning-resources.generate-agreement') }}" method="POST" target="_blank">
+                        @csrf
+                        <input type="hidden" name="action_type" x-model="form.action_type">
+
+                        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                            {{-- Select Template --}}
+                            <div class="form-group">
+                                <label class="font-bold text-dark dark:text-white-light">Select Agreement Template <span class="text-danger">*</span></label>
+                                <select name="template_id" class="form-select" x-model="form.template_id" @change="onTemplateChange()" required>
+                                    @foreach($agreementTemplates as $tmpl)
+                                        <option value="{{ $tmpl->id }}" 
+                                                data-country="{{ strtolower($tmpl->country->name ?? '') }}"
+                                                data-layout="{{ $tmpl->layout_type }}">
+                                            {{ $tmpl->title }} ({{ $tmpl->layout_type === 'stamp' ? 'Stamp Paper' : 'Agency Pad' }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label>Agreement Date</label>
+                                    <input type="text" name="date" class="form-input" x-model="form.date" placeholder="e.g. 04th November 2026">
+                                </div>
+                                <div class="form-group">
+                                    <label>Applicant Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="applicant_name" class="form-input" x-model="form.applicant_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Father's Name</label>
+                                    <input type="text" name="father_name" class="form-input" x-model="form.father_name" placeholder="Father's Name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mother's Name</label>
+                                    <input type="text" name="mother_name" class="form-input" x-model="form.mother_name" placeholder="Mother's Name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Passport Number</label>
+                                    <input type="text" name="passport_no" class="form-input" x-model="form.passport_no" placeholder="Passport No">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone / Contact</label>
+                                    <input type="text" name="phone" class="form-input" x-model="form.phone" placeholder="Phone Number">
+                                </div>
+                                <div class="form-group md:col-span-2">
+                                    <label>Full Address</label>
+                                    <input type="text" name="address" class="form-input" x-model="form.address" placeholder="Village/Area, Thana, District">
+                                </div>
+                            </div>
+
+                            <hr class="border-[#e0e6ed] dark:border-[#1b2e4b]">
+
+                            {{-- Financial & Academic Particulars --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label>Agency Service Charge</label>
+                                    <input type="text" name="service_charge" class="form-input" x-model="form.service_charge" placeholder="e.g. BDT 50,000">
+                                </div>
+                                <div class="form-group">
+                                    <label>Service Charge (In Words)</label>
+                                    <input type="text" name="service_charge_words" class="form-input" x-model="form.service_charge_words" placeholder="e.g. Fifty Thousand Taka only">
+                                </div>
+                                <div class="form-group">
+                                    <label>Target University (Optional)</label>
+                                    <input type="text" name="university_name" class="form-input" x-model="form.university_name" placeholder="University Name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Target Course (Optional)</label>
+                                    <input type="text" name="course_name" class="form-input" x-model="form.course_name" placeholder="Course Name">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Footer Actions --}}
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" @click="agreementModalOpen = false" class="btn btn-outline-danger">Cancel</button>
+
+                            <div class="flex items-center gap-2">
+
+                                {{-- Download DOCX --}}
+                                <button type="submit" @click="form.action_type = 'docx'" class="btn btn-primary gap-1.5 text-xs" style="background-color: #2563eb;">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Word (.docx)
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+<script>
+function agreementGeneratorHandler() {
+    return {
+        agreementModalOpen: false,
+        form: {
+            template_id: '{{ $agreementTemplates->first()?->id ?? 1 }}',
+            action_type: 'preview',
+            date: '{{ now()->format('d F Y') }}',
+            applicant_name: @js(trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? ''))),
+            father_name: @js($student->father_name ?? ''),
+            mother_name: @js($student->mother_name ?? ''),
+            passport_no: @js($student->passport_number ?? ''),
+            phone: @js($student->phone ?? ''),
+            address: @js($student->address ?? ''),
+            service_charge: 'BDT 50,000',
+            service_charge_words: 'Fifty Thousand Taka only',
+            university_name: @js($student->university->name ?? ''),
+            course_name: @js($student->course->name ?? ''),
+            intake_name: @js($student->intake->intake_name ?? ''),
+        },
+        openAgreementModal() {
+            this.onTemplateChange();
+            this.agreementModalOpen = true;
+        },
+        onTemplateChange() {
+            const select = document.querySelector('select[name="template_id"]');
+            if (select) {
+                const opt = select.options[select.selectedIndex];
+                const country = (opt ? opt.getAttribute('data-country') : '') || '';
+                if (country.includes('korea')) {
+                    this.form.service_charge = 'BDT 120,000';
+                    this.form.service_charge_words = 'One Lac Twenty Thousand Taka only';
+                } else if (country.includes('malta')) {
+                    this.form.service_charge = 'BDT 50,000';
+                    this.form.service_charge_words = 'Fifty Thousand Taka only';
+                }
+            }
+        }
+    };
+}
+</script>
 @endsection

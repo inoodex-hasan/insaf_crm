@@ -25,8 +25,7 @@ class CountryController extends Controller
 
     public function create()
     {
-
-        return view('admin.countries.create');
+        return redirect()->route('admin.countries.index');
     }
 
     public function store(Request $request)
@@ -43,8 +42,7 @@ class CountryController extends Controller
 
     public function edit(Country $country)
     {
-
-        return view('admin.countries.edit', compact('country'));
+        return redirect()->route('admin.countries.index');
     }
 
     public function update(Request $request, Country $country)

@@ -30,10 +30,7 @@ class CourseIntakeController extends Controller
 
     public function create()
     {
-
-        $courses = Course::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.course-intakes.create', compact('courses'));
+        return redirect()->route('admin.course-intakes.index');
     }
 
     public function store(Request $request)
@@ -50,10 +47,7 @@ class CourseIntakeController extends Controller
 
     public function edit(CourseIntake $courseIntake)
     {
-
-        $courses = Course::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.course-intakes.edit', compact('courseIntake', 'courses'));
+        return redirect()->route('admin.course-intakes.index');
     }
 
     public function update(Request $request, CourseIntake $courseIntake)

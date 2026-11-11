@@ -69,14 +69,14 @@ Route::prefix('dashboard/courses')->name('admin.courses.')->middleware('can:*edi
 });
 
 // CourseIntake Management
-// Route::prefix('dashboard/course-intakes')->name('admin.course-intakes.')->middleware('can:*editor')->group(function () {
-//     Route::get('/', [CourseIntakeController::class, 'index'])->name('index');
-//     Route::get('/create', [CourseIntakeController::class, 'create'])->name('create');
-//     Route::post('/', [CourseIntakeController::class, 'store'])->name('store');
-//     Route::get('{courseIntake}/edit', [CourseIntakeController::class, 'edit'])->name('edit');
-//     Route::put('{courseIntake}', [CourseIntakeController::class, 'update'])->name('update');
-//     Route::delete('{courseIntake}', [CourseIntakeController::class, 'destroy'])->name('destroy');
-// });
+Route::prefix('dashboard/course-intakes')->name('admin.course-intakes.')->middleware('can:*editor')->group(function () {
+    Route::get('/', [CourseIntakeController::class, 'index'])->name('index');
+    Route::get('/create', [CourseIntakeController::class, 'create'])->name('create');
+    Route::post('/', [CourseIntakeController::class, 'store'])->name('store');
+    Route::get('{courseIntake}/edit', [CourseIntakeController::class, 'edit'])->name('edit');
+    Route::put('{courseIntake}', [CourseIntakeController::class, 'update'])->name('update');
+    Route::delete('{courseIntake}', [CourseIntakeController::class, 'destroy'])->name('destroy');
+});
 
 // Student Management
 Route::prefix('dashboard/students')->name('admin.students.')->group(function () {
@@ -99,6 +99,25 @@ Route::prefix('dashboard/search-student')->name('admin.student-search.')->middle
     Route::get('country-remarks', [App\Http\Controllers\Admin\StudentSearchController::class, 'getCountryRemarks'])->name('country-remarks');
 });
 
+// Search Program Module
+Route::prefix('dashboard/search-program')->name('admin.search-program.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\SearchProgramController::class, 'index'])->name('index');
+});
+
+// Program Settings (Taxonomies: Levels & Requirements)
+Route::prefix('dashboard/program-settings')->name('admin.program-settings.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\ProgramSettingController::class, 'index'])->name('index');
+    Route::post('levels', [App\Http\Controllers\Admin\ProgramSettingController::class, 'storeLevel'])->name('levels.store');
+    Route::put('levels/{level}', [App\Http\Controllers\Admin\ProgramSettingController::class, 'updateLevel'])->name('levels.update');
+    Route::delete('levels/{level}', [App\Http\Controllers\Admin\ProgramSettingController::class, 'destroyLevel'])->name('levels.destroy');
+    Route::post('levels/{level}/toggle', [App\Http\Controllers\Admin\ProgramSettingController::class, 'toggleLevel'])->name('levels.toggle');
+
+    Route::post('requirements', [App\Http\Controllers\Admin\ProgramSettingController::class, 'storeRequirement'])->name('requirements.store');
+    Route::put('requirements/{requirement}', [App\Http\Controllers\Admin\ProgramSettingController::class, 'updateRequirement'])->name('requirements.update');
+    Route::delete('requirements/{requirement}', [App\Http\Controllers\Admin\ProgramSettingController::class, 'destroyRequirement'])->name('requirements.destroy');
+    Route::post('requirements/{requirement}/toggle', [App\Http\Controllers\Admin\ProgramSettingController::class, 'toggleRequirement'])->name('requirements.toggle');
+});
+
 // Learning Resource Module
 Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\LearningResourceController::class, 'index'])->name('index');
@@ -106,6 +125,7 @@ Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')
     Route::get('templates/{template}/preview', [App\Http\Controllers\Admin\LearningResourceController::class, 'previewTemplate'])->name('templates.preview');
     Route::get('templates/{template}/download-pdf', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadPdf'])->name('templates.download-pdf');
     Route::get('templates/{template}/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadDocx'])->name('templates.download-docx');
+    Route::post('generate-agreement', [App\Http\Controllers\Admin\LearningResourceController::class, 'generateAgreement'])->name('generate-agreement');
     Route::post('documents', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeDocument'])->name('documents.store');
     Route::delete('documents/{resource}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyDocument'])->name('documents.destroy');
     Route::post('interview-prep', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeInterviewPrep'])->name('interview-prep.store');

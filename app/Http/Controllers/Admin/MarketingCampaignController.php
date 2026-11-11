@@ -30,7 +30,7 @@ class MarketingCampaignController extends Controller
 
     public function create()
     {
-        return view('admin.marketing.campaigns.create');
+        return redirect()->route('admin.marketing.campaigns.index');
     }
 
     public function store(Request $request)
@@ -60,7 +60,7 @@ class MarketingCampaignController extends Controller
 
     public function edit(MarketingCampaign $campaign)
     {
-        return view('admin.marketing.campaigns.edit', compact('campaign'));
+        return redirect()->route('admin.marketing.campaigns.index');
     }
 
     public function update(Request $request, MarketingCampaign $campaign)

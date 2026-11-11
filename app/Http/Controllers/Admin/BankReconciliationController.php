@@ -18,13 +18,13 @@ class BankReconciliationController extends Controller
         $reconciliations = BankReconciliation::with(['account', 'closedBy'])
             ->orderBy('statement_date', 'desc')
             ->paginate(15);
-        return view('admin.accounts.bank-reconciliations.index', compact('reconciliations'));
+        $accounts = OfficeAccount::where('status', 'active')->get();
+        return view('admin.accounts.bank-reconciliations.index', compact('reconciliations', 'accounts'));
     }
 
     public function create()
     {
-        $accounts = OfficeAccount::where('status', 'active')->get();
-        return view('admin.accounts.bank-reconciliations.create', compact('accounts'));
+        return redirect()->route('admin.bank-reconciliations.index');
     }
 
     public function store(Request $request)

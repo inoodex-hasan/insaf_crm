@@ -105,10 +105,21 @@ class StudentController extends Controller
 
     public function show(Student $student)
     {
-
         $student->load(['marketingAssignee', 'consultantAssignee', 'applicationAssignee', 'creator', 'country', 'university', 'course', 'intake', 'applications.university', 'applications.course', 'applications.intake', 'payments', 'activities.user']);
 
-        return view('admin.students.show', compact('student'));
+        $agreementTemplates = \App\Models\AgreementTemplate::where('is_active', true)
+            ->where(function ($q) use ($student) {
+                if ($student->country_id) {
+                    $q->where('country_id', $student->country_id)
+                      ->orWhereNull('country_id');
+                } else {
+                    $q->whereNull('country_id');
+                }
+            })
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('admin.students.show', compact('student', 'agreementTemplates'));
     }
 
     public function downloadPdf(Student $student)

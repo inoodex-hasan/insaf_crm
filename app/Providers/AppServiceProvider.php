@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Global Str class alias for blade views & vendor packages
+        if (!class_exists('Str')) {
+            class_alias(\Illuminate\Support\Str::class, 'Str');
+        }
+
         // Share active currencies with all views for the header ticker
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             $activeCurrencies = \Illuminate\Support\Facades\Cache::remember('active_currencies', 3600, function () {

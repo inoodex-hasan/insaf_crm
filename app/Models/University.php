@@ -12,6 +12,7 @@ class University extends Model
 
     protected $fillable = [
         'country_id',
+        'state_province',
         'name',
         'short_name',
         'website',

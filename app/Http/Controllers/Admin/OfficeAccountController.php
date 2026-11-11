@@ -36,7 +36,7 @@ class OfficeAccountController extends Controller
 
     public function create()
     {
-        return view('admin.office-accounts.create');
+        return redirect()->route('admin.office-accounts.index');
     }
 
     public function store(Request $request)
@@ -53,7 +53,7 @@ class OfficeAccountController extends Controller
 
     public function edit(OfficeAccount $officeAccount)
     {
-        return view('admin.office-accounts.edit', compact('officeAccount'));
+        return redirect()->route('admin.office-accounts.index');
     }
 
     public function update(Request $request, OfficeAccount $officeAccount)

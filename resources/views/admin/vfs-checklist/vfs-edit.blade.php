@@ -5,7 +5,14 @@
 @section('content')
     <div class="flex flex-wrap items-center justify-between gap-4">
         <h2 class="text-xl font-semibold uppercase">Edit VFS Status & Notes</h2>
-        <a href="{{ route('admin.vfs-checklist.overview') }}" class="btn btn-secondary">Back to Overview</a>
+        <a href="{{ route('admin.vfs-checklist.overview') }}" class="btn btn-secondary gap-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Overview
+        </a>
     </div>
 
     <div class="grid grid-cols-1 gap-6 pt-5 lg:grid-cols-2">
