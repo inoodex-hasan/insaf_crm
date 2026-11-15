@@ -23,7 +23,7 @@ class LeadController extends Controller
     public function index(Request $request)
     {
         $canViewAllLeads = $this->canViewAllLeads();
-        $query = Lead::with('creator');
+        $query = Lead::with(['creator', 'country', 'course']);
 
         if (!$canViewAllLeads) {
             $query->where('created_by', Auth::id());

@@ -45,28 +45,57 @@
             display: none !important;
         }
 
-        /* Fix for table action dropdowns: ensure active row always floats above subsequent rows */
+        /* Table Action Dropdown & Stacking Protocol across all tables */
         table tbody tr:focus-within,
         table tbody tr.dropdown-open,
         table tbody tr:hover:has(.dropdown) {
             position: relative !important;
-            z-index: 40 !important;
+            z-index: 60 !important;
+        }
+
+        table tbody tr.dropdown-open td,
+        table tbody tr:focus-within td,
+        table tbody tr:hover:has(.dropdown) td,
+        table tbody td.dropdown-open,
+        table tbody td:has(.dropdown-open) {
+            position: relative !important;
+            z-index: 60 !important;
         }
 
         .dropdown {
-            position: relative;
+            position: relative !important;
         }
 
-        .dropdown ul {
+        .dropdown.dropdown-open,
+        .dropdown:focus-within,
+        .dropdown:has(ul:not([style*="display: none"])) {
             z-index: 100 !important;
         }
 
-        /* Prevent table containers from clipping open 3-dot dropdown menus */
+        .dropdown ul {
+            z-index: 9999 !important;
+        }
+
+        /* Prevent table containers from clipping open 3-dot dropdown menus across the entire system */
         .table-responsive:has(.dropdown-open),
         .table-responsive:focus-within,
         .datatable:has(.dropdown-open),
-        .datatable:focus-within {
+        .datatable:focus-within,
+        .overflow-x-auto:has(.dropdown-open),
+        .overflow-x-auto:focus-within,
+        [class*="overflow"]:has(.dropdown-open),
+        [class*="overflow"]:focus-within,
+        .panel:has(.dropdown-open),
+        .panel:focus-within,
+        .dropdown-open-container {
             overflow: visible !important;
+        }
+
+        /* Guarantee minimum height on data table containers so dropdowns have canvas even with 1-2 rows */
+        .datatable .overflow-x-auto,
+        .table-responsive,
+        .overflow-x-auto {
+            min-height: 280px;
         }
 
         /* Ensure modals always cover the entire viewport including header and sidebar */
@@ -365,6 +394,10 @@
         });
     </script>
     @endif
+
+    <!-- Staff Daily Attendance Check-In Prompt Modal (Hidden if already checked in or Super Admin) -->
+    @include('admin.attendance.partials.prompt-modal')
+
     <!-- Global Modal Teleport Container (Covers entire screen including header and sidebar) -->
     <div id="modal-portal"></div>
 </body>

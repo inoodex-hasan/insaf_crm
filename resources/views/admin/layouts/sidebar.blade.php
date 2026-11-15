@@ -237,6 +237,34 @@
                     </a>
                 </li>
 
+                <!-- Attendance & Work Shift -->
+                <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.attendance.*') ? 'true' : 'false' }} }">
+                    <a href="javascript:;" @click="open = !open" class="group {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center">
+                                <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span class="px-3">Attendance</span>
+                            </div>
+                            <div class="rtl:rotate-180">
+                                <svg class="h-4 w-4 transition-transform" :class="open ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
+                                    <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                    <ul x-show="open" x-collapse class="sub-menu">
+                        <li><a href="{{ route('admin.attendance.my-attendance') }}" class="{{ request()->routeIs('admin.attendance.my-attendance') ? 'active' : '' }}">My Attendance</a></li>
+                        @if(auth()->check() && auth()->user()->isAdminOrSuperAdmin())
+                            <li><a href="{{ route('admin.attendance.index') }}" class="{{ request()->routeIs('admin.attendance.index') ? 'active' : '' }}">Daily Board</a></li>
+                            <li><a href="{{ route('admin.attendance.report') }}" class="{{ request()->routeIs('admin.attendance.report') ? 'active' : '' }}">Monthly Deductions</a></li>
+                            <li><a href="{{ route('admin.attendance.settings') }}" class="{{ request()->routeIs('admin.attendance.settings') ? 'active' : '' }}">Settings</a></li>
+                        @endif
+                    </ul>
+                </li>
+
                 <!-- Consulting -->
                 <li class="nav-item" x-data="{ open: false }">
                     <a href="javascript:;" @click="open = !open" class="group">

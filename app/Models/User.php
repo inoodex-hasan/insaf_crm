@@ -65,4 +65,40 @@ class User extends Authenticatable
     {
         return $this->designation === 'senior';
     }
+
+    /**
+     * Check if the user is a super admin.
+     * Only true super-admin role is exempt; all other users (including admin) must track attendance.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return method_exists($this, 'hasRole') && ($this->hasRole('super-admin') || $this->hasRole('superadmin'));
+    }
+
+    /**
+     * Check if user is super admin or admin (administrator).
+     * Grants management access to Attendance Board, Reports, and Settings.
+     */
+    public function isAdminOrSuperAdmin(): bool
+    {
+        return method_exists($this, 'hasRole') && (
+            $this->hasRole('super-admin') ||
+            $this->hasRole('superadmin') ||
+            $this->hasRole('admin') ||
+            $this->hasRole('administrator')
+        );
+    }
+
+    /**
+     * Attendance relationships
+     */
+    public function attendances(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function todayAttendance(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Attendance::class)->where('date', now()->toDateString());
+    }
 }

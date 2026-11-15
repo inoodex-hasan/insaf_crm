@@ -533,14 +533,27 @@
                         <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                             {{-- Select Template --}}
                             <div class="form-group">
-                                <label class="font-bold text-dark dark:text-white-light">Select Agreement Template <span class="text-danger">*</span></label>
+                                <label class="font-bold text-dark dark:text-white-light">Select Agreement / Document Template <span class="text-danger">*</span></label>
                                 <select name="template_id" class="form-select" x-model="form.template_id" @change="onTemplateChange()" required>
-                                    @foreach($agreementTemplates as $tmpl)
-                                        <option value="{{ $tmpl->id }}" 
-                                                data-country="{{ strtolower($tmpl->country->name ?? '') }}"
-                                                data-layout="{{ $tmpl->layout_type }}">
-                                            {{ $tmpl->title }} ({{ $tmpl->layout_type === 'stamp' ? 'Stamp Paper' : 'Agency Pad' }})
-                                        </option>
+                                    @php
+                                        $groupedModalTemplates = $agreementTemplates->groupBy(fn($t) => match($t->type) {
+                                            'other' => 'Other (Declarations & Receipts)',
+                                            'clearance_withdrawal', 'clearance_full' => 'Clearance Certificates',
+                                            default => 'Study Permit Agreements',
+                                        });
+                                    @endphp
+                                    @foreach($groupedModalTemplates as $groupLabel => $groupItems)
+                                        <optgroup label="{{ $groupLabel }}">
+                                            @foreach($groupItems as $tmpl)
+                                                <option value="{{ $tmpl->id }}" 
+                                                        data-country="{{ strtolower($tmpl->country->name ?? '') }}"
+                                                        data-type="{{ $tmpl->type }}"
+                                                        data-title="{{ strtolower($tmpl->title) }}"
+                                                        data-layout="{{ $tmpl->layout_type }}">
+                                                    {{ $tmpl->title }} ({{ $tmpl->layout_type === 'stamp' ? 'Stamp Paper' : 'Agency Pad' }})
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
                                     @endforeach
                                 </select>
                             </div>
@@ -578,8 +591,8 @@
 
                             <hr class="border-[#e0e6ed] dark:border-[#1b2e4b]">
 
-                            {{-- Financial & Academic Particulars --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Financial & Academic Particulars (Agreements) --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="selectedTemplateType !== 'other'">
                                 <div class="form-group">
                                     <label>Agency Service Charge</label>
                                     <input type="text" name="service_charge" class="form-input" x-model="form.service_charge" placeholder="e.g. BDT 50,000">
@@ -595,6 +608,30 @@
                                 <div class="form-group">
                                     <label>Target Course (Optional)</label>
                                     <input type="text" name="course_name" class="form-input" x-model="form.course_name" placeholder="Course Name">
+                                </div>
+                            </div>
+
+                            {{-- Declaration / Receipt / Cheque Particulars (Other Templates) --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="selectedTemplateType === 'other'" x-cloak>
+                                <div class="form-group md:col-span-2">
+                                    <label>Submitted / Received Documents List</label>
+                                    <input type="text" name="documents_list" class="form-input" x-model="form.documents_list" placeholder="e.g. Passport, SSC (Certificate & Transcript), HSC (Certificate & Transcript)">
+                                </div>
+                                <div class="form-group">
+                                    <label>Amount (Refund / Cheque / Compensation)</label>
+                                    <input type="text" name="amount" class="form-input" x-model="form.amount" placeholder="e.g. BDT 30,000">
+                                </div>
+                                <div class="form-group">
+                                    <label>Amount (In Words)</label>
+                                    <input type="text" name="amount_words" class="form-input" x-model="form.amount_words" placeholder="e.g. Thirty Thousand Bangladeshi Taka Only">
+                                </div>
+                                <div class="form-group">
+                                    <label>Cheque No (If Security Cheque Receipt)</label>
+                                    <input type="text" name="cheque_no" class="form-input" x-model="form.cheque_no" placeholder="e.g. SSP 4691735">
+                                </div>
+                                <div class="form-group">
+                                    <label>Destination Country (For File Receive)</label>
+                                    <input type="text" name="country_name" class="form-input" x-model="form.country_name" placeholder="e.g. South Korea, Malta">
                                 </div>
                             </div>
                         </div>
@@ -626,9 +663,10 @@
 function agreementGeneratorHandler() {
     return {
         agreementModalOpen: false,
+        selectedTemplateType: 'agreement',
         form: {
             template_id: '{{ $agreementTemplates->first()?->id ?? 1 }}',
-            action_type: 'preview',
+            action_type: 'docx',
             date: '{{ now()->format('d F Y') }}',
             applicant_name: @js(trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? ''))),
             father_name: @js($student->father_name ?? ''),
@@ -638,6 +676,11 @@ function agreementGeneratorHandler() {
             address: @js($student->address ?? ''),
             service_charge: 'BDT 50,000',
             service_charge_words: 'Fifty Thousand Taka only',
+            documents_list: 'Passport, SSC (Certificate & Transcript), HSC (Certificate & Transcript)',
+            amount: 'BDT 30,000',
+            amount_words: 'Thirty Thousand Bangladeshi Taka Only',
+            cheque_no: '',
+            country_name: @js($student->country->name ?? ''),
             university_name: @js($student->university->name ?? ''),
             course_name: @js($student->course->name ?? ''),
             intake_name: @js($student->intake->intake_name ?? ''),
@@ -651,12 +694,29 @@ function agreementGeneratorHandler() {
             if (select) {
                 const opt = select.options[select.selectedIndex];
                 const country = (opt ? opt.getAttribute('data-country') : '') || '';
-                if (country.includes('korea')) {
-                    this.form.service_charge = 'BDT 120,000';
-                    this.form.service_charge_words = 'One Lac Twenty Thousand Taka only';
-                } else if (country.includes('malta')) {
-                    this.form.service_charge = 'BDT 50,000';
-                    this.form.service_charge_words = 'Fifty Thousand Taka only';
+                const type = (opt ? opt.getAttribute('data-type') : '') || 'agreement';
+                const title = (opt ? opt.getAttribute('data-title') : '') || '';
+                this.selectedTemplateType = type;
+
+                if (type === 'other') {
+                    if (title.includes('security cheque')) {
+                        this.form.amount = '2,00,000 BDT';
+                        this.form.amount_words = 'Two Lakh Taka Only';
+                    } else if (title.includes('refund')) {
+                        this.form.amount = 'BDT 30,000';
+                        this.form.amount_words = 'Thirty Thousand Bangladeshi Taka Only';
+                    } else if (title.includes('file receive')) {
+                        this.form.amount = 'BDT 20,000';
+                        this.form.amount_words = 'Twenty Thousand Taka Only';
+                    }
+                } else {
+                    if (country.includes('korea')) {
+                        this.form.service_charge = 'BDT 120,000';
+                        this.form.service_charge_words = 'One Lac Twenty Thousand Taka only';
+                    } else if (country.includes('malta')) {
+                        this.form.service_charge = 'BDT 50,000';
+                        this.form.service_charge_words = 'Fifty Thousand Taka only';
+                    }
                 }
             }
         }

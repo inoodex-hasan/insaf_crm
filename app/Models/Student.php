@@ -137,6 +137,16 @@ class Student extends Model
         return $this->hasMany(StudentActivity::class)->latest();
     }
 
+    public function costings()
+    {
+        return $this->hasMany(StudentCosting::class)->latest();
+    }
+
+    public function latestCosting()
+    {
+        return $this->hasOne(StudentCosting::class)->latestOfMany();
+    }
+
     public function logActivity(string $type, string $title, ?string $description = null, array $properties = []): StudentActivity
     {
         return StudentActivity::log($this->id, $type, $title, $description, $properties);

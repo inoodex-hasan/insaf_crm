@@ -81,6 +81,17 @@
                                         <input type="number" step="0.01"
                                             name="salaries[{{ $index }}][deduction]"
                                             value="{{ $salary['deduction'] ?? 0 }}" class="form-input w-24 calc-input" />
+                                        <input type="hidden" name="salaries[{{ $index }}][attendance_deduction]" value="{{ $salary['attendance_deduction'] ?? 0 }}" />
+                                        <input type="hidden" name="salaries[{{ $index }}][late_days]" value="{{ $salary['late_days'] ?? 0 }}" />
+                                        <input type="hidden" name="salaries[{{ $index }}][absent_days]" value="{{ $salary['absent_days'] ?? 0 }}" />
+                                        <input type="hidden" name="salaries[{{ $index }}][half_days]" value="{{ $salary['half_days'] ?? 0 }}" />
+                                        <input type="hidden" name="salaries[{{ $index }}][attendance_details]" value="{{ $salary['attendance_details'] ?? '' }}" />
+                                        @if(($salary['attendance_deduction'] ?? 0) > 0)
+                                            <span class="text-[10px] text-danger font-semibold block mt-1 leading-tight" title="{{ $salary['attendance_details'] ?? '' }}">
+                                                Att: -{{ number_format($salary['attendance_deduction'], 2) }}
+                                                ({{ $salary['late_days'] }}L, {{ $salary['absent_days'] }}A)
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="font-bold text-primary">
                                         <span class="net-salary-display">{{ number_format($salary['net_salary'] ?? $salary['basic_salary'], 2) }}</span>

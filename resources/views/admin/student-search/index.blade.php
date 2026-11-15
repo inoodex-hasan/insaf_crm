@@ -2,6 +2,61 @@
 
 @section('title', 'Search Students')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/css/nice-select2.css') }}">
+    <style>
+        .student-search-filter-row .nice-select {
+            width: 100%;
+            height: 38px !important;
+            line-height: 36px !important;
+            display: flex !important;
+            align-items: center !important;
+            background-image: none !important;
+            padding-left: 12px;
+            padding-right: 28px;
+            border-radius: 6px;
+            border: 1px solid #e0e6ed;
+            font-size: 0.875rem;
+        }
+        .student-search-filter-row .nice-select .current {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .student-search-filter-row .nice-select .nice-select-dropdown {
+            z-index: 60 !important;
+            min-width: 240px;
+            width: 100%;
+        }
+        .student-search-filter-row .nice-select .list {
+            width: 100%;
+            max-height: 260px;
+        }
+        .dark .student-search-filter-row .nice-select {
+            background-color: #121e32;
+            border-color: #17263c;
+            color: #888ea8;
+        }
+        .dark .student-search-filter-row .nice-select .nice-select-dropdown {
+            background-color: #121e32;
+            border: 1px solid #1b2e4b;
+        }
+        .dark .student-search-filter-row .nice-select .nice-select-search {
+            background-color: #0e1726;
+            border-color: #1b2e4b;
+            color: #e2e8f0;
+        }
+        .dark .student-search-filter-row .nice-select .option:hover,
+        .dark .student-search-filter-row .nice-select .option.focus,
+        .dark .student-search-filter-row .nice-select .option.selected.focus {
+            background-color: #1b2e4b;
+            color: #ffffff;
+        }
+    </style>
+@endpush
+
 @section('content')
 <div x-data="studentSearchComponent()">
     <!-- Page Header -->
@@ -14,43 +69,35 @@
         </div>
     </div>
 
-    <!-- Filter Panel -->
+    <!-- Filter Panel (Single Line) -->
     <div class="panel mt-5">
-        <form action="{{ route('admin.student-search.index') }}" method="GET" class="space-y-3">
-            <!-- Row 1: Keyword, Country, University -->
-            <div class="flex items-end gap-3 w-full" style="display: flex;">
+        <form action="{{ route('admin.student-search.index') }}" method="GET">
+            <div class="student-search-filter-row" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; width: 100%;">
                 <!-- Search Keyword -->
-                <div style="flex: 2; min-width: 250px;">
+                <div style="flex: 2; min-width: 180px;">
                     <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Keyword Search</label>
-                    <div class="relative">
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search name, phone, email, passport, father, mother, sponsor..."
-                            class="form-input text-sm ltr:pr-10 rtl:pl-10 w-full" />
-                        <span class="absolute inset-y-0 ltr:right-3 rtl:left-3 flex items-center pointer-events-none text-gray-400">
-                        </span>
-                    </div>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Search name, phone, email, passport..."
+                        class="form-input text-sm w-full" style="height: 38px;" />
                 </div>
 
                 <!-- Country Filter -->
-                <div style="flex: 1; min-width: 150px;">
+                <div style="flex: 1; min-width: 125px;">
                     <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Country</label>
-                    <select name="country_id" id="filter_country_id"
-                        x-model="selectedCountryId"
-                        @change="onCountryFilterChange($event.target.value)"
-                        class="form-select text-sm w-full">
+                    <select name="country_id" id="filter_country_id" class="form-select text-sm w-full" style="height: 38px;">
                         <option value="">All Countries</option>
                         @foreach($countries as $c)
-                            <option value="{{ $c->id }}" data-name="{{ strtolower($c->name) }}" {{ request('country_id') == $c->id ? 'selected' : '' }}>
+                            <option value="{{ $c->id }}" {{ request('country_id') == $c->id ? 'selected' : '' }}>
                                 {{ $c->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- University Filter -->
-                <div style="flex: 1; min-width: 150px;">
+                <!-- University Filter (Searchable) -->
+                <div style="flex: 1.4; min-width: 165px;">
                     <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">University</label>
-                    <select name="university_id" class="form-select text-sm w-full">
+                    <select name="university_id" id="filter_university_id" class="form-select text-sm w-full" style="height: 38px;">
                         <option value="">All Universities</option>
                         @foreach($universities as $u)
                             <option value="{{ $u->id }}" {{ request('university_id') == $u->id ? 'selected' : '' }}>
@@ -59,28 +106,12 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
-
-            <!-- Row 2: Remarks, Payment Status, Action Buttons -->
-            <div class="flex items-end gap-3 w-full pt-1" style="display: flex;">
-                <!-- Filter by Remarks -->
-                <div style="flex: 1.5; min-width: 200px;">
-                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">
-                        Filter by Remarks <span class="text-gray-400 font-normal" x-text="countryRemarksLabel"></span>
-                    </label>
-                    <select name="remarks" id="filter_remarks" class="form-select text-sm w-full">
-                        <option value="">All Remarks</option>
-                        <template x-for="(label, key) in filterRemarksOptions" :key="key">
-                            <option :value="label" :selected="currentSelectedRemarks === label" x-text="label"></option>
-                        </template>
-                    </select>
-                </div>
 
                 <!-- Payment Status -->
-                <div style="flex: 1; min-width: 160px;">
+                <div style="flex: 1; min-width: 130px;">
                     <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Payment Status</label>
-                    <select name="payment_status" class="form-select text-sm w-full">
-                        <option value="">All Payment Status</option>
+                    <select name="payment_status" class="form-select text-sm w-full" style="height: 38px;">
+                        <option value="">All Status</option>
                         <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Fully Paid</option>
                         <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>Partial Due</option>
                         <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
@@ -89,14 +120,14 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div style="flex: 0 0 auto;" class="flex items-center gap-2">
-                    <button type="submit" class="btn btn-primary gap-1.5 px-5">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div style="flex: 0 0 auto; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                    <button type="submit" class="btn btn-primary gap-1.5 px-4" style="height: 38px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                         </svg>
-                        Filter Results
+                        Filter
                     </button>
-                    <a href="{{ route('admin.student-search.index') }}" class="btn btn-outline-danger px-4">Reset</a>
+                    <a href="{{ route('admin.student-search.index') }}" class="btn btn-outline-danger px-3" style="height: 38px; display: inline-flex; align-items: center;">Reset</a>
                 </div>
             </div>
         </form>
@@ -104,7 +135,7 @@
 
     <!-- Results Data Table -->
     <div class="panel mt-5 p-0">
-        <div class="overflow-x-auto min-h-[280px]">
+        <div class="table-responsive overflow-x-auto min-h-[280px]" style="min-height: 280px;">
             <table class="table-hover w-full table-auto text-left text-sm">
                 <thead class="bg-gray-50 dark:bg-[#1b2e4b] text-xs uppercase text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                     <tr>
@@ -116,7 +147,7 @@
                         <th class="py-3 px-3">Payments</th>
                         <th class="py-3 px-3 min-w-[200px]">Remarks (Country Based)</th>
                         <th class="py-3 px-3 min-w-[160px]">Notes</th>
-                        <th class="py-3 px-3 text-center">Action</th>
+                        <!-- <th class="py-3 px-3 text-center">Action</th> -->
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -189,11 +220,11 @@
                                     @endif
                                 </div>
                                 <div class="font-medium text-xs text-gray-800 dark:text-gray-200 mt-1">
-                                    {{ $student->university?->name ?? 'No University' }}
+                                    {{ Str::limit($student->university?->name, 20) ?: 'No University' }}
                                 </div>
                                 @if($student->subject || $student->course)
                                     <div class="text-[11px] text-gray-500 dark:text-gray-400">
-                                        {{ $student->subject ?: $student->course?->name }}
+                                        {{ Str::limit($student->subject, 20) ?: Str::limit($student->course?->name, 20) }}
                                     </div>
                                 @endif
                             </td>
@@ -261,15 +292,16 @@
 
                             <!-- Notes Field -->
                             <td class="py-3 px-3">
-                                <div class="flex items-start gap-1.5">
-                                    <div class="text-xs text-gray-700 dark:text-gray-300 line-clamp-2 max-w-[180px]" id="notes-text-{{ $student->id }}">
-                                        {{ $student->notes ?: '—' }}
-                                    </div>
+                                <div class="flex items-center gap-1.5" style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                    <span class="text-xs text-gray-700 dark:text-gray-300" id="notes-text-{{ $student->id }}" style="display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25;">
+                                        {{ Str::limit($student->notes, 15) ?: 'N/A' }}
+                                    </span>
                                     <button type="button"
                                         @click="openNotesModal({{ $student->id }}, '{{ addslashes($student->full_name) }}', `{{ addslashes($student->notes ?? '') }}`)"
                                         class="text-primary hover:text-primary-dark p-1 rounded hover:bg-primary/10 shrink-0"
+                                        style="display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"
                                         title="Edit note">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
@@ -278,7 +310,7 @@
                             </td>
 
                             <!-- Actions -->
-                            <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <!-- <td class="py-3 px-3 text-center whitespace-nowrap">
                                 <div class="dropdown flex items-center justify-center" x-data="dropdown" @click.outside="open = false">
                                     <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-dark/70 hover:bg-gray-100 hover:text-primary dark:text-white-light/70 dark:hover:bg-dark/40 dark:hover:text-primary" @click="toggle">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -322,7 +354,7 @@
                                         @endcan
                                     </ul>
                                 </div>
-                            </td>
+                            </td> -->
                         </tr>
                     @empty
                         <tr>
@@ -402,55 +434,27 @@
 </div>
 
 @push('scripts')
+<script src="{{ asset('assets/js/nice-select2.js') }}"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uniSelect = document.getElementById('filter_university_id');
+    if (uniSelect && typeof NiceSelect !== 'undefined') {
+        NiceSelect.bind(uniSelect, {
+            searchable: true,
+            placeholder: 'All Universities',
+            searchtext: 'Search university...'
+        });
+    }
+});
+
 function studentSearchComponent() {
     return {
-        allRemarksConfig: @json($allRemarksConfig),
-        countriesList: @json($countries),
-        selectedCountryId: "{{ request('country_id') }}",
-        currentSelectedRemarks: "{{ request('remarks') }}",
-        filterRemarksOptions: @json($filterRemarks),
-        countryRemarksLabel: '',
-
         // Notes Modal State
         isNotesModalOpen: false,
         activeStudentId: null,
         activeStudentName: '',
         activeStudentNotes: '',
         isSavingNotes: false,
-
-        init() {
-            this.updateFilterRemarksList(this.selectedCountryId);
-        },
-
-        onCountryFilterChange(countryId) {
-            this.selectedCountryId = countryId;
-            this.updateFilterRemarksList(countryId);
-        },
-
-        updateFilterRemarksList(countryId) {
-            if (!countryId) {
-                this.filterRemarksOptions = this.allRemarksConfig['others'] || {};
-                this.countryRemarksLabel = '(All / Others)';
-                return;
-            }
-
-            const country = this.countriesList.find(c => String(c.id) === String(countryId));
-            if (!country) {
-                this.filterRemarksOptions = this.allRemarksConfig['others'] || {};
-                this.countryRemarksLabel = '(Others)';
-                return;
-            }
-
-            const countryKey = country.name.toLowerCase().trim();
-            if (this.allRemarksConfig[countryKey]) {
-                this.filterRemarksOptions = this.allRemarksConfig[countryKey];
-                this.countryRemarksLabel = `(${country.name})`;
-            } else {
-                this.filterRemarksOptions = this.allRemarksConfig['others'] || {};
-                this.countryRemarksLabel = `(Others)`;
-            }
-        },
 
         // Quick AJAX update for remarks dropdown
         async updateRemarks(studentId, remarkValue) {

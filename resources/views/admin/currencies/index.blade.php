@@ -34,7 +34,8 @@
                 </div>
             </form>
         </div>
-        <table class="table-auto w-full">
+        <div class="table-responsive overflow-x-auto" style="min-height: 280px;">
+            <table class="table-auto w-full">
             <thead>
                 <tr>
                     <th>#</th>
@@ -122,6 +123,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
 
         <div class="mt-4">
             {{ $currencies->links() }}

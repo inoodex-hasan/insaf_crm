@@ -72,6 +72,12 @@
                     </div>
                     <div class="flex justify-between"><span>Other
                             Deductions</span><span>{{ number_format($salary->other_deductions, 2) }}</span></div>
+                    @if($salary->attendance_deduction > 0)
+                        <div class="flex justify-between text-danger font-semibold">
+                            <span>Attendance Penalty ({{ $salary->late_days }}L, {{ $salary->absent_days }}A)</span>
+                            <span>-{{ number_format($salary->attendance_deduction, 2) }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between"><span>Paid
                             Amount</span><span>{{ number_format($salary->paid_amount, 2) }}</span></div>
                     <div class="mt-3 flex justify-between border-t border-white-light pt-3 font-bold dark:border-[#1b2e4b]">

@@ -137,6 +137,235 @@
                     </a>
                 </div>
 
+                <!-- Staff Live Attendance Header Status / Quick Action Dropdown -->
+                @if(auth()->check())
+                    @php
+                        $headerAtt = auth()->user()->todayAttendance;
+                        $headerSettings = \App\Models\AttendanceSetting::getSettings();
+                    @endphp
+                    <div class="dropdown flex shrink-0" x-data="headerAttendance()" @click.outside="open = false">
+                        <!-- Header Trigger Pill -->
+                        @if(!$headerAtt)
+                            <button type="button" 
+                                    @click="toggle"
+                                    class="group inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary shadow-sm transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md"
+                                    style="gap: 4px;"
+                                    title="Attendance not submitted today. Click to Check In.">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+                                    <span class="relative inline-flex h-2 w-2 rounded-full bg-primary group-hover:bg-white"></span>
+                                </span>
+                                <span>Check In</span>
+                            </button>
+                        @elseif($headerAtt && !$headerAtt->check_out)
+                            <button type="button" 
+                                    @click="toggle"
+                                    class="group inline-flex items-center rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success shadow-sm transition-all duration-200 hover:bg-success hover:text-white hover:shadow-md"
+                                    style="gap: 4px;"
+                                    title="Checked In at {{ optional($headerAtt->check_in)->format('h:i A') ?? '--:--' }}. Click to Check Out.">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
+                                    <span class="relative inline-flex h-2 w-2 rounded-full bg-success group-hover:bg-white"></span>
+                                </span>
+                                <span>In: <strong class="font-bold">{{ optional($headerAtt->check_in)->format('h:i A') ?? '--:--' }}</strong></span>
+                            </button>
+                        @else
+                            <button type="button" 
+                                    @click="toggle"
+                                    class="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-200 dark:border-dark dark:bg-dark/60 dark:text-slate-300"
+                                    style="gap: 4px;"
+                                    title="Shift Completed today ({{ $headerAtt->total_hours }} hrs)">
+                                <span class="h-2 w-2 rounded-full bg-success"></span>
+                                <span>Done ({{ $headerAtt->total_hours }}h)</span>
+                            </button>
+                        @endif
+
+                        <!-- Seamless Quick Attendance Dropdown -->
+                        <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
+                            class="top-11 w-[320px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90 shadow-2xl rounded-xl border border-[#e0e6ed] bg-white dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+                            <!-- Dropdown Header -->
+                            <li class="border-b border-[#e0e6ed] bg-slate-50 px-4 py-3 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                                <div class="flex items-center justify-between">
+                                    <h5 class="text-sm font-bold text-dark dark:text-white-light">
+                                        Work Attendance
+                                    </h5>
+                                    @if(!$headerAtt)
+                                        <span class="badge bg-danger/10 text-danger border border-danger/20 text-[10px] font-bold px-2 py-0.5 rounded">Not Checked In</span>
+                                    @elseif(!$headerAtt->check_out)
+                                        <span class="badge bg-success/10 text-success border border-success/20 text-[10px] font-bold px-2 py-0.5 rounded">Checked In</span>
+                                    @else
+                                        <span class="badge bg-info/10 text-info border border-info/20 text-[10px] font-bold px-2 py-0.5 rounded">Shift Done</span>
+                                    @endif
+                                </div>
+                            </li>
+
+                            <!-- Dropdown Body -->
+                            <li class="p-4 space-y-3 font-normal text-xs" @click.stop>
+                                <!-- Shift details -->
+                                <div class="space-y-1.5 text-white-dark text-[11px] bg-slate-50 dark:bg-dark/40 p-3 rounded-lg border border-slate-100 dark:border-dark">
+                                    <div class="flex justify-between">
+                                        <span>Shift Hours:</span>
+                                        <span class="font-semibold text-dark dark:text-white-light">{{ \Carbon\Carbon::parse($headerSettings->shift_start_time)->format('h:i A') }} – {{ \Carbon\Carbon::parse($headerSettings->shift_end_time)->format('h:i A') }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Grace Period:</span>
+                                        <span class="font-semibold text-dark dark:text-white-light">+{{ $headerSettings->late_grace_minutes }} mins</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Office:</span>
+                                        <span class="font-semibold text-dark dark:text-white-light truncate max-w-[150px]">{{ $headerSettings->office_name }}</span>
+                                    </div>
+                                    @if($headerAtt)
+                                        <div class="flex justify-between pt-1.5 border-t border-slate-200 dark:border-dark text-dark dark:text-white-light">
+                                            <span>Check-In Time:</span>
+                                            <strong class="font-bold text-success">{{ optional($headerAtt->check_in)->format('h:i A') ?? '--:--' }}</strong>
+                                        </div>
+                                        @if($headerAtt->check_out)
+                                            <div class="flex justify-between text-dark dark:text-white-light">
+                                                <span>Check-Out Time:</span>
+                                                <strong class="font-bold text-primary">{{ optional($headerAtt->check_out)->format('h:i A') ?? '--:--' }}</strong>
+                                            </div>
+                                        @endif
+                                    @endif
+                                </div>
+
+                                <!-- Action Button Inside Dropdown -->
+                                @if(!$headerAtt)
+                                    <button type="button" 
+                                            @click="submitCheckIn()" 
+                                            :disabled="loading" 
+                                            class="btn btn-success w-full gap-2 py-2 text-xs font-bold shadow-sm hover:shadow transition flex items-center justify-center">
+                                        <svg x-show="!loading" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                                        <span x-show="loading" class="animate-spin inline-block h-3.5 w-3.5 border-2 border-white border-l-transparent rounded-full"></span>
+                                        <span x-text="loading ? 'Verifying GPS...' : 'Check In Now'"></span>
+                                    </button>
+                                @elseif(!$headerAtt->check_out)
+                                    <button type="button" 
+                                            @click="submitCheckOut()" 
+                                            :disabled="loading" 
+                                            class="btn btn-primary w-full gap-2 py-2 text-xs font-bold shadow-sm hover:shadow transition flex items-center justify-center">
+                                        <svg x-show="!loading" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                        <span x-show="loading" class="animate-spin inline-block h-3.5 w-3.5 border-2 border-white border-l-transparent rounded-full"></span>
+                                        <span x-text="loading ? 'Recording...' : 'Check Out Now'"></span>
+                                    </button>
+                                @else
+                                    <div class="p-2.5 rounded-lg bg-success/10 text-success text-center text-xs font-bold flex items-center justify-center gap-1.5 border border-success/20">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Shift Completed ({{ $headerAtt->total_hours }} hrs)
+                                    </div>
+                                @endif
+
+                                <!-- Error feedback -->
+                                <div x-cloak x-show="errorMessage" class="text-[11px] text-danger font-semibold flex items-start gap-1 p-2 rounded bg-danger/10 border border-danger/20">
+                                    <svg class="h-3.5 w-3.5 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    <span x-text="errorMessage"></span>
+                                </div>
+                            </li>
+
+                            <!-- Dropdown Footer -->
+                            <li class="border-t border-[#e0e6ed] bg-slate-50 px-4 py-2.5 text-center dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                                <a href="{{ route('admin.attendance.my-attendance') }}" 
+                                   class="text-xs font-bold text-primary hover:underline flex items-center justify-center gap-1">
+                                    <span>View My Attendance History</span>
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <script>
+                    function headerAttendance() {
+                        return {
+                            open: false,
+                            loading: false,
+                            errorMessage: '',
+                            toggle() {
+                                this.open = !this.open;
+                                this.errorMessage = '';
+                            },
+                            submitCheckIn() {
+                                this.loading = true;
+                                this.errorMessage = '';
+
+                                const sendPayload = (lat = null, lng = null) => {
+                                    fetch('{{ route('admin.attendance.check-in') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        body: JSON.stringify({ latitude: lat, longitude: lng })
+                                    })
+                                    .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+                                    .then(({ ok, data }) => {
+                                        this.loading = false;
+                                        if (ok && data.success) {
+                                            window.location.reload();
+                                        } else {
+                                            this.errorMessage = data.message || 'Check-in failed.';
+                                        }
+                                    })
+                                    .catch(err => {
+                                        this.loading = false;
+                                        this.errorMessage = 'Network error: ' + err.message;
+                                    });
+                                };
+
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                        pos => sendPayload(pos.coords.latitude, pos.coords.longitude),
+                                        () => sendPayload(null, null),
+                                        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                                    );
+                                } else {
+                                    sendPayload(null, null);
+                                }
+                            },
+                            submitCheckOut() {
+                                this.loading = true;
+                                this.errorMessage = '';
+
+                                const sendPayload = (lat = null, lng = null) => {
+                                    fetch('{{ route('admin.attendance.check-out') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        body: JSON.stringify({ latitude: lat, longitude: lng })
+                                    })
+                                    .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+                                    .then(({ ok, data }) => {
+                                        this.loading = false;
+                                        if (ok && data.success) {
+                                            window.location.reload();
+                                        } else {
+                                            this.errorMessage = data.message || 'Check-out failed.';
+                                        }
+                                    })
+                                    .catch(err => {
+                                        this.loading = false;
+                                        this.errorMessage = 'Network error: ' + err.message;
+                                    });
+                                };
+
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                        pos => sendPayload(pos.coords.latitude, pos.coords.longitude),
+                                        () => sendPayload(null, null),
+                                        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                                    );
+                                } else {
+                                    sendPayload(null, null);
+                                }
+                            }
+                        };
+                    }
+                    </script>
+                @endif
+
                 <div class="dropdown flex shrink-0" x-data="dropdown" @click.outside="open = false">
                     <a href="javascript:;"
                         class="relative block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"

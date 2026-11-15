@@ -21,6 +21,11 @@ class Salary extends Model
         'tax_deduction',
         'insurance_deduction',
         'other_deductions',
+        'attendance_deduction',
+        'late_days',
+        'absent_days',
+        'half_days',
+        'attendance_details',
         'net_salary',
         'paid_amount',
         'payment_status',
@@ -46,6 +51,10 @@ class Salary extends Model
         'tax_deduction' => 'decimal:2',
         'insurance_deduction' => 'decimal:2',
         'other_deductions' => 'decimal:2',
+        'attendance_deduction' => 'decimal:2',
+        'late_days' => 'integer',
+        'absent_days' => 'integer',
+        'half_days' => 'integer',
         'net_salary' => 'decimal:2',
         'paid_amount' => 'decimal:2',
         'payment_date' => 'date',
@@ -63,7 +72,8 @@ class Salary extends Model
             // Calculate net salary
             $totalDeductions = $salary->tax_deduction
                 + $salary->insurance_deduction
-                + $salary->other_deductions;
+                + $salary->other_deductions
+                + ($salary->attendance_deduction ?? 0);
 
             $salary->net_salary = $salary->gross_salary - $totalDeductions;
 
@@ -87,7 +97,8 @@ class Salary extends Model
             // Recalculate net salary
             $totalDeductions = $salary->tax_deduction
                 + $salary->insurance_deduction
-                + $salary->other_deductions;
+                + $salary->other_deductions
+                + ($salary->attendance_deduction ?? 0);
 
             $salary->net_salary = $salary->gross_salary - $totalDeductions;
 

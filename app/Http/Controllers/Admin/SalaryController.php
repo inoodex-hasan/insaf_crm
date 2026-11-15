@@ -153,8 +153,31 @@ class SalaryController extends Controller
             }
         }
 
+        $attService = app(AttendanceService::class);
+        $attSettings = AttendanceSetting::getSettings();
+
         $salaries = [];
         foreach ($existingSalaries as $salary) {
+            $user = $salary->user_id ? User::find($salary->user_id) : null;
+            $attDeduction = 0.0;
+            $lateDays = 0;
+            $absentDays = 0;
+            $halfDays = 0;
+            $attDetails = null;
+
+            if ($user && $attSettings->auto_apply_salary_deduction) {
+                $calc = $attService->calculateMonthlyDeductions($user, $month, (float) $salary->basic_salary);
+                $attDeduction = (float) $calc['total_attendance_deduction'];
+                $lateDays = (int) $calc['late_days'];
+                $absentDays = (int) $calc['absent_days'];
+                $halfDays = (int) $calc['half_days'];
+                $attDetails = $calc['formula'];
+            }
+
+            $otherDeductions = (float) ($salary->tax_deduction + $salary->insurance_deduction + $salary->other_deductions);
+            $totalDeductions = round($otherDeductions + $attDeduction, 2);
+            $netSalary = max(0, ((float) $salary->basic_salary + (float) $salary->bonus) - $totalDeductions);
+
             $salaries[] = [
                 'id' => $salary->id, // Will be null if pulled from previous month
                 'user_id' => $salary->user_id,
@@ -162,8 +185,13 @@ class SalaryController extends Controller
                 'designation' => $salary->designation ?? 'Employee',
                 'basic_salary' => (float) $salary->basic_salary,
                 'bonus' => (float) $salary->bonus,
-                'deduction' => (float) ($salary->tax_deduction + $salary->insurance_deduction + $salary->other_deductions),
-                'net_salary' => (float) $salary->net_salary,
+                'deduction' => $totalDeductions,
+                'attendance_deduction' => $attDeduction,
+                'late_days' => $lateDays,
+                'absent_days' => $absentDays,
+                'half_days' => $halfDays,
+                'attendance_details' => $attDetails,
+                'net_salary' => $netSalary,
                 'status' => $salary->payment_status,
                 'account_number' => $salary->account_number,
                 'bank_name' => $salary->bank_name,
@@ -186,6 +214,11 @@ class SalaryController extends Controller
             'salaries.*.basic_salary' => ['required', 'numeric', 'min:0'],
             'salaries.*.bonus' => ['nullable', 'numeric', 'min:0'],
             'salaries.*.deduction' => ['nullable', 'numeric', 'min:0'],
+            'salaries.*.attendance_deduction' => ['nullable', 'numeric', 'min:0'],
+            'salaries.*.late_days' => ['nullable', 'integer', 'min:0'],
+            'salaries.*.absent_days' => ['nullable', 'integer', 'min:0'],
+            'salaries.*.half_days' => ['nullable', 'integer', 'min:0'],
+            'salaries.*.attendance_details' => ['nullable', 'string'],
             'salaries.*.account_number' => ['nullable', 'string', 'max:255'],
             'salaries.*.bank_name' => ['nullable', 'string', 'max:255'],
             'salaries.*.bank_branch' => ['nullable', 'string', 'max:255'],
@@ -198,11 +231,18 @@ class SalaryController extends Controller
             if (!empty($salaryData['id'])) {
                 $salary = Salary::find($salaryData['id']);
                 if ($salary) {
+                    $attDeduct = (float) ($salaryData['attendance_deduction'] ?? 0);
+                    $totDeduct = (float) ($salaryData['deduction'] ?? 0);
                     $salary->update([
                         'employee_name' => $salaryData['employee_name'],
                         'basic_salary' => $salaryData['basic_salary'],
                         'bonus' => $salaryData['bonus'] ?? 0,
-                        'tax_deduction' => $salaryData['deduction'] ?? 0,
+                        'attendance_deduction' => $attDeduct,
+                        'tax_deduction' => max(0, $totDeduct - $attDeduct),
+                        'late_days' => $salaryData['late_days'] ?? 0,
+                        'absent_days' => $salaryData['absent_days'] ?? 0,
+                        'half_days' => $salaryData['half_days'] ?? 0,
+                        'attendance_details' => $salaryData['attendance_details'] ?? null,
                         'account_number' => $salaryData['account_number'] ?? null,
                         'bank_name' => $salaryData['bank_name'] ?? null,
                         'bank_branch' => $salaryData['bank_branch'] ?? null,
@@ -223,6 +263,8 @@ class SalaryController extends Controller
                 }
             }
 
+            $attDeduct = (float) ($salaryData['attendance_deduction'] ?? 0);
+            $totDeduct = (float) ($salaryData['deduction'] ?? 0);
             Salary::create([
                 'user_id' => $salaryData['user_id'] ?? null,
                 'employee_name' => $salaryData['employee_name'],
@@ -231,9 +273,14 @@ class SalaryController extends Controller
                 'bonus' => $salaryData['bonus'] ?? 0,
                 'overtime_amount' => 0,
                 'allowances' => 0,
-                'tax_deduction' => $salaryData['deduction'] ?? 0,
+                'attendance_deduction' => $attDeduct,
+                'tax_deduction' => max(0, $totDeduct - $attDeduct),
                 'insurance_deduction' => 0,
                 'other_deductions' => 0,
+                'late_days' => $salaryData['late_days'] ?? 0,
+                'absent_days' => $salaryData['absent_days'] ?? 0,
+                'half_days' => $salaryData['half_days'] ?? 0,
+                'attendance_details' => $salaryData['attendance_details'] ?? null,
                 'payment_status' => 'pending',
                 'account_number' => $salaryData['account_number'] ?? null,
                 'bank_name' => $salaryData['bank_name'] ?? null,

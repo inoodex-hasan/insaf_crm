@@ -21,7 +21,7 @@
         </form>
 
         <!-- Table -->
-        <div class="table-responsive">
+        <div class="table-responsive" style="min-height: 280px;">
             <table class="table-hover">
                 <thead>
                     <tr>

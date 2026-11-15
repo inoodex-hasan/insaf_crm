@@ -15,6 +15,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('tyro-dashboard.index');
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('admin.dashboard');
 
 Route::prefix('dashboard/settings')->name('admin.settings.')->middleware('can:manage-settings')->group(function () {
     Route::get('/', [SettingController::class, 'index'])->name('index');
@@ -102,6 +103,8 @@ Route::prefix('dashboard/search-student')->name('admin.student-search.')->middle
 // Search Program Module
 Route::prefix('dashboard/search-program')->name('admin.search-program.')->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\SearchProgramController::class, 'index'])->name('index');
+    Route::post('/save-student-costing', [App\Http\Controllers\Admin\SearchProgramController::class, 'saveStudentCosting'])->name('save-student-costing')->middleware('can:*consultant|*application|*marketing');
+    Route::match(['GET', 'POST'], '/print-quotation', [App\Http\Controllers\Admin\SearchProgramController::class, 'printQuotation'])->name('print-quotation');
 });
 
 // Program Settings (Taxonomies: Levels & Requirements)
@@ -121,7 +124,9 @@ Route::prefix('dashboard/program-settings')->name('admin.program-settings.')->mi
 // Learning Resource Module
 Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\LearningResourceController::class, 'index'])->name('index');
+    Route::post('templates', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeTemplate'])->name('templates.store');
     Route::put('templates/{template}', [App\Http\Controllers\Admin\LearningResourceController::class, 'updateTemplate'])->name('templates.update');
+    Route::delete('templates/{template}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyTemplate'])->name('templates.destroy');
     Route::get('templates/{template}/preview', [App\Http\Controllers\Admin\LearningResourceController::class, 'previewTemplate'])->name('templates.preview');
     Route::get('templates/{template}/download-pdf', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadPdf'])->name('templates.download-pdf');
     Route::get('templates/{template}/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadDocx'])->name('templates.download-docx');
@@ -424,6 +429,23 @@ Route::get('/files/{path}', [App\Http\Controllers\FileServingController::class, 
     ->where('path', '.*')
     ->middleware('auth')
     ->name('serve-file');
+
+// Attendance Tracking & Super Admin Control
+Route::prefix('dashboard/attendance')->name('admin.attendance.')->middleware('auth')->group(function () {
+    // Staff actions
+    Route::post('/check-in', [App\Http\Controllers\Admin\AttendanceController::class, 'checkIn'])->name('check-in');
+    Route::post('/check-out', [App\Http\Controllers\Admin\AttendanceController::class, 'checkOut'])->name('check-out');
+    Route::get('/my-attendance', [App\Http\Controllers\Admin\AttendanceController::class, 'myAttendance'])->name('my-attendance');
+
+    // Super Admin control panel
+    Route::get('/', [App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('index');
+    Route::get('/settings', [App\Http\Controllers\Admin\AttendanceController::class, 'settings'])->name('settings');
+    Route::post('/settings', [App\Http\Controllers\Admin\AttendanceController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/{attendance}/adjust', [App\Http\Controllers\Admin\AttendanceController::class, 'adjust'])->name('adjust');
+    Route::post('/manual-store', [App\Http\Controllers\Admin\AttendanceController::class, 'manualStore'])->name('manual-store');
+    Route::get('/report', [App\Http\Controllers\Admin\AttendanceController::class, 'report'])->name('report');
+});
+
 
 
 

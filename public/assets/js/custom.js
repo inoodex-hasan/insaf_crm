@@ -62,19 +62,60 @@
 
             init() {
                 this.$watch("open", (value) => {
-                    const tr = this.$el.closest("tr");
-                    if (tr) {
-                        if (value) {
-                            tr.classList.add("dropdown-open");
-                            tr.style.position = "relative";
-                            tr.style.zIndex = "50";
-                        } else {
-                            tr.classList.remove("dropdown-open");
-                            tr.style.position = "";
-                            tr.style.zIndex = "";
-                        }
-                    }
+                    this.applyDropdownState(value);
                 });
+            },
+
+            applyDropdownState(isOpen) {
+                const tr = this.$el.closest("tr");
+                const td = this.$el.closest("td");
+                const containers = [];
+                let parent = this.$el.parentElement;
+                while (parent && parent !== document.body) {
+                    if (
+                        parent.classList.contains("overflow-x-auto") ||
+                        parent.classList.contains("table-responsive") ||
+                        parent.classList.contains("datatable") ||
+                        parent.classList.contains("panel")
+                    ) {
+                        containers.push(parent);
+                    }
+                    parent = parent.parentElement;
+                }
+
+                if (isOpen) {
+                    this.$el.classList.add("dropdown-open");
+                    if (tr) {
+                        tr.classList.add("dropdown-open");
+                        tr.style.position = "relative";
+                        tr.style.zIndex = "60";
+                    }
+                    if (td) {
+                        td.classList.add("dropdown-open");
+                        td.style.position = "relative";
+                        td.style.zIndex = "60";
+                    }
+                    containers.forEach(c => {
+                        c.classList.add("dropdown-open-container");
+                        c.style.overflow = "visible";
+                    });
+                } else {
+                    this.$el.classList.remove("dropdown-open");
+                    if (tr) {
+                        tr.classList.remove("dropdown-open");
+                        tr.style.position = "";
+                        tr.style.zIndex = "";
+                    }
+                    if (td) {
+                        td.classList.remove("dropdown-open");
+                        td.style.position = "";
+                        td.style.zIndex = "";
+                    }
+                    containers.forEach(c => {
+                        c.classList.remove("dropdown-open-container");
+                        c.style.overflow = "";
+                    });
+                }
             },
 
             toggle() {
@@ -82,12 +123,9 @@
                 if (this.open) {
                     const rect = this.$el.getBoundingClientRect();
                     this.openUp = (window.innerHeight - rect.bottom) < 190;
-                    const tr = this.$el.closest("tr");
-                    if (tr) {
-                        tr.classList.add("dropdown-open");
-                        tr.style.position = "relative";
-                        tr.style.zIndex = "50";
-                    }
+                    this.applyDropdownState(true);
+                } else {
+                    this.applyDropdownState(false);
                 }
             },
         }));

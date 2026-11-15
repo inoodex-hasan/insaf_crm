@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
-<!-- Mirrored from html.vristo.sbthemes.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 22 Jan 2026 10:32:34 GMT -->
 <!-- Added by HTTrack -->
 <meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 
@@ -299,7 +298,7 @@
                     <ul class="perfect-scrollbar relative h-[calc(100vh-80px)] space-y-0.5 overflow-y-auto overflow-x-hidden p-4 py-0 font-semibold"
                         x-data="{ activeDropdown: 'dashboard' }">
                         <li class="menu nav-item">
-                            <a href="{{ route('admin.dashboard') }}">
+                            <a href="{{ route('tyro-dashboard.index') }}">
                                 <button type="button" class="nav-link group"
                                     :class="{'active' : activeDropdown === 'dashboard'}"
                                     @click="activeDropdown === 'dashboard' ? activeDropdown = null : activeDropdown = 'dashboard'">

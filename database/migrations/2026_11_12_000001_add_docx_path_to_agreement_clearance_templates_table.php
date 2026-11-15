@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('agreement_clearance_templates', function (Blueprint $table) {
+            $table->string('docx_path', 255)->nullable()->after('header_space_mm');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('agreement_clearance_templates', function (Blueprint $table) {
+            $table->dropColumn('docx_path');
+        });
+    }
+};
+

@@ -45,7 +45,7 @@
                 </div>
             </form>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="min-height: 280px;">
             <table class="table-striped table-hover">
                 <thead>
                     <tr>

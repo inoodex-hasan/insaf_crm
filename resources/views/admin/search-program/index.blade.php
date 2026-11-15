@@ -181,52 +181,51 @@
                         <!-- Country -->
                         <div class="filter-select-group">
                             <label>Country</label>
-                            <select name="country_id">
+                            <select name="country_id" x-model="filterCountryId" @change="onCountryChange()">
                                 <option value="">Select Country</option>
                                 @foreach($countries as $country)
-                                    <option value="{{ $country->id }}" {{ request('country_id') == $country->id ? 'selected' : '' }}>
+                                    <option value="{{ $country->id }}">
                                         {{ $country->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <!-- Province | State (University Location) -->
+                        <!-- Province | State (Cascades by Country when selected) -->
                         <div class="filter-select-group">
                             <label>Province | State</label>
-                            <select name="state_province">
+                            <select name="state_province" x-model="filterProvince">
                                 <option value="">Select Province | State</option>
-                                @foreach($provinces as $prov)
-                                    <option value="{{ $prov }}" {{ request('state_province') == $prov ? 'selected' : '' }}>
-                                        {{ $prov }}
-                                    </option>
-                                @endforeach
+                                <template x-for="prov in availableProvinces" :key="prov">
+                                    <option :value="prov" x-text="prov" :selected="filterProvince === prov"></option>
+                                </template>
                             </select>
                         </div>
 
-                        <!-- Study Area (Dynamic) -->
+                        <!-- Study Area (Top-level Category) -->
                         <div class="filter-select-group">
                             <label>Study Area</label>
-                            <select name="study_area">
+                            <select name="study_area" x-model="filterStudyArea" @change="onStudyAreaChange()">
                                 <option value="">Select Study Area</option>
                                 @foreach($studyAreas as $area)
-                                    <option value="{{ $area }}" {{ request('study_area') == $area ? 'selected' : '' }}>
+                                    <option value="{{ $area }}">
                                         {{ $area }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <!-- Discipline Area (Dynamic) -->
+                        <!-- Discipline Area (Subcategory - Greyed out until Study Area is picked) -->
                         <div class="filter-select-group">
                             <label>Discipline Area</label>
-                            <select name="discipline_area">
-                                <option value="">Select Discipline Area</option>
-                                @foreach($disciplineAreas as $disc)
-                                    <option value="{{ $disc }}" {{ request('discipline_area') == $disc ? 'selected' : '' }}>
-                                        {{ $disc }}
-                                    </option>
-                                @endforeach
+                            <select name="discipline_area"
+                                    x-model="filterDisciplineArea"
+                                    :disabled="!filterStudyArea"
+                                    :title="filterStudyArea ? 'Select Discipline Area' : 'Pick a Study Area first to unlock'">
+                                <option value="" x-text="filterStudyArea ? (availableDisciplines.length ? 'Select Discipline Area' : 'No specialties under this Study Area') : 'Select Study Area first'"></option>
+                                <template x-for="disc in availableDisciplines" :key="disc">
+                                    <option :value="disc" x-text="disc" :selected="filterDisciplineArea === disc"></option>
+                                </template>
                             </select>
                         </div>
 
@@ -420,9 +419,30 @@
                             <div class="fee-block">
                                 <span class="fee-label">Tuition Fee</span>
                                 <span class="fee-amount">{{ $course->formatted_fee }}</span>
+                                <span class="est-total-pill" 
+                                      @click.stop="openCostingModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
+                                      title="View complete financial breakdown">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                    <span>Est. Total: BDT ~<span x-text="formatNumber(getEstTotalBdt({{ json_encode($course) }}, {{ json_encode($course->university?->country) }}))"></span></span>
+                                </span>
                             </div>
 
                             <div class="actions-block">
+                                <button type="button" 
+                                        @click="openCostingModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
+                                        class="btn-costing-view"
+                                        title="Itemized Costing Breakdown & Quotation">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                    <span>Cost Breakdown</span>
+                                </button>
+
                                 <button type="button" 
                                         @click="openDetailModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
                                         class="btn-detail-view">
@@ -597,6 +617,379 @@
                                 </svg>
                             </a>
                         @endcan
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 2. Costing Breakdown Modal - STRICT PROTOCOL (RULE 1) -->
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="costingModalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="costingModalOpen = false"
+                     x-show="costingModalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-4xl rounded-xl border border-[#e0e6ed] bg-white shadow-2xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden"
+                     style="max-height: 92vh; display: flex; flex-direction: column;">
+                    
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="badge bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">Financial Breakdown</span>
+                                <span class="text-xs font-semibold text-slate-500" x-text="costingCountry?.name || 'Destination'"></span>
+                            </div>
+                            <h5 class="text-base font-bold text-dark dark:text-white-light mt-0.5" x-text="costingCourse?.name || 'Course Costing Breakdown'"></h5>
+                        </div>
+                        <button type="button" 
+                                @click="costingModalOpen = false" 
+                                class="p-1.5 rounded-lg text-slate-400 hover:text-dark hover:bg-slate-100 dark:hover:text-white dark:hover:bg-[#1b2e4b] transition">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body (Scrollable) -->
+                    <div class="p-6 space-y-5 overflow-y-auto" style="flex: 1 1 auto; max-height: calc(92vh - 145px);">
+                        
+                        <!-- Rate Adjuster & Program Banner -->
+                        <div class="bg-slate-50 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b] p-3.5 rounded-lg flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-700 dark:text-slate-300" x-text="costingUniversity?.name || 'Institution'"></span>
+                                <span class="text-slate-400">•</span>
+                                <span class="text-slate-500 font-medium" x-text="costingCourse?.duration || 'Term'"></span>
+                            </div>
+
+                            <!-- Live Exchange Rate Controls -->
+                            <div class="flex items-center gap-2 bg-white dark:bg-[#1b2e4b] px-3 py-1.5 rounded border border-[#e0e6ed] dark:border-[#253b5c]">
+                                <span class="text-white-dark font-semibold">Exchange Rate:</span>
+                                <span class="font-bold text-slate-800 dark:text-slate-200" x-text="'1 ' + costingCurrency + ' ='"></span>
+                                <input type="number" 
+                                       step="0.01" 
+                                       min="0.1" 
+                                       x-model.number="costingExchangeRate" 
+                                       @input="recalculateAll()"
+                                       class="form-input text-xs font-bold w-20 py-0.5 px-1.5 text-center border-slate-300 dark:border-slate-700 rounded text-emerald-600 dark:text-emerald-400">
+                                <span class="font-semibold text-slate-600 dark:text-slate-400">BDT</span>
+                            </div>
+                        </div>
+
+                        <!-- 4 MANDATORY CORE COST COMPONENTS -->
+                        <div class="space-y-4">
+                            
+                            <!-- 1. TUITION FEE & SCHOLARSHIP SECTION -->
+                            <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl overflow-hidden">
+                                <div class="bg-blue-50/60 dark:bg-blue-950/30 px-4 py-2.5 border-b border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-between">
+                                    <span class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide">
+                                        1. Academic Tuition Fee & Scholarship
+                                    </span>
+                                    <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-400">Payable to: University</span>
+                                </div>
+
+                                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                    <!-- A. Base Tuition Fee -->
+                                    <div class="space-y-1.5 bg-slate-50 dark:bg-[#121e32] p-3 rounded-lg border border-slate-200 dark:border-[#1b2e4b]">
+                                        <div class="flex items-center justify-between">
+                                            <label class="font-bold text-slate-700 dark:text-slate-300">Base Tuition Fee</label>
+                                            <span class="text-[10px] text-slate-400 uppercase font-semibold" x-text="costingCurrency"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   x-model.number="costingTuitionFee" 
+                                                   @input="recalculateAll()"
+                                                   class="form-input text-xs font-semibold py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded">
+                                            <span class="font-semibold text-slate-500 whitespace-nowrap">
+                                                = BDT <span x-text="formatNumber(costingTuitionFee * costingExchangeRate)"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- B. Scholarship / Tuition Waiver -->
+                                    <div class="space-y-1.5 bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/50">
+                                        <div class="flex items-center justify-between">
+                                            <label class="font-bold text-emerald-800 dark:text-emerald-300">
+                                                Scholarship / Tuition Waiver (Deduction)
+                                            </label>
+                                            <span class="text-[10px] text-emerald-600 uppercase font-semibold">Minus (-)</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   x-model.number="costingScholarshipAmount" 
+                                                   @input="recalculateAll()"
+                                                   placeholder="0.00"
+                                                   class="form-input text-xs font-semibold py-1 px-2 border-emerald-300 dark:border-emerald-800 rounded text-emerald-700 dark:text-emerald-300">
+                                            <span class="font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
+                                                = -BDT <span x-text="formatNumber(costingScholarshipAmount * costingExchangeRate)"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Net Tuition Fee Subtotal Row -->
+                                <div class="bg-blue-50/30 dark:bg-blue-950/20 px-4 py-2.5 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-between text-xs font-bold">
+                                    <span class="text-blue-900 dark:text-blue-300">Net Tuition Payable:</span>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-slate-600 dark:text-slate-400" x-text="costingCurrency + ' ' + formatNumber(Math.max(0, costingTuitionFee - costingScholarshipAmount))"></span>
+                                        <span class="text-blue-700 dark:text-blue-400 text-sm">BDT <span x-text="formatNumber(netTuitionBdt)"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. UNIVERSITY APPLICATION FEE -->
+                            <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl overflow-hidden">
+                                <div class="bg-amber-50/60 dark:bg-amber-950/30 px-4 py-2 border-b border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-between">
+                                    <span class="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wide">
+                                        2. University Application / Admission Fee
+                                    </span>
+                                    <span class="text-[11px] font-semibold text-amber-700 dark:text-amber-400">Payable to: University</span>
+                                </div>
+
+                                <div class="p-3 bg-white dark:bg-[#1b2e4b] flex flex-wrap items-center justify-between gap-3 text-xs">
+                                    <div class="flex items-center gap-2" style="flex: 1; min-width: 200px;">
+                                        <input type="text" 
+                                               x-model="costingApplicationTitle" 
+                                               class="form-input text-xs py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded"
+                                               style="flex: 2;">
+                                        <div class="flex items-center gap-1.5" style="flex: 1.5;">
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   x-model.number="costingApplicationFee" 
+                                                   @input="recalculateAll()"
+                                                   class="form-input text-xs font-semibold py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded text-right">
+                                            <span class="font-bold text-slate-500" x-text="costingCurrency"></span>
+                                        </div>
+                                    </div>
+                                    <div class="font-bold text-slate-800 dark:text-slate-200">
+                                        BDT <span x-text="formatNumber(costingApplicationFee * costingExchangeRate)"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. ADDITIONAL COSTS (EMGS, STATE/CVU FEE, EMBASSY, MEDICAL, ETC.) -->
+                            <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl overflow-hidden">
+                                <div class="bg-purple-50/60 dark:bg-purple-950/30 px-4 py-2 border-b border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-between">
+                                    <span class="text-xs font-bold text-purple-900 dark:text-purple-300 uppercase tracking-wide">
+                                        3. Additional Costs (EMGS, State Fee, CVU, Embassy & Legal)
+                                    </span>
+                                    <button type="button" 
+                                            @click="addAdditionalItem()"
+                                            class="text-[11px] font-bold text-purple-700 hover:text-purple-900 dark:text-purple-400 flex items-center gap-1 bg-white dark:bg-[#121e32] px-2.5 py-0.5 rounded border border-purple-200 dark:border-purple-800">
+                                        <span>+ Add Cost</span>
+                                    </button>
+                                </div>
+
+                                <div class="p-3 bg-white dark:bg-[#1b2e4b] space-y-2 text-xs">
+                                    <template x-for="(item, idx) in costingAdditionalItems" :key="idx">
+                                        <div class="flex flex-wrap items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-[#121e32] border border-slate-200 dark:border-[#253b5c]">
+                                            <!-- Title -->
+                                            <div style="flex: 2.5; min-width: 170px;">
+                                                <input type="text" 
+                                                       x-model="item.title" 
+                                                       placeholder="Cost title (e.g. EMGS Fee)"
+                                                       class="form-input text-xs py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded w-full">
+                                            </div>
+
+                                            <!-- Payable To -->
+                                            <div style="flex: 1.5; min-width: 120px;">
+                                                <select x-model="item.payable_to" 
+                                                        class="form-select text-xs py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded w-full">
+                                                    <option value="government_embassy">Government / Embassy / EMGS</option>
+                                                    <option value="university">University</option>
+                                                    <option value="third_party">Third Party / Medical</option>
+                                                    <option value="agency">Agency</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Currency -->
+                                            <div style="flex: 0.8; min-width: 70px;">
+                                                <select x-model="item.currency" 
+                                                        @change="onItemCurrencyChange(item)"
+                                                        class="form-select text-xs py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded w-full">
+                                                    <option :value="costingCurrency" x-text="costingCurrency"></option>
+                                                    <option value="BDT">BDT</option>
+                                                    <option value="USD">USD</option>
+                                                    <option value="EUR">EUR</option>
+                                                    <option value="MYR">MYR</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Amount -->
+                                            <div style="flex: 1.2; min-width: 90px;">
+                                                <input type="number" 
+                                                       step="0.01" 
+                                                       min="0" 
+                                                       x-model.number="item.foreign_amount" 
+                                                       @input="onItemAmountChange(item)"
+                                                       class="form-input text-xs font-semibold py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded w-full text-right">
+                                            </div>
+
+                                            <!-- BDT Equiv -->
+                                            <div class="text-right font-bold text-slate-800 dark:text-slate-200" style="flex: 1.2; min-width: 90px;">
+                                                BDT <span x-text="formatNumber(item.bdt_amount)"></span>
+                                            </div>
+
+                                            <!-- Remove button -->
+                                            <div>
+                                                <button type="button" 
+                                                        @click="removeAdditionalItem(idx)" 
+                                                        class="p-1 rounded text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Subtotal for Additional Costs -->
+                                    <div class="flex items-center justify-between pt-1 px-1 font-bold text-xs">
+                                        <span class="text-purple-900 dark:text-purple-300">Subtotal Additional Costs:</span>
+                                        <span class="text-purple-700 dark:text-purple-400">BDT <span x-text="formatNumber(totalAdditionalBdt)"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. INSAF AGENCY SERVICE PACKAGE -->
+                            <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl overflow-hidden">
+                                <div class="bg-orange-50/60 dark:bg-orange-950/30 px-4 py-2 border-b border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-between">
+                                    <span class="text-xs font-bold text-orange-900 dark:text-orange-300 uppercase tracking-wide">
+                                        4. Insaf Agency Service Package (Post-Approval / Service Charge)
+                                    </span>
+                                    <span class="text-[11px] font-semibold text-orange-700 dark:text-orange-400">Payable to: Insaf International</span>
+                                </div>
+
+                                <div class="p-3 bg-white dark:bg-[#1b2e4b] flex flex-wrap items-center justify-between gap-3 text-xs">
+                                    <div class="text-slate-600 dark:text-slate-400">
+                                        Official service fee agreed in file opening contract (payable upon visa approval).
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-700 dark:text-slate-300">BDT</span>
+                                        <input type="number" 
+                                               step="500" 
+                                               min="0" 
+                                               x-model.number="costingAgencyFee" 
+                                               @input="recalculateAll()"
+                                               class="form-input text-xs font-bold py-1 px-2 border-slate-300 dark:border-[#253b5c] rounded text-right w-32 text-orange-700 dark:text-orange-400">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- CORE SUMMARY KPI BAR -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900 text-white p-4 rounded-xl shadow-inner text-xs">
+                            <div class="text-center">
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Net Tuition</span>
+                                <span class="text-sm font-extrabold text-blue-300">BDT <span x-text="formatNumber(netTuitionBdt)"></span></span>
+                            </div>
+                            <div class="text-center">
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">App & State/Addl</span>
+                                <span class="text-sm font-extrabold text-amber-300">BDT <span x-text="formatNumber(totalAppAndAdditionalBdt)"></span></span>
+                            </div>
+                            <div class="text-center">
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Agency Package</span>
+                                <span class="text-sm font-extrabold text-orange-300">BDT <span x-text="formatNumber(costingAgencyFee)"></span></span>
+                            </div>
+                            <div class="text-center bg-emerald-600 rounded-lg py-1 px-2">
+                                <span class="text-emerald-100 block text-[10px] uppercase font-bold tracking-wider">Grand Total Budget</span>
+                                <span class="text-base font-black text-white">BDT <span x-text="formatNumber(grandTotalBdt)"></span></span>
+                            </div>
+                        </div>
+
+                        <!-- ASSIGN TO STUDENT / CRM INTEGRATION PANEL -->
+                        <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] bg-slate-50/70 dark:bg-[#121e32] p-4 rounded-xl text-xs space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                                    Assign This Costing Breakdown to Active Student
+                                </span>
+                                <span class="text-[11px] text-slate-500">Links quotation to profile & saves history</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <!-- Student Selector -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Select Active Student:</label>
+                                    <select x-model="selectedStudentId" class="form-select text-xs py-1.5">
+                                        <option value="">-- Choose Student to Assign --</option>
+                                        <template x-for="st in studentsList" :key="st.id">
+                                            <option :value="st.id" x-text="st.first_name + ' ' + (st.last_name || '') + (st.passport_number ? ' (' + st.passport_number + ')' : '')"></option>
+                                        </template>
+                                    </select>
+                                </div>
+
+                                <!-- Package Sync Toggle -->
+                                <div class="flex flex-col justify-end">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer mt-auto pb-1">
+                                        <input type="checkbox" x-model="syncPackageAmount" class="form-checkbox text-primary rounded">
+                                        <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Sync Agency Fee to Student Package Amount</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Modal Footer & Action Buttons -->
+                    <div class="flex flex-wrap items-center justify-between border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-3.5 dark:border-[#1b2e4b] dark:bg-[#121e32] gap-3">
+                        <button type="button" @click="costingModalOpen = false" class="btn btn-outline-danger btn-sm text-xs px-5">
+                            Close
+                        </button>
+
+                        <div class="flex items-center gap-2">
+                            <!-- 1. Print Quotation on Insaf Pad -->
+                            <button type="button" 
+                                    @click="printQuotation()" 
+                                    class="btn btn-outline-primary btn-sm text-xs px-4 flex items-center gap-1.5">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg>
+                                <span>Print Official Quotation</span>
+                            </button>
+
+                            <!-- 2. Assign to Student -->
+                            <button type="button" 
+                                    @click="saveStudentCosting()" 
+                                    :disabled="!selectedStudentId || isSavingCosting"
+                                    class="btn btn-success btn-sm text-xs px-5 flex items-center gap-1.5">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                <span x-text="isSavingCosting ? 'Saving...' : 'Assign to Student'"></span>
+                            </button>
+
+                            <!-- 3. Direct Apply -->
+                            @can('*consultant|*application|*marketing')
+                                <a :href="'{{ url('dashboard/applications/create') }}?university_id=' + (costingCourse?.university_id || '') + '&course_id=' + (costingCourse?.id || '')" 
+                                   class="btn btn-primary btn-sm text-xs px-5 flex items-center gap-1.5">
+                                    <span>Apply</span>
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </a>
+                            @endcan
+                        </div>
                     </div>
 
                 </div>
@@ -946,6 +1339,20 @@
     .filter-select-group select:focus {
         border-color: #22c55e;
     }
+    .filter-select-group select:disabled {
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        border-color: #e2e8f0;
+        cursor: not-allowed;
+        opacity: 0.75;
+    }
+    .dark .filter-select-group select:disabled {
+        background-color: #0b1220;
+        color: #475569;
+        border-color: #17253d;
+        cursor: not-allowed;
+        opacity: 0.75;
+    }
 
     .stem-info-bubble {
         display: inline-flex;
@@ -1241,6 +1648,55 @@
         color: #22c55e;
     }
 
+    .est-total-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        cursor: pointer;
+        margin-top: 4px;
+        transition: all 0.2s;
+    }
+    .dark .est-total-pill {
+        background: rgba(6, 95, 70, 0.2);
+        color: #34d399;
+        border-color: rgba(5, 150, 105, 0.4);
+    }
+    .est-total-pill:hover {
+        background: #d1fae5;
+        transform: translateY(-1px);
+    }
+
+    .btn-costing-view {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #10b981;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s;
+    }
+    .dark .btn-costing-view {
+        background: rgba(6, 95, 70, 0.2);
+        color: #34d399;
+        border-color: #059669;
+    }
+    .btn-costing-view:hover {
+        background: #10b981;
+        color: #ffffff;
+    }
+
     .actions-block {
         display: flex;
         align-items: center;
@@ -1337,11 +1793,403 @@
             selectedUniversity: null,
             selectedCountry: null,
 
+            filterCountryId: @js((string) request('country_id', '')),
+            filterProvince: @js((string) request('state_province', '')),
+            filterStudyArea: @js((string) request('study_area', '')),
+            filterDisciplineArea: @js((string) request('discipline_area', '')),
+            studyDisciplineMap: @js($studyDisciplineMap),
+            countryProvincesMap: @js($countryProvincesMap),
+            allProvinces: @js($provinces),
+
+            init() {
+                // Re-sync dynamic x-for selects after initial DOM render
+                this.$nextTick(() => {
+                    const provVal = @js((string) request('state_province', ''));
+                    const discVal = @js((string) request('discipline_area', ''));
+                    if (provVal && this.availableProvinces.includes(provVal)) {
+                        this.filterProvince = provVal;
+                    }
+                    if (discVal && this.availableDisciplines.includes(discVal)) {
+                        this.filterDisciplineArea = discVal;
+                    }
+                });
+            },
+
+            get availableDisciplines() {
+                if (!this.filterStudyArea) return [];
+                return this.studyDisciplineMap[this.filterStudyArea] || [];
+            },
+
+            get availableProvinces() {
+                if (this.filterCountryId && this.countryProvincesMap[this.filterCountryId]) {
+                    return this.countryProvincesMap[this.filterCountryId];
+                }
+                return this.allProvinces || [];
+            },
+
+            onStudyAreaChange() {
+                if (!this.availableDisciplines.includes(this.filterDisciplineArea)) {
+                    this.filterDisciplineArea = '';
+                }
+            },
+
+            onCountryChange() {
+                if (this.filterProvince && !this.availableProvinces.includes(this.filterProvince)) {
+                    this.filterProvince = '';
+                }
+            },
+
             openDetailModal(course, university, country) {
                 this.selectedCourse = course;
                 this.selectedUniversity = university;
                 this.selectedCountry = country;
                 this.modalOpen = true;
+            },
+
+            // ==========================================
+            // COSTING BREAKDOWN & FINANCIAL ENGINE
+            // ==========================================
+            costingModalOpen: false,
+            costingCourse: null,
+            costingUniversity: null,
+            costingCountry: null,
+            costingCurrency: 'USD',
+            costingExchangeRate: 125.00,
+            costingTuitionFee: 0,
+            costingScholarshipAmount: 0,
+            costingApplicationTitle: 'University Application / Admission Fee',
+            costingApplicationFee: 100,
+            costingAdditionalItems: [],
+            costingAgencyFee: 50000,
+            selectedStudentId: '',
+            syncPackageAmount: true,
+            isSavingCosting: false,
+
+            costingTemplatesMap: @js($costingTemplatesMap),
+            defaultCostingTemplate: @js($defaultCostingTemplate),
+            studentsList: @js($studentsList),
+
+            formatNumber(num) {
+                if (num === null || num === undefined || isNaN(num)) return '0.00';
+                return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
+
+            get netTuitionForeign() {
+                const tuition = Number(this.costingTuitionFee) || 0;
+                const scholarship = Number(this.costingScholarshipAmount) || 0;
+                return Math.max(0, tuition - scholarship);
+            },
+
+            get netTuitionBdt() {
+                return this.netTuitionForeign * (Number(this.costingExchangeRate) || 1);
+            },
+
+            get totalAdditionalBdt() {
+                return this.costingAdditionalItems.reduce((acc, item) => acc + (Number(item.bdt_amount) || 0), 0);
+            },
+
+            get totalAppAndAdditionalBdt() {
+                const appBdt = (Number(this.costingApplicationFee) || 0) * (Number(this.costingExchangeRate) || 1);
+                return appBdt + this.totalAdditionalBdt;
+            },
+
+            get grandTotalBdt() {
+                return this.netTuitionBdt + this.totalAppAndAdditionalBdt + (Number(this.costingAgencyFee) || 0);
+            },
+
+            getEstTotalBdt(course, country) {
+                const tpl = (country && this.costingTemplatesMap[country.id]) 
+                    ? this.costingTemplatesMap[country.id] 
+                    : this.defaultCostingTemplate;
+
+                const rate = Number(tpl?.default_exchange_rate) || (course.currency === 'EUR' ? 135 : (course.currency === 'MYR' ? 30 : 125));
+                const tuition = Number(course.tuition_fee) || 4500;
+                let total = tuition * rate;
+
+                if (tpl && tpl.items) {
+                    tpl.items.forEach(item => {
+                        if (item.category === 'application_fee') {
+                            total += (Number(item.default_foreign_amount) || 0) * rate;
+                        } else if (item.category === 'additional_cost') {
+                            if (item.currency === 'BDT') {
+                                total += Number(item.default_bdt_amount) || 0;
+                            } else {
+                                total += (Number(item.default_foreign_amount) || 0) * rate;
+                            }
+                        } else if (item.category === 'agency_fee') {
+                            total += Number(item.default_bdt_amount) || 0;
+                        }
+                    });
+                }
+                return Math.round(total);
+            },
+
+            openCostingModal(course, university, country) {
+                this.costingCourse = course;
+                this.costingUniversity = university;
+                this.costingCountry = country;
+
+                const tpl = (country && this.costingTemplatesMap[country.id]) 
+                    ? this.costingTemplatesMap[country.id] 
+                    : this.defaultCostingTemplate;
+
+                this.costingCurrency = course.currency || tpl?.currency || 'USD';
+                this.costingExchangeRate = Number(tpl?.default_exchange_rate) || (this.costingCurrency === 'EUR' ? 135 : (this.costingCurrency === 'MYR' ? 30 : 125));
+                
+                // 1. Tuition Fee (Auto-pulled from course or template)
+                this.costingTuitionFee = Number(course.tuition_fee) > 0 
+                    ? Number(course.tuition_fee) 
+                    : (tpl?.items?.find(i => i.category === 'tuition')?.default_foreign_amount || 5000);
+
+                // 2. Scholarship (Default 0, customizable)
+                this.costingScholarshipAmount = 0;
+
+                // 3. Application Fee
+                const appItem = tpl?.items?.find(i => i.category === 'application_fee');
+                this.costingApplicationTitle = appItem ? appItem.title : 'University Application / Admission Fee';
+                this.costingApplicationFee = appItem ? Number(appItem.default_foreign_amount) : (this.costingCurrency === 'MYR' ? 500 : 100);
+
+                // 4. Agency Fee
+                const agencyItem = tpl?.items?.find(i => i.category === 'agency_fee');
+                this.costingAgencyFee = agencyItem ? Number(agencyItem.default_bdt_amount) : 50000;
+
+                // 5. Additional Items (EMGS, State fee, CVU, Embassy, Medical)
+                this.costingAdditionalItems = [];
+                if (tpl && tpl.items) {
+                    tpl.items.filter(i => i.category === 'additional_cost').forEach(i => {
+                        const isBdt = i.currency === 'BDT';
+                        const fAmount = Number(i.default_foreign_amount) || 0;
+                        const bdtAmount = isBdt ? (Number(i.default_bdt_amount) || fAmount) : (fAmount * this.costingExchangeRate);
+
+                        this.costingAdditionalItems.push({
+                            category: 'additional_cost',
+                            title: i.title,
+                            payable_to: i.payable_to || 'government_embassy',
+                            currency: i.currency || this.costingCurrency,
+                            foreign_amount: fAmount,
+                            exchange_rate: isBdt ? 1 : this.costingExchangeRate,
+                            bdt_amount: bdtAmount,
+                            is_deduction: false
+                        });
+                    });
+                }
+
+                this.selectedStudentId = '';
+                this.costingModalOpen = true;
+            },
+
+            addAdditionalItem() {
+                this.costingAdditionalItems.push({
+                    category: 'additional_cost',
+                    title: 'Embassy / State / Legal Fee',
+                    payable_to: 'government_embassy',
+                    currency: this.costingCurrency,
+                    foreign_amount: 100,
+                    exchange_rate: this.costingExchangeRate,
+                    bdt_amount: 100 * this.costingExchangeRate,
+                    is_deduction: false
+                });
+            },
+
+            removeAdditionalItem(index) {
+                this.costingAdditionalItems.splice(index, 1);
+            },
+
+            onItemAmountChange(item) {
+                const amt = Number(item.foreign_amount) || 0;
+                if (item.currency === 'BDT') {
+                    item.bdt_amount = amt;
+                } else {
+                    item.bdt_amount = amt * (Number(this.costingExchangeRate) || 1);
+                }
+            },
+
+            onItemCurrencyChange(item) {
+                if (item.currency === 'BDT') {
+                    item.exchange_rate = 1;
+                    item.bdt_amount = Number(item.foreign_amount) || 0;
+                } else {
+                    item.exchange_rate = this.costingExchangeRate;
+                    item.bdt_amount = (Number(item.foreign_amount) || 0) * this.costingExchangeRate;
+                }
+            },
+
+            recalculateAll() {
+                const rate = Number(this.costingExchangeRate) || 1;
+                this.costingAdditionalItems.forEach(item => {
+                    if (item.currency !== 'BDT') {
+                        item.exchange_rate = rate;
+                        item.bdt_amount = (Number(item.foreign_amount) || 0) * rate;
+                    }
+                });
+            },
+
+            buildAllItemsPayload() {
+                const rate = Number(this.costingExchangeRate) || 1;
+                const items = [];
+
+                // 1. Base Tuition
+                items.push({
+                    category: 'tuition',
+                    title: (this.costingCourse?.name || 'Course') + ' Tuition Fee',
+                    payable_to: 'university',
+                    currency: this.costingCurrency,
+                    foreign_amount: Number(this.costingTuitionFee) || 0,
+                    exchange_rate: rate,
+                    bdt_amount: (Number(this.costingTuitionFee) || 0) * rate,
+                    is_deduction: false
+                });
+
+                // 2. Scholarship
+                if (Number(this.costingScholarshipAmount) > 0) {
+                    items.push({
+                        category: 'scholarship',
+                        title: 'Scholarship / Tuition Fee Waiver',
+                        payable_to: 'university',
+                        currency: this.costingCurrency,
+                        foreign_amount: Number(this.costingScholarshipAmount) || 0,
+                        exchange_rate: rate,
+                        bdt_amount: (Number(this.costingScholarshipAmount) || 0) * rate,
+                        is_deduction: true
+                    });
+                }
+
+                // 3. Application Fee
+                if (Number(this.costingApplicationFee) > 0) {
+                    items.push({
+                        category: 'application_fee',
+                        title: this.costingApplicationTitle,
+                        payable_to: 'university',
+                        currency: this.costingCurrency,
+                        foreign_amount: Number(this.costingApplicationFee) || 0,
+                        exchange_rate: rate,
+                        bdt_amount: (Number(this.costingApplicationFee) || 0) * rate,
+                        is_deduction: false
+                    });
+                }
+
+                // 4. Additional Costs (EMGS, State fee, CVU, Embassy, etc.)
+                this.costingAdditionalItems.forEach(item => {
+                    items.push({
+                        category: 'additional_cost',
+                        title: item.title,
+                        payable_to: item.payable_to,
+                        currency: item.currency,
+                        foreign_amount: Number(item.foreign_amount) || 0,
+                        exchange_rate: item.currency === 'BDT' ? 1 : rate,
+                        bdt_amount: Number(item.bdt_amount) || 0,
+                        is_deduction: false
+                    });
+                });
+
+                // 5. Agency Service Charge
+                if (Number(this.costingAgencyFee) > 0) {
+                    items.push({
+                        category: 'agency_fee',
+                        title: 'Insaf Agency Service Package (Post-Approval)',
+                        payable_to: 'agency',
+                        currency: 'BDT',
+                        foreign_amount: Number(this.costingAgencyFee) || 0,
+                        exchange_rate: 1,
+                        bdt_amount: Number(this.costingAgencyFee) || 0,
+                        is_deduction: false
+                    });
+                }
+
+                return items;
+            },
+
+            printQuotation() {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('admin.search-program.print-quotation') }}';
+                form.target = '_blank';
+
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = '_token';
+                csrf.value = '{{ csrf_token() }}';
+                form.appendChild(csrf);
+
+                const payload = {
+                    course_name: this.costingCourse?.name,
+                    university_name: this.costingUniversity?.name,
+                    country_name: this.costingCountry?.name,
+                    program_level: this.costingCourse?.program_level,
+                    currency: this.costingCurrency,
+                    exchange_rate: this.costingExchangeRate,
+                    tuition_fee: Number(this.costingTuitionFee) || 0,
+                    scholarship_amount: Number(this.costingScholarshipAmount) || 0,
+                    net_tuition_fee: this.netTuitionBdt,
+                    application_fee: (Number(this.costingApplicationFee) || 0) * (Number(this.costingExchangeRate) || 1),
+                    total_additional_costs: this.totalAdditionalBdt,
+                    agency_fee: Number(this.costingAgencyFee) || 0,
+                    grand_total_bdt: this.grandTotalBdt,
+                    items: this.buildAllItemsPayload(),
+                    student_id: this.selectedStudentId || null
+                };
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'quotation_data';
+                input.value = JSON.stringify(payload);
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            },
+
+            async saveStudentCosting() {
+                if (!this.selectedStudentId) {
+                    alert('Please select an active student to assign this costing breakdown.');
+                    return;
+                }
+
+                this.isSavingCosting = true;
+                const payload = {
+                    student_id: this.selectedStudentId,
+                    course_id: this.costingCourse?.id || null,
+                    university_id: this.costingUniversity?.id || null,
+                    country_id: this.costingCountry?.id || null,
+                    currency: this.costingCurrency,
+                    exchange_rate: Number(this.costingExchangeRate) || 1,
+                    tuition_fee: Number(this.costingTuitionFee) || 0,
+                    scholarship_amount: Number(this.costingScholarshipAmount) || 0,
+                    net_tuition_fee: this.netTuitionBdt,
+                    application_fee: (Number(this.costingApplicationFee) || 0) * (Number(this.costingExchangeRate) || 1),
+                    total_additional_costs: this.totalAdditionalBdt,
+                    agency_fee: Number(this.costingAgencyFee) || 0,
+                    grand_total_bdt: this.grandTotalBdt,
+                    sync_package_amount: this.syncPackageAmount,
+                    items: this.buildAllItemsPayload(),
+                    notes: 'Generated via Search Program for ' + (this.costingCourse?.name || 'Program')
+                };
+
+                try {
+                    const response = await fetch('{{ route('admin.search-program.save-student-costing') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(data.message || 'Costing breakdown assigned successfully!');
+                        this.costingModalOpen = false;
+                    } else {
+                        alert(data.message || 'Error saving costing breakdown.');
+                    }
+                } catch (err) {
+                    console.error('Error saving costing breakdown:', err);
+                    alert('Network error while saving costing breakdown.');
+                } finally {
+                    this.isSavingCosting = false;
+                }
             }
         };
     }

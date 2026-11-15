@@ -3,6 +3,9 @@
 @section('title', 'Dashboard')
 
 @section('content')
+    <!-- Staff Attendance Tracking Widget (Visible for regular staff, hidden for Super Admin) -->
+    @include('admin.attendance.partials.dashboard-widget')
+
     <!-- Breadcrumb -->
     @if (auth()->check() && auth()->user()->hasRole('admin'))
         <h5 class="text-xs font-semibold text-[#506690]">Administration</h5>

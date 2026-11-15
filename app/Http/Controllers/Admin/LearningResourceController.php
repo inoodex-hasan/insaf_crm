@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -44,7 +45,13 @@ class LearningResourceController extends Controller
             ->ordered()
             ->get();
 
-        // 3. Country Based Documents
+        // 3. Other Templates (Declarations, Receipts, Acknowledgements)
+        $otherTemplates = AgreementTemplate::others()
+            ->active()
+            ->ordered()
+            ->get();
+
+        // 4. Country Based Documents
         $docQuery = LearningResource::category('country_document')
             ->with(['country', 'creator'])
             ->ordered();
@@ -54,7 +61,7 @@ class LearningResourceController extends Controller
         }
         $countryDocuments = $docQuery->get();
 
-        // 4. Interview Preparation Resources
+        // 5. Interview Preparation Resources
         $interviewQuery = LearningResource::category('interview_prep')
             ->with(['country', 'creator'])
             ->ordered();
@@ -70,13 +77,70 @@ class LearningResourceController extends Controller
             'countries',
             'agreementTemplates',
             'clearanceTemplates',
+            'otherTemplates',
             'countryDocuments',
             'interviewPreps'
         ));
     }
 
     /**
-     * Update an agreement or clearance master template.
+     * Resolve redirect tab name for an AgreementTemplate.
+     */
+    protected function resolveTemplateTab(AgreementTemplate $template): string
+    {
+        if (in_array($template->type, ['clearance_withdrawal', 'clearance_full'])) {
+            return 'clearances';
+        }
+        if ($template->type === 'other') {
+            return 'other';
+        }
+        return 'agreements';
+    }
+
+    /**
+     * Store a newly created template (used for the "Other" templates tab).
+     */
+    public function storeTemplate(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'nullable|string|in:other,agreement,clearance_withdrawal,clearance_full',
+            'layout_type' => 'nullable|string|in:pad,stamp',
+            'header_space_mm' => 'nullable|integer|min:0|max:200',
+            'content' => 'required|string',
+            'docx_template' => 'nullable|file|mimes:docx|max:20480',
+        ]);
+
+        $type = $validated['type'] ?? 'other';
+        $template = AgreementTemplate::create([
+            'type' => $type,
+            'country_id' => null,
+            'layout_type' => $validated['layout_type'] ?? 'pad',
+            'header_space_mm' => $validated['header_space_mm'] ?? 0,
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'is_active' => true,
+            'sort_order' => (AgreementTemplate::where('type', $type)->max('sort_order') ?? 0) + 1,
+        ]);
+
+        if ($request->hasFile('docx_template')) {
+            $subDir = $type === 'other' ? 'other' : 'custom';
+            $filename = Str::slug($template->title) . "_{$template->id}.docx";
+            $relPath = "storage/app/templates/{$subDir}/{$filename}";
+            $absDir = base_path("storage/app/templates/{$subDir}");
+            if (!is_dir($absDir)) {
+                mkdir($absDir, 0755, true);
+            }
+            $request->file('docx_template')->move($absDir, $filename);
+            $template->update(['docx_path' => $relPath]);
+        }
+
+        return redirect()->route('admin.learning-resources.index', ['tab' => $this->resolveTemplateTab($template)])
+            ->with('success', "Template '{$template->title}' created successfully.");
+    }
+
+    /**
+     * Update an agreement, clearance, or other master template.
      */
     public function updateTemplate(Request $request, AgreementTemplate $template): RedirectResponse
     {
@@ -104,13 +168,37 @@ class LearningResourceController extends Controller
                     mkdir($dir, 0755, true);
                 }
                 $request->file('docx_template')->move($dir, basename($masterPath));
+            } else {
+                $subDir = $template->type === 'other' ? 'other' : 'custom';
+                $filename = Str::slug($template->title) . "_{$template->id}.docx";
+                $relPath = "storage/app/templates/{$subDir}/{$filename}";
+                $absDir = base_path("storage/app/templates/{$subDir}");
+                if (!is_dir($absDir)) {
+                    mkdir($absDir, 0755, true);
+                }
+                $request->file('docx_template')->move($absDir, $filename);
+                $template->update(['docx_path' => $relPath]);
             }
         }
 
-        $tab = in_array($template->type, ['clearance_withdrawal', 'clearance_full']) ? 'clearances' : 'agreements';
-
-        return redirect()->route('admin.learning-resources.index', ['tab' => $tab])
+        return redirect()->route('admin.learning-resources.index', ['tab' => $this->resolveTemplateTab($template)])
             ->with('success', "Template '{$template->title}' updated successfully.");
+    }
+
+    /**
+     * Delete a custom "Other" template.
+     */
+    public function destroyTemplate(AgreementTemplate $template): RedirectResponse
+    {
+        if ($template->type !== 'other') {
+            return redirect()->back()->with('error', 'Core agreement and clearance templates cannot be deleted.');
+        }
+
+        $title = $template->title;
+        $template->delete();
+
+        return redirect()->route('admin.learning-resources.index', ['tab' => 'other'])
+            ->with('success', "Template '{$title}' deleted successfully.");
     }
 
     /**
@@ -145,6 +233,13 @@ class LearningResourceController extends Controller
      */
     protected function getMasterDocxTemplatePath(AgreementTemplate $template): ?string
     {
+        if (!empty($template->docx_path)) {
+            $explicitPath = base_path($template->docx_path);
+            if (file_exists($explicitPath)) {
+                return $explicitPath;
+            }
+        }
+
         $countryName = strtolower($template->country->name ?? '');
         $layout = $template->layout_type === 'stamp' ? 'stamp' : 'pad';
 
@@ -162,13 +257,78 @@ class LearningResourceController extends Controller
             }
         }
 
-        // Generic fallback template for other countries / general agreements
-        $defaultPath = storage_path("app/templates/default_agreement_{$layout}.docx");
-        if (file_exists($defaultPath)) {
-            return $defaultPath;
+        if ($template->type === 'agreement') {
+            $defaultPath = storage_path("app/templates/default_agreement_{$layout}.docx");
+            if (file_exists($defaultPath)) {
+                return $defaultPath;
+            }
         }
 
         return null;
+    }
+
+    /**
+     * Build shared token maps for both HTML (Preview/PDF) and TemplateProcessor (DOCX).
+     */
+    protected function buildTemplateTokenMap(AgreementTemplate $template, array $data = []): array
+    {
+        $countryName = !empty($data['country_name'])
+            ? $data['country_name']
+            : ($template->country->name ?? 'Destination Country');
+        $isKorea = str_contains(strtolower($countryName), 'korea');
+
+        $defaultFee = $isKorea ? 'BDT 120,000' : 'BDT 50,000';
+        $defaultFeeWords = $isKorea ? 'One Lac Twenty Thousand Taka only' : 'Fifty Thousand Taka only';
+
+        $serviceCharge = !empty($data['service_charge']) ? $data['service_charge'] : $defaultFee;
+        $serviceChargeWords = !empty($data['service_charge_words']) ? $data['service_charge_words'] : $defaultFeeWords;
+
+        $plain = [
+            'DATE' => !empty($data['date']) ? $data['date'] : now()->format('d F Y'),
+            'APPLICANT_NAME' => !empty($data['applicant_name']) ? $data['applicant_name'] : '________________________',
+            'FATHER_NAME' => !empty($data['father_name']) ? $data['father_name'] : '________________________',
+            'MOTHER_NAME' => !empty($data['mother_name']) ? $data['mother_name'] : '________________________',
+            'PASSPORT_NO' => !empty($data['passport_no']) ? $data['passport_no'] : '________________________',
+            'ADDRESS' => !empty($data['address']) ? $data['address'] : '________________________',
+            'PHONE' => !empty($data['phone']) ? $data['phone'] : '________________________',
+            'SERVICE_CHARGE' => $serviceCharge,
+            'SERVICE_CHARGE_WORDS' => $serviceChargeWords,
+            'AMOUNT' => !empty($data['amount']) ? $data['amount'] : $serviceCharge,
+            'AMOUNT_WORDS' => !empty($data['amount_words']) ? $data['amount_words'] : $serviceChargeWords,
+            'CHEQUE_NO' => !empty($data['cheque_no']) ? $data['cheque_no'] : '________________________',
+            'DOCUMENTS_LIST' => !empty($data['documents_list']) ? $data['documents_list'] : 'Passport, SSC (Certificate & Transcript), HSC (Certificate & Transcript)',
+            'COUNTRY_NAME' => $countryName,
+            'COUNTRY_UPPER' => strtoupper($countryName),
+            'UNIVERSITY_NAME' => !empty($data['university_name']) ? $data['university_name'] : '________________________',
+            'COURSE_NAME' => !empty($data['course_name']) ? $data['course_name'] : '________________________',
+            'INTAKE_NAME' => !empty($data['intake_name']) ? $data['intake_name'] : '________________________',
+            'INTAKE' => !empty($data['intake_name']) ? $data['intake_name'] : '',
+        ];
+
+        $bracket = [];
+        foreach ($plain as $k => $v) {
+            $bracket["[{$k}]"] = $v;
+        }
+
+        return ['plain' => $plain, 'bracket' => $bracket];
+    }
+
+    /**
+     * Populate a master DOCX template safely with XML escaping and return download response.
+     */
+    protected function renderMasterDocxResponse(string $masterPath, string $cleanTitle, array $plainTokens): BinaryFileResponse
+    {
+        Settings::setOutputEscapingEnabled(true);
+
+        $processor = new TemplateProcessor($masterPath);
+        $processor->setValues($plainTokens);
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'docx_') . '.docx';
+        $processor->saveAs($tempPath);
+
+        return response()->download($tempPath, "{$cleanTitle}.docx", [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
     }
 
     /**
@@ -180,28 +340,8 @@ class LearningResourceController extends Controller
         $masterPath = $this->getMasterDocxTemplatePath($template);
 
         if ($masterPath && file_exists($masterPath)) {
-            $tempPath = tempnam(sys_get_temp_dir(), 'docx_') . '.docx';
-            $processor = new TemplateProcessor($masterPath);
-
-            $countryName = $template->country->name ?? 'Destined Country';
-            $isKorea = str_contains(strtolower($countryName), 'korea');
-
-            $processor->setValue('DATE', now()->format('d F Y'));
-            $processor->setValue('APPLICANT_NAME', '________________________');
-            $processor->setValue('FATHER_NAME', '________________________');
-            $processor->setValue('MOTHER_NAME', '________________________');
-            $processor->setValue('PASSPORT_NO', '________________________');
-            $processor->setValue('ADDRESS', '________________________');
-            $processor->setValue('PHONE', '________________________');
-            $processor->setValue('SERVICE_CHARGE', $isKorea ? 'BDT 120,000' : 'BDT 50,000');
-            $processor->setValue('SERVICE_CHARGE_WORDS', $isKorea ? 'One Lac Twenty Thousand Taka only' : 'Fifty Thousand Taka only');
-            $processor->setValue('COUNTRY_NAME', $countryName);
-            $processor->setValue('COUNTRY_UPPER', strtoupper($countryName));
-            $processor->saveAs($tempPath);
-
-            return response()->download($tempPath, "{$cleanTitle}.docx", [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ])->deleteFileAfterSend(true);
+            $tokens = $this->buildTemplateTokenMap($template);
+            return $this->renderMasterDocxResponse($masterPath, $cleanTitle, $tokens['plain']);
         }
 
         $phpWord = new PhpWord();
@@ -385,30 +525,20 @@ class LearningResourceController extends Controller
             'phone' => 'nullable|string|max:100',
             'service_charge' => 'nullable|string|max:100',
             'service_charge_words' => 'nullable|string|max:255',
+            'amount' => 'nullable|string|max:100',
+            'amount_words' => 'nullable|string|max:255',
+            'cheque_no' => 'nullable|string|max:100',
+            'documents_list' => 'nullable|string|max:1000',
+            'country_name' => 'nullable|string|max:150',
             'university_name' => 'nullable|string|max:255',
             'course_name' => 'nullable|string|max:255',
             'intake_name' => 'nullable|string|max:255',
         ]);
 
-        $template = AgreementTemplate::findOrFail($validated['template_id']);
+        $template = AgreementTemplate::with('country')->findOrFail($validated['template_id']);
+        $tokens = $this->buildTemplateTokenMap($template, $validated);
 
-        // Token replacements
-        $replacements = [
-            '[DATE]' => !empty($validated['date']) ? $validated['date'] : now()->format('d F Y'),
-            '[APPLICANT_NAME]' => $validated['applicant_name'],
-            '[FATHER_NAME]' => !empty($validated['father_name']) ? $validated['father_name'] : '________________________',
-            '[MOTHER_NAME]' => !empty($validated['mother_name']) ? $validated['mother_name'] : '________________________',
-            '[PASSPORT_NO]' => !empty($validated['passport_no']) ? $validated['passport_no'] : '________________________',
-            '[ADDRESS]' => !empty($validated['address']) ? $validated['address'] : '________________________',
-            '[PHONE]' => !empty($validated['phone']) ? $validated['phone'] : '________________________',
-            '[SERVICE_CHARGE]' => !empty($validated['service_charge']) ? $validated['service_charge'] : 'BDT 50,000',
-            '[SERVICE_CHARGE_WORDS]' => !empty($validated['service_charge_words']) ? $validated['service_charge_words'] : 'Fifty Thousand Taka only',
-            '[UNIVERSITY_NAME]' => !empty($validated['university_name']) ? $validated['university_name'] : '________________________',
-            '[COURSE_NAME]' => !empty($validated['course_name']) ? $validated['course_name'] : '________________________',
-            '[INTAKE_NAME]' => !empty($validated['intake_name']) ? $validated['intake_name'] : '________________________',
-        ];
-
-        $renderedContent = str_replace(array_keys($replacements), array_values($replacements), $template->content);
+        $renderedContent = str_replace(array_keys($tokens['bracket']), array_values($tokens['bracket']), $template->content);
 
         // Create a clone object for view rendering without modifying DB
         $populatedTemplate = clone $template;
@@ -438,32 +568,7 @@ class LearningResourceController extends Controller
 
             // Use 1:1 master DOCX template preserving pad watermark logo and official layout
             if ($masterPath && file_exists($masterPath)) {
-                $processor = new TemplateProcessor($masterPath);
-
-                $countryName = $template->country->name ?? 'Destined Country';
-                $isKorea = str_contains(strtolower($countryName), 'korea');
-
-                $processor->setValue('DATE', !empty($validated['date']) ? $validated['date'] : now()->format('d F Y'));
-                $processor->setValue('APPLICANT_NAME', $validated['applicant_name']);
-                $processor->setValue('FATHER_NAME', !empty($validated['father_name']) ? $validated['father_name'] : '________________________');
-                $processor->setValue('MOTHER_NAME', !empty($validated['mother_name']) ? $validated['mother_name'] : '________________________');
-                $processor->setValue('PASSPORT_NO', !empty($validated['passport_no']) ? $validated['passport_no'] : '________________________');
-                $processor->setValue('ADDRESS', !empty($validated['address']) ? $validated['address'] : '________________________');
-                $processor->setValue('PHONE', !empty($validated['phone']) ? $validated['phone'] : '________________________');
-                $processor->setValue('SERVICE_CHARGE', !empty($validated['service_charge']) ? $validated['service_charge'] : ($isKorea ? 'BDT 120,000' : 'BDT 50,000'));
-                $processor->setValue('SERVICE_CHARGE_WORDS', !empty($validated['service_charge_words']) ? $validated['service_charge_words'] : ($isKorea ? 'One Lac Twenty Thousand Taka only' : 'Fifty Thousand Taka only'));
-                $processor->setValue('COUNTRY_NAME', $countryName);
-                $processor->setValue('COUNTRY_UPPER', strtoupper($countryName));
-                $processor->setValue('UNIVERSITY_NAME', !empty($validated['university_name']) ? $validated['university_name'] : '');
-                $processor->setValue('COURSE_NAME', !empty($validated['course_name']) ? $validated['course_name'] : '');
-                $processor->setValue('INTAKE', !empty($validated['intake_name']) ? $validated['intake_name'] : '');
-
-                $tempPath = tempnam(sys_get_temp_dir(), 'docx_') . '.docx';
-                $processor->saveAs($tempPath);
-
-                return response()->download($tempPath, "{$cleanTitle}.docx", [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                ])->deleteFileAfterSend(true);
+                return $this->renderMasterDocxResponse($masterPath, $cleanTitle, $tokens['plain']);
             }
 
             $phpWord = new PhpWord();

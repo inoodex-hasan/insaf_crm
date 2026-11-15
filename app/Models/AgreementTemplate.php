@@ -20,6 +20,7 @@ class AgreementTemplate extends Model
         'title',
         'content',
         'header_space_mm',
+        'docx_path',
         'is_active',
         'sort_order',
     ];
@@ -50,6 +51,11 @@ class AgreementTemplate extends Model
         return $query->whereIn('type', ['clearance_withdrawal', 'clearance_full']);
     }
 
+    public function scopeOthers(Builder $query): Builder
+    {
+        return $query->where('type', 'other');
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order', 'asc')->orderBy('id', 'asc');
@@ -64,6 +70,7 @@ class AgreementTemplate extends Model
             'agreement' => 'Student Agreement',
             'clearance_withdrawal' => 'Withdrawal File Clearance',
             'clearance_full' => 'Full Clearance (All Done)',
+            'other' => 'Other Declaration / Receipt',
             default => ucfirst(str_replace('_', ' ', $this->type)),
         };
     }

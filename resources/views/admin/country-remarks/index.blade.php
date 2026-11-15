@@ -44,7 +44,7 @@
 
     <!-- Remarks Table in Standard CRM Design -->
     <div class="panel">
-        <div class="table-responsive">
+        <div class="table-responsive" style="min-height: 280px;">
             <table class="table-hover table-striped w-full table-auto">
                 <thead>
                     <tr>

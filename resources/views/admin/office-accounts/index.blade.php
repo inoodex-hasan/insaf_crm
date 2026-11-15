@@ -49,7 +49,7 @@
         </div>
 
         <div class="datatable">
-            <div class="overflow-x-auto">
+            <div class="table-responsive overflow-x-auto" style="min-height: 280px;">
                 <table class="table-hover w-full table-auto">
                     <thead>
                         <tr>

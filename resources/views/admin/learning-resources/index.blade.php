@@ -15,6 +15,7 @@
     editTemplateLayout: 'pad',
     editTemplateActive: true,
     
+    otherModalOpen: false,
     docModalOpen: false,
     interviewModalOpen: false,
 
@@ -37,6 +38,14 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <template x-if="activeTab === 'other'">
+                <button type="button" @click="otherModalOpen = true" class="btn btn-primary flex items-center gap-2 text-xs">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Other Template
+                </button>
+            </template>
             <template x-if="activeTab === 'documents'">
                 <button type="button" @click="docModalOpen = true" class="btn btn-primary flex items-center gap-2 text-xs">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,6 +112,22 @@
                     Clearance Formats (Templates)
                     <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
                         {{ $clearanceTemplates->count() }}
+                    </span>
+                </button>
+            </li>
+
+            <!-- Tab: Other Templates -->
+            <li class="mr-2">
+                <button type="button" 
+                        @click="activeTab = 'other'" 
+                        :class="activeTab === 'other' ? 'text-primary border-primary active border-b-2 font-bold' : 'text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300'"
+                        class="inline-flex items-center gap-2 p-4 rounded-t-lg transition">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+                    </svg>
+                    Other (Declarations &amp; Receipts)
+                    <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                        {{ $otherTemplates->count() }}
                     </span>
                 </button>
             </li>
@@ -420,14 +445,6 @@
                     </button>
                 </div>
 
-                <p class="mt-3 text-xs text-white-dark line-clamp-2">
-                    @if($template->type === 'clearance_withdrawal')
-                        Official declaration acknowledging return of all physical passports, academic certificates, financial settlement calculation, and complete mutual discharge.
-                    @else
-                        Official completion certificate certifying visa sticker/eVisa handover, flight briefing confirmation, zero outstanding balance, and final sign-off.
-                    @endif
-                </p>
-
                 <!-- Action Buttons -->
                 <div class="mt-5 pt-4 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center gap-2">
                     <a href="{{ route('admin.learning-resources.templates.preview', $template) }}" 
@@ -465,6 +482,93 @@
             </div>
             @endforeach
         </div>
+    </div>
+
+    <!-- TAB: OTHER TEMPLATES (DECLARATIONS, ACKNOWLEDGEMENTS, RECEIPTS) -->
+    <div x-show="activeTab === 'other'" class="space-y-6">
+        <div class="rounded-xl border border-[#e0e6ed] bg-gradient-to-r from-amber-50/50 via-white to-slate-50 p-5 shadow-sm dark:border-[#1b2e4b] dark:from-[#1b2e4b]/40 dark:via-[#1b2e4b]/20 dark:to-[#1b2e4b]/40">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <h5 class="text-sm font-bold text-dark dark:text-white-light flex items-center gap-2">
+                        <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+                        </svg>
+                        Declarations, Acknowledgements &amp; Operational Receipts
+                    </h5>
+                    <p class="text-xs text-white-dark leading-relaxed">
+                        Reusable operational forms on Official Insaf Immigration Pad (Document Declaration, Document Received Acknowledgement, File Receive Agreement, Refund Confirmation, Security Cheque Receipt, etc.). Upload custom <code>.docx</code> templates or auto-fill directly from any student's profile.
+                    </p>
+                </div>
+
+                <button type="button" @click="otherModalOpen = true" class="btn btn-primary btn-sm flex items-center gap-1.5 text-xs shrink-0">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Template
+                </button>
+            </div>
+        </div>
+
+        @if($otherTemplates->isEmpty())
+            <div class="rounded-xl border border-dashed border-[#e0e6ed] bg-white p-10 text-center dark:border-[#1b2e4b] dark:bg-[#1b2e4b]/40">
+                <p class="text-sm font-semibold text-dark dark:text-white-light">No other templates configured yet.</p>
+                <p class="text-xs text-white-dark mt-1">Click "+ Add Template" to create or upload your first declaration/receipt template.</p>
+            </div>
+        @else
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem;">
+                @foreach($otherTemplates as $template)
+                    <div class="rounded-xl border border-[#e0e6ed] bg-white p-5 shadow-sm transition hover:shadow-md dark:border-[#1b2e4b] dark:bg-[#1b2e4b] flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                                        <span class="rounded bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 border border-amber-300 dark:bg-amber-900/40 dark:text-amber-300">
+                                            Other Format
+                                        </span>
+                                        <span class="rounded bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-800 border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300">
+                                            {{ $template->layout_type === 'stamp' ? 'Stamp Paper' : 'Official Pad Logo' }}
+                                        </span>
+                                    </div>
+                                    <h5 class="text-base font-bold text-dark dark:text-white-light leading-snug">
+                                        {{ $template->title }}
+                                    </h5>
+                                </div>
+
+                                <button type="button"
+                                        @click="openEditModal({{ json_encode($template) }})"
+                                        class="text-slate-400 hover:text-primary transition p-1"
+                                        title="Edit Template">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-5 pt-4 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-1.5">
+
+                                <a href="{{ route('admin.learning-resources.templates.download-docx', $template) }}"
+                                   class="btn btn-primary btn-sm px-2.5 py-1 text-xs flex items-center gap-1"
+                                   style="background-color: #2563eb; color: white;">
+                                    Word (.docx)
+                                </a>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <button type="button"
+                                        @click="openEditModal({{ json_encode($template) }})"
+                                        class="btn btn-outline-dark btn-sm px-2.5 py-1 text-xs">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <!-- TAB 3: COUNTRY BASED DOCUMENTS -->
@@ -952,6 +1056,98 @@
                         <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-5 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
                             <button type="button" @click="interviewModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
                             <button type="submit" class="btn btn-primary btn-sm text-xs">Save Resource</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ========================================== -->
+    <!-- MODAL 4: ADD OTHER TEMPLATE (FULL VIEWPORT)-->
+    <!-- ========================================== -->
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="otherModalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="otherModalOpen = false"
+                     x-show="otherModalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-2xl rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+
+                    <form action="{{ route('admin.learning-resources.templates.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="type" value="other">
+
+                        <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <div>
+                                <h5 class="text-base font-bold text-dark dark:text-white-light">Add Other Template</h5>
+                                <p class="text-xs text-white-dark mt-0.5">Add a new declaration, acknowledgement, or operational receipt template.</p>
+                            </div>
+                            <button type="button"
+                                    @click="otherModalOpen = false"
+                                    class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition"
+                                    style="display: flex; align-items: center; justify-content: center;"
+                                    title="Close Modal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 2; min-width: 240px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Template Title *</label>
+                                    <input type="text" name="title" placeholder="e.g. Passport Release Declaration" required class="form-input text-xs w-full">
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Layout Type</label>
+                                    <select name="layout_type" class="form-select text-xs w-full">
+                                        <option value="pad">Official Agency Pad</option>
+                                        <option value="stamp">Stamp Paper (90mm Margin)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4 dark:border-primary/40 dark:bg-primary/10">
+                                <label class="block text-xs font-bold text-primary mb-1">Upload Master Word (.docx) File (Recommended)</label>
+                                <p class="text-[11px] text-white-dark mb-2">
+                                    Upload a <code>.docx</code> file containing your official letterhead pad &amp; watermark. Supported placeholders:
+                                    <code class="text-primary font-bold">${DATE}</code>,
+                                    <code class="text-primary font-bold">${APPLICANT_NAME}</code>,
+                                    <code class="text-primary font-bold">${FATHER_NAME}</code>,
+                                    <code class="text-primary font-bold">${MOTHER_NAME}</code>,
+                                    <code class="text-primary font-bold">${PASSPORT_NO}</code>,
+                                    <code class="text-primary font-bold">${DOCUMENTS_LIST}</code>,
+                                    <code class="text-primary font-bold">${AMOUNT}</code>,
+                                    <code class="text-primary font-bold">${AMOUNT_WORDS}</code>,
+                                    <code class="text-primary font-bold">${CHEQUE_NO}</code>.
+                                </p>
+                                <input type="file" name="docx_template" accept=".docx" class="form-input text-xs w-full bg-white dark:bg-[#121e32]">
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Template Content (Web Preview &amp; PDF) *</label>
+                                    <span class="text-[10px] text-primary">Supports [DATE], [APPLICANT_NAME], [PASSPORT_NO], etc.</span>
+                                </div>
+                                <textarea name="content" rows="10" required placeholder="<div class='agreement-document'>...</div>" class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" @click="otherModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm text-xs">Create Template</button>
                         </div>
                     </form>
 
