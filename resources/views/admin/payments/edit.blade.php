@@ -102,7 +102,7 @@
 
                 <div class="form-group md:col-span-2">
                     <label for="notes">Notes</label>
-                    <textarea name="notes" id="notes" class="form-input rows=" 3"
+                    <textarea name="notes" id="notes" class="form-input" rows="3"
                         placeholder="Additional information...">{{ old('notes', $payment->notes) }}</textarea>
                     @error('notes')
                         <span class="text-danger text-sm">{{ $message }}</span>

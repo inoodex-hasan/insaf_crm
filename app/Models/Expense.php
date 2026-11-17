@@ -13,6 +13,11 @@ class Expense extends Model
         'chart_of_account_id',
         'description',
         'amount',
+        'is_investment',
+        'staff_id',
+        'country_id',
+        'university_id',
+        'investment_purpose',
         'expense_date',
         'payment_method',
         'office_account_id',
@@ -25,6 +30,7 @@ class Expense extends Model
     protected $casts = [
         'expense_date' => 'date',
         'amount' => 'decimal:2',
+        'is_investment' => 'boolean',
     ];
 
     protected static function booted()
@@ -62,5 +68,30 @@ class Expense extends Model
     public function journalEntry()
     {
         return $this->belongsTo(JournalEntry::class);
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
+    }
+
+    public function scopeInvestments($query)
+    {
+        return $query->where('is_investment', true);
+    }
+
+    public function scopeGeneralExpenses($query)
+    {
+        return $query->where('is_investment', false);
     }
 }

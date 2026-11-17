@@ -17,6 +17,7 @@ class AttendanceSetting extends Model
         'office_latitude',
         'office_longitude',
         'geofence_radius_meters',
+        'office_locations',
         'enforce_geofence',
         'enforce_ip',
         'allowed_ips',
@@ -44,6 +45,7 @@ class AttendanceSetting extends Model
         'office_latitude' => 'decimal:8',
         'office_longitude' => 'decimal:8',
         'geofence_radius_meters' => 'integer',
+        'office_locations' => 'array',
         'enforce_geofence' => 'boolean',
         'enforce_ip' => 'boolean',
         'late_grace_minutes' => 'integer',
@@ -90,6 +92,29 @@ class AttendanceSetting extends Model
             'half_day_deduction_rate' => 0.50,
             'auto_apply_salary_deduction' => true,
         ]);
+    }
+
+    /**
+     * Get all office locations (supports multi-office branch geofencing).
+     *
+     * @return array<int, array{name: string, latitude: float, longitude: float, radius_meters: int}>
+     */
+    public function getAllOffices(): array
+    {
+        if (!empty($this->office_locations) && is_array($this->office_locations) && count($this->office_locations) > 0) {
+            return array_values(array_filter($this->office_locations, function ($loc) {
+                return !empty($loc['name']) && isset($loc['latitude']) && isset($loc['longitude']);
+            }));
+        }
+
+        return [
+            [
+                'name' => $this->office_name ?: 'Main Office',
+                'latitude' => (float) $this->office_latitude,
+                'longitude' => (float) $this->office_longitude,
+                'radius_meters' => (int) ($this->geofence_radius_meters ?: 100),
+            ]
+        ];
     }
 
     public function updater(): BelongsTo

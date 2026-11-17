@@ -79,8 +79,9 @@ class AttendanceService
 
         $settings = AttendanceSetting::getSettings();
         $distance = null;
+        $matchedOfficeName = null;
 
-        // 1. Geofence Verification
+        // 1. Geofence Verification (Supports Multi-Office Branches)
         if ($settings->enforce_geofence) {
             $lat = $data['latitude'] ?? null;
             $lng = $data['longitude'] ?? null;
@@ -91,18 +92,44 @@ class AttendanceService
                 ]);
             }
 
-            $distance = $this->calculateDistance(
-                (float) $lat,
-                (float) $lng,
-                (float) $settings->office_latitude,
-                (float) $settings->office_longitude
-            );
+            $offices = $settings->getAllOffices();
+            $matchedOffice = null;
+            $closestDistance = null;
+            $closestOffice = null;
 
-            if ($distance > $settings->geofence_radius_meters) {
+            foreach ($offices as $office) {
+                $dist = $this->calculateDistance(
+                    (float) $lat,
+                    (float) $lng,
+                    (float) $office['latitude'],
+                    (float) $office['longitude']
+                );
+
+                if ($closestDistance === null || $dist < $closestDistance) {
+                    $closestDistance = $dist;
+                    $closestOffice = $office;
+                }
+
+                $allowedRadius = (int) ($office['radius_meters'] ?? $settings->geofence_radius_meters);
+                if ($dist <= $allowedRadius) {
+                    $matchedOffice = $office;
+                    $distance = $dist;
+                    break;
+                }
+            }
+
+            if (!$matchedOffice) {
+                $nearestName = $closestOffice['name'] ?? $settings->office_name;
+                $nearestRadius = (int) ($closestOffice['radius_meters'] ?? $settings->geofence_radius_meters);
+                $branchCount = count($offices);
+                $branchNote = $branchCount > 1 ? " (Nearest of {$branchCount} office locations)" : "";
+
                 throw ValidationException::withMessages([
-                    'location' => "You are {$distance}m away from {$settings->office_name}. Allowed check-in radius is within {$settings->geofence_radius_meters}m.",
+                    'location' => "You are {$closestDistance}m away from {$nearestName}{$branchNote}. Allowed check-in radius is within {$nearestRadius}m.",
                 ]);
             }
+
+            $matchedOfficeName = $matchedOffice['name'] ?? $settings->office_name;
         }
 
         // 2. IP Verification
@@ -143,6 +170,7 @@ class AttendanceService
                 'check_in_lat' => $data['latitude'] ?? null,
                 'check_in_lng' => $data['longitude'] ?? null,
                 'check_in_distance_meters' => $distance,
+                'office_name' => $matchedOfficeName,
                 'status' => $status,
                 'is_late' => $isLate,
                 'late_minutes' => $lateMinutes,

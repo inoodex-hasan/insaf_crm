@@ -221,6 +221,28 @@
         </table>
 
         <table class="notes">
+            @if ($expense->is_investment)
+                <tr>
+                    <th>INVESTMENT TYPE</th>
+                    <td><strong>Staff Foreign Tour & University Partnership Investment</strong></td>
+                </tr>
+                <tr>
+                    <th>STAFF / DELEGATE</th>
+                    <td><strong>{{ $expense->staff->name ?? 'Unassigned' }}</strong></td>
+                </tr>
+                @if ($expense->country || $expense->university)
+                    <tr>
+                        <th>DESTINATION</th>
+                        <td>{{ $expense->country->name ?? '' }} {{ $expense->university ? '(' . $expense->university->name . ')' : '' }}</td>
+                    </tr>
+                @endif
+                @if ($expense->investment_purpose)
+                    <tr>
+                        <th>TOUR PURPOSE</th>
+                        <td>{{ $expense->investment_purpose }}</td>
+                    </tr>
+                @endif
+            @endif
             <tr>
                 <th>ACCOUNT</th>
                 <td>{{ $expense->account->account_name ?? 'Cash' }}</td>

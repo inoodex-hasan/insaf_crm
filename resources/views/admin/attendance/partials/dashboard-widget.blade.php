@@ -52,7 +52,7 @@
                     Grace: +{{ $settings->late_grace_minutes }} mins
                 </span>
                 <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-dark/50 px-2.5 py-1 rounded-md border border-slate-200 dark:border-dark">
-                    Office: {{ $settings->office_name }}
+                    Office: {{ $att->office_name ?? $settings->office_name }}
                 </span>
                 @if($settings->enforce_geofence)
                     <span class="inline-flex items-center text-[11px] font-semibold text-info bg-info/10 px-2.5 py-1 rounded-md border border-info/20">

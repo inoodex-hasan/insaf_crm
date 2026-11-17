@@ -15,12 +15,21 @@ function attendancePromptModal() {
             this.updateClock();
             setInterval(() => this.updateClock(), 1000);
             try {
-                sessionStorage.removeItem('insaf_attendance_prompt_dismissed');
+                const userId = '{{ auth()->id() }}';
+                const dismissedKey = 'insaf_prompt_dismissed_' + userId + '_{{ now()->toDateString() }}';
+                if (sessionStorage.getItem(dismissedKey)) {
+                    this.promptOpen = false;
+                }
             } catch(e) {}
         },
 
         closeModal() {
             this.promptOpen = false;
+            try {
+                const userId = '{{ auth()->id() }}';
+                const dismissedKey = 'insaf_prompt_dismissed_' + userId + '_{{ now()->toDateString() }}';
+                sessionStorage.setItem(dismissedKey, '1');
+            } catch(e) {}
         },
 
         updateClock() {
@@ -132,7 +141,14 @@ function attendancePromptModal() {
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="text-white-dark">Work Location:</span>
-                                <span class="font-semibold text-dark dark:text-white-light truncate max-w-[200px]">{{ $settings->office_name }}</span>
+                                <span class="font-semibold text-dark dark:text-white-light truncate max-w-[200px]" title="{{ implode(', ', array_column($settings->getAllOffices(), 'name')) }}">
+                                    @php $officeCount = count($settings->getAllOffices()); @endphp
+                                    @if($officeCount > 1)
+                                        {{ $settings->office_name }} (+{{ $officeCount - 1 }} branch{{ $officeCount > 2 ? 'es' : '' }})
+                                    @else
+                                        {{ $settings->office_name }}
+                                    @endif
+                                </span>
                             </div>
                             <div class="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-dark">
                                 <span class="text-white-dark">Current Time:</span>
@@ -157,7 +173,7 @@ function attendancePromptModal() {
                             </button>
                             <div class="text-[10px] text-white-dark text-center mt-2 flex items-center justify-center gap-1">
                                 <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
-                                <span>Verifies office geofence & network IP automatically</span>
+                                <span>Verifies physical presence within office geofence via GPS</span>
                             </div>
                         </div>
 

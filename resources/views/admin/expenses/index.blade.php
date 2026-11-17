@@ -4,14 +4,17 @@
 
 @section('content')
 
-<div x-data="expenseModalHandler()">
-
+<div>
+    {{-- Page Header --}}
     <div class="flex flex-wrap items-center justify-between gap-4">
-        <h2 class="text-xl font-semibold uppercase">Expenses</h2>
-        <div class="flex w-full flex-wrap items-center justify-end gap-4 sm:w-auto">
+        <div>
+            <h2 class="text-xl font-bold uppercase tracking-wider text-dark dark:text-white-light">Expense & Investment Management</h2>
+            <p class="text-xs text-white-dark mt-1">Track operational office expenses alongside foreign university partnership tours and staff investments.</p>
+        </div>
+        <div class="flex w-full flex-wrap items-center justify-end gap-3 sm:w-auto">
             <a href="{{ route('admin.expenses.preview', request()->query()) }}" class="btn btn-outline-primary gap-2" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                     <polyline points="14 2 14 8 20 8"></polyline>
                     <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -21,81 +24,170 @@
                 Preview
             </a>
             <a href="{{ route('admin.expenses.download', request()->query()) }}" class="btn btn-outline-success gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
                 Download
             </a>
-            <button type="button" @click="openCreateModal()" class="btn btn-primary gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+            <a href="{{ route('admin.expenses.create') }}" class="btn btn-primary gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Record Expense
-            </button>
+            </a>
         </div>
     </div>
 
+    {{-- Summary Metric Cards --}}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mt-5">
+        {{-- Card 1: Total Expenses --}}
+        <div class="panel p-4 rounded-xl border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#1b2e4b]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs uppercase font-bold text-white-dark tracking-wider">Total Expenses (All)</span>
+                    <div class="text-2xl font-black text-danger mt-1">BDT {{ number_format($totalExpenses, 2) }}</div>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-danger/10 text-danger">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="text-[11px] text-white-dark mt-2">Combined operational outlays & foreign tour investments</div>
+        </div>
+
+        {{-- Card 2: General / Operational Expenses --}}
+        <div class="panel p-4 rounded-xl border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#1b2e4b]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs uppercase font-bold text-white-dark tracking-wider">General Operations</span>
+                    <div class="text-2xl font-black text-primary mt-1">BDT {{ number_format($totalGeneral, 2) }}</div>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="text-[11px] text-white-dark mt-2">Office rent, utilities, salaries, stationery, marketing</div>
+        </div>
+
+        {{-- Card 3: Tour & Partnership Investments --}}
+        <div class="panel p-4 rounded-xl border border-purple-200 dark:border-purple-900/40 bg-purple-50/40 dark:bg-purple-950/20">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs uppercase font-bold text-purple-700 dark:text-purple-300 tracking-wider">Tour & Staff Investments</span>
+                    <div class="text-2xl font-black text-purple-800 dark:text-purple-200 mt-1">BDT {{ number_format($totalInvestments, 2) }}</div>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-300">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13"></path>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </div>
+            </div>
+            <div class="text-[11px] text-purple-600/80 dark:text-purple-400 mt-2">Foreign university delegations, spot admissions & negotiations</div>
+        </div>
+    </div>
+
+    {{-- Filter Panel --}}
     <div class="panel mt-6">
         <div class="mb-5">
-            <form action="{{ route('admin.expenses.index') }}" method="GET"
-                class="flex flex-wrap items-center gap-3 w-full">
-                <div class="relative flex-1 min-w-[200px] md:max-w-xs">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search description, category..." class="form-input ltr:pr-11 rtl:pl-11" />
-                    <button type="submit"
-                        class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5"
-                                opacity="0.5" />
-                            <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" />
-                        </svg>
-                    </button>
+            <form action="{{ route('admin.expenses.index') }}" method="GET" class="space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {{-- Search --}}
+                    <div class="relative sm:col-span-2">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Search description, staff, purpose, method..." class="form-input ltr:pr-11 rtl:pl-11" />
+                        <button type="submit"
+                            class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="11.5" cy="11.5" r="9.5" opacity="0.5" />
+                                <path d="M18.5 18.5L22 22" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Type Filter --}}
+                    <div>
+                        <select name="investment_filter" class="form-select">
+                            <option value="">All Expense Types</option>
+                            <option value="general" {{ request('investment_filter') === 'general' ? 'selected' : '' }}>General Expenses Only</option>
+                            <option value="investment" {{ request('investment_filter') === 'investment' ? 'selected' : '' }}>Tour Investments Only</option>
+                        </select>
+                    </div>
+
+                    {{-- Staff Filter --}}
+                    <div>
+                        <select name="staff_id" class="form-select">
+                            <option value="">All Staff / Delegates</option>
+                            @foreach ($staffList as $staff)
+                                <option value="{{ $staff->id }}" {{ request('staff_id') == $staff->id ? 'selected' : '' }}>
+                                    {{ $staff->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Country Filter --}}
+                    <div>
+                        <select name="country_id" class="form-select">
+                            <option value="">All Countries</option>
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}" {{ request('country_id') == $country->id ? 'selected' : '' }}>
+                                    {{ $country->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Category Filter --}}
+                    <div>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->name }}" {{ request('category') == $category->name ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
-                <div class="w-44">
-                    <select name="category" class="form-select pr-10">
-                        <option value="">All Categories</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->name }}"
-                                {{ request('category') == $category->name ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-[#e0e6ed] dark:border-[#1b2e4b]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-white-dark font-medium">Date Range:</span>
+                        <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-input text-xs w-36 py-1.5" placeholder="Start Date" />
+                        <span class="text-xs text-white-dark">to</span>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-input text-xs w-36 py-1.5" placeholder="End Date" />
+                    </div>
 
-                <div class="w-36">
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-input" placeholder="Start Date" />
-                </div>
-
-                <div class="w-36">
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-input" placeholder="End Date" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{{ route('admin.expenses.index') }}" class="btn btn-outline-danger">Reset</a>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="btn btn-primary py-1.5 px-6 text-xs">Apply Filters</button>
+                        <a href="{{ route('admin.expenses.index') }}" class="btn btn-outline-danger py-1.5 px-4 text-xs">Reset</a>
+                    </div>
                 </div>
             </form>
         </div>
 
+        {{-- Datatable --}}
         <div class="datatable">
             <div class="table-responsive overflow-x-auto min-h-[280px]" style="min-height: 280px;">
                 <table class="table-hover w-full table-auto">
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Method</th>
+                            <th>Description & Delegation</th>
+                            <th>Type & Category</th>
+                            <th class="text-right">Amount</th>
+                            <th>Payment Method</th>
                             <th>Recorded By</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -103,15 +195,54 @@
                     <tbody>
                         @forelse($expenses as $expense)
                             <tr>
-                                <td>{{ $expense->expense_date->format('M d, Y') }}</td>
-                                <td class="font-semibold">{{ $expense->description }}</td>
-                                <td><span
-                                        class="badge badge-outline-info">{{ $expense->chartOfAccount->name ?? 'General' }}</span>
-                                </td>
-                                <td class="font-bold text-danger">{{ number_format($expense->amount, 2) }}</td>
-                                <td>{{ $expense->payment_method ?: '-' }}</td>
+                                <td class="whitespace-nowrap font-medium text-xs">{{ $expense->expense_date->format('M d, Y') }}</td>
                                 <td>
-                                    <div class="text-xs">
+                                    @if($expense->is_investment)
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="badge bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 font-bold text-[10px] uppercase tracking-wider py-0.5 px-2">
+                                                Tour Investment
+                                            </span>
+                                            @if($expense->investment_purpose)
+                                                <span class="text-xs font-semibold text-purple-900 dark:text-purple-200">
+                                                    {{ $expense->investment_purpose }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                    <div class="font-bold text-sm text-dark dark:text-white-light">
+                                        {{ $expense->description }}
+                                    </div>
+                                    @if($expense->is_investment)
+                                        <div class="text-[11px] text-white-dark mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                                            <span>Staff: <strong class="text-slate-700 dark:text-slate-300">{{ $expense->staff->name ?? 'Unassigned' }}</strong></span>
+                                            @if($expense->country)
+                                                <span>&bull;</span>
+                                                <span class="text-slate-700 dark:text-slate-300">
+                                                    {{ $expense->country->name }}
+                                                </span>
+                                            @endif
+                                            @if($expense->university)
+                                                <span class="text-primary font-medium">({{ $expense->university->name }})</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge badge-outline-info text-xs">
+                                        {{ $expense->chartOfAccount->name ?? 'General' }}
+                                    </span>
+                                </td>
+                                <td class="font-bold text-danger text-right whitespace-nowrap">
+                                    BDT {{ number_format($expense->amount, 2) }}
+                                </td>
+                                <td class="capitalize text-xs whitespace-nowrap">
+                                    {{ str_replace('_', ' ', $expense->payment_method) ?: '-' }}
+                                    @if($expense->account)
+                                        <div class="text-[10px] text-white-dark">{{ $expense->account->account_name }}</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="text-xs text-white-dark">
                                         {{ $expense->creator->name ?? 'System' }}
                                     </div>
                                 </td>
@@ -129,30 +260,22 @@
                                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                         <polyline points="14 2 14 8 20 8"></polyline>
                                                     </svg>
-                                                    PDF
+                                                    Download Voucher
                                                 </a>
                                             </li>
                                             <li>
-                                                <button type="button" @click="toggle(); openEditModal({
-                                                    id: {{ $expense->id }},
-                                                    description: @js($expense->description),
-                                                    amount: '{{ $expense->amount }}',
-                                                    expense_date: '{{ $expense->expense_date->format('Y-m-d') }}',
-                                                    chart_of_account_id: '{{ $expense->chart_of_account_id }}',
-                                                    payment_method: '{{ $expense->payment_method }}',
-                                                    office_account_id: '{{ $expense->office_account_id ?? '' }}',
-                                                    notes: @js($expense->notes ?? '')
-                                                })" class="flex w-full items-center px-4 py-2 text-left hover:!bg-primary/10 hover:!text-primary">
+                                                <a href="{{ route('admin.expenses.edit', $expense->id) }}"
+                                                   class="flex w-full items-center px-4 py-2 text-left hover:!bg-primary/10 hover:!text-primary">
                                                     <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                     </svg>
                                                     Edit
-                                                </button>
+                                                </a>
                                             </li>
                                             <li>
                                                 <form action="{{ route('admin.expenses.destroy', $expense->id) }}" method="POST"
-                                                    onsubmit="return confirm('Delete this expense?');" class="m-0">
+                                                    onsubmit="return confirm('Delete this expense record?');" class="m-0">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="flex w-full items-center px-4 py-2 text-left text-danger hover:!bg-danger/10 hover:!text-danger">
@@ -170,7 +293,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-6">No expenses found.</td>
+                                <td colspan="7" class="text-center py-8 text-white-dark">
+                                    No expenses or staff tour investments found matching the filter criteria.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -181,168 +306,6 @@
             </div>
         </div>
     </div>
-
-    {{-- Wider Modal for Expense (max-w-2xl) --}}
-    <template x-teleport="#modal-portal">
-        <div x-cloak
-             x-show="modalOpen"
-             class="modal-overlay-full"
-             style="display: none;">
-            <div class="flex min-h-screen items-center justify-center px-4 py-8">
-                <div @click.away="modalOpen = false"
-                     x-show="modalOpen"
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-150"
-                     x-transition:leave-start="opacity-100 scale-100"
-                     x-transition:leave-end="opacity-0 scale-95"
-                     class="w-full max-w-2xl rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
-
-                    {{-- Header --}}
-                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-5 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
-                        <h5 class="text-base font-bold text-dark dark:text-white-light" x-text="isEdit ? 'Edit Expense' : 'Record Expense'"></h5>
-                        <button type="button" @click="modalOpen = false" class="text-white-dark hover:text-dark dark:hover:text-white transition">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-
-                    {{-- Body --}}
-                    <form :action="actionUrl" method="POST">
-                        @csrf
-                        <input type="hidden" name="_method" x-show="isEdit" value="PUT">
-
-                        <div class="p-6 space-y-4">
-                            @if($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul class="list-disc list-inside text-sm">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="form-group">
-                                    <label>Description <span class="text-danger">*</span></label>
-                                    <input type="text" name="description" class="form-input" x-model="form.description" required placeholder="e.g. Office Stationery">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Amount <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" name="amount" class="form-input" x-model="form.amount" required placeholder="0.00">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Expense Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="expense_date" class="form-input" x-model="form.expense_date" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Category <span class="text-danger">*</span></label>
-                                    <select name="chart_of_account_id" class="form-select" x-model="form.chart_of_account_id" required>
-                                        <option value="">Select Category</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">
-                                                {{ $category->name }} ({{ $category->code }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Payment Method <span class="text-danger">*</span></label>
-                                    <select name="payment_method" class="form-select" x-model="form.payment_method" required>
-                                        <option value="cash">Cash</option>
-                                        <option value="credit">Credit</option>
-                                        <option value="bank_transfer">Bank Transfer</option>
-                                        <option value="mobile_banking">Mobile Banking</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Pay From Account</label>
-                                    <select name="office_account_id" class="form-select" x-model="form.office_account_id">
-                                        <option value="">-- Select Account --</option>
-                                        @foreach ($accounts as $account)
-                                            <option value="{{ $account->id }}">
-                                                {{ $account->account_name }}
-                                                ({{ ucfirst($account->account_type) }}{{ $account->provider_name ? ' - ' . $account->provider_name : '' }} - {{ $account->account_number }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group md:col-span-2">
-                                    <label>Notes</label>
-                                    <textarea name="notes" rows="3" class="form-textarea" x-model="form.notes" placeholder="Optional notes..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Footer --}}
-                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] px-6 py-4 dark:border-[#1b2e4b]">
-                            <button type="button" @click="modalOpen = false" class="btn btn-outline-danger">Cancel</button>
-                            <button type="submit" class="btn btn-primary px-8" x-text="isEdit ? 'Update Expense' : 'Save Expense'"></button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </template>
-
 </div>
-
-<script>
-function expenseModalHandler() {
-    return {
-        modalOpen: {{ (isset($errors) && $errors->any()) ? 'true' : 'false' }},
-        isEdit: {{ old('_method') === 'PUT' ? 'true' : 'false' }},
-        actionUrl: '{{ route('admin.expenses.store') }}',
-        form: {
-            description: @js(old('description', '')),
-            amount: @js(old('amount', '')),
-            expense_date: @js(old('expense_date', date('Y-m-d'))),
-            chart_of_account_id: @js(old('chart_of_account_id', '')),
-            payment_method: @js(old('payment_method', 'cash')),
-            office_account_id: @js(old('office_account_id', '')),
-            notes: @js(old('notes', '')),
-        },
-        openCreateModal() {
-            this.isEdit = false;
-            this.actionUrl = '{{ route('admin.expenses.store') }}';
-            this.form = {
-                description: '',
-                amount: '',
-                expense_date: '{{ date('Y-m-d') }}',
-                chart_of_account_id: '',
-                payment_method: 'cash',
-                office_account_id: '',
-                notes: ''
-            };
-            this.modalOpen = true;
-        },
-        openEditModal(item) {
-            this.isEdit = true;
-            this.actionUrl = '{{ url('dashboard/expenses') }}/' + item.id;
-            this.form = {
-                description: item.description,
-                amount: item.amount,
-                expense_date: item.expense_date,
-                chart_of_account_id: item.chart_of_account_id,
-                payment_method: item.payment_method,
-                office_account_id: item.office_account_id,
-                notes: item.notes
-            };
-            this.modalOpen = true;
-        }
-    };
-}
-</script>
 
 @endsection

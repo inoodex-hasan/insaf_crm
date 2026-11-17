@@ -178,6 +178,26 @@ Route::prefix('dashboard/my-commissions')->name('my-commissions.')->middleware('
     Route::post('{commission}/cancel', [App\Http\Controllers\Admin\MyCommissionController::class, 'cancelClaim'])->name('cancel');
 });
 
+// Partner Commission Management (University & Agency B2B Commissions)
+Route::prefix('dashboard/partner-commissions')->name('admin.partner-commissions.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'store'])->name('store');
+    Route::get('/{partnerCommission}', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'show'])->name('show');
+    Route::get('/{partnerCommission}/edit', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'edit'])->name('edit');
+    Route::put('/{partnerCommission}', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'update'])->name('update');
+    Route::post('/{partnerCommission}/settle', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'settle'])->name('settle');
+    Route::delete('/{partnerCommission}', [App\Http\Controllers\Admin\PartnerCommissionController::class, 'destroy'])->name('destroy');
+});
+
+// Partner Agencies Management
+Route::prefix('dashboard/partner-agencies')->name('admin.partner-agencies.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\PartnerAgencyController::class, 'index'])->name('index');
+    Route::post('/', [App\Http\Controllers\Admin\PartnerAgencyController::class, 'store'])->name('store');
+    Route::put('/{partnerAgency}', [App\Http\Controllers\Admin\PartnerAgencyController::class, 'update'])->name('update');
+    Route::delete('/{partnerAgency}', [App\Http\Controllers\Admin\PartnerAgencyController::class, 'destroy'])->name('destroy');
+});
+
 // Role Management Overrides
 Route::prefix('dashboard/roles')->name('tyro-dashboard.roles.')->group(function () {
     Route::get('/', [LocalRoleController::class, 'index'])->name('index');

@@ -99,7 +99,6 @@ class ProgramSettingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'code' => 'nullable|string|max:50|unique:program_requirements,code',
-            'category' => 'nullable|string|in:test,waiver,other',
             'sort_order' => 'nullable|integer',
         ]);
 
@@ -116,7 +115,7 @@ class ProgramSettingController extends Controller
         ProgramRequirement::create([
             'name' => $validated['name'],
             'code' => $code,
-            'category' => $validated['category'] ?? 'test',
+            'category' => 'general',
             'sort_order' => $validated['sort_order'] ?? (ProgramRequirement::max('sort_order') + 1),
             'is_active' => true,
         ]);
@@ -129,13 +128,11 @@ class ProgramSettingController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'category' => 'nullable|string|in:test,waiver,other',
             'sort_order' => 'nullable|integer',
         ]);
 
         $requirement->update([
             'name' => $validated['name'],
-            'category' => $validated['category'] ?? $requirement->category,
             'sort_order' => $validated['sort_order'] ?? $requirement->sort_order,
         ]);
 

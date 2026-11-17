@@ -121,6 +121,38 @@
            MINI SIDEBAR & PINNED FULL SIDEBAR PROTOCOL
            ============================================================ */
         @media (min-width: 1024px) {
+            /* Solid background enforcement on sidebar across all states */
+            .sidebar {
+                background-color: #ffffff !important;
+            }
+            .dark .sidebar {
+                background-color: #0e1726 !important;
+            }
+
+            /* Submenu container background enforcement */
+            .sidebar ul.sub-menu {
+                background-color: #f3f4f6 !important;
+                border-radius: 0.375rem !important;
+                padding: 0.5rem !important;
+            }
+            .dark .sidebar ul.sub-menu {
+                background-color: #1b2e4b !important;
+            }
+
+            /* Active & hover background for all sidebar navigation links */
+            .sidebar .nav-item > a:hover,
+            .sidebar .nav-item > a:focus,
+            .sidebar .nav-item > a.active {
+                background-color: rgba(67, 97, 238, 0.1) !important;
+                color: #4361ee !important;
+            }
+            .dark .sidebar .nav-item > a:hover,
+            .dark .sidebar .nav-item > a:focus,
+            .dark .sidebar .nav-item > a.active {
+                background-color: rgba(67, 97, 238, 0.2) !important;
+                color: #4361ee !important;
+            }
+
             /* 1. Base Mini Sidebar (Collapsed 70px) */
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar,
             body.mini-sidebar:not(.pinned-sidebar) .sidebar {
@@ -130,7 +162,7 @@
                 margin-left: 0 !important;
                 margin-right: 0 !important;
                 transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease !important;
-                overflow-x: hidden !important;
+                overflow: hidden !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .main-content,
@@ -153,124 +185,155 @@
             }
 
             /* In Mini Collapsed Mode: Hide text, arrows, submenus, and pin button */
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo span,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo span,
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .sidebar-pin-btn,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .sidebar-pin-btn {
-                opacity: 0 !important;
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo span,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo span,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .sidebar-pin-btn,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .sidebar-pin-btn {
                 display: none !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .sidebar-header,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .sidebar-header {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .sidebar-header,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .sidebar-header {
                 justify-content: center !important;
                 padding-left: 0 !important;
                 padding-right: 0 !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo {
                 margin: 0 auto !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo img,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .main-logo img {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo img,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .main-logo img {
                 margin-left: 0 !important;
                 margin-right: 0 !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) ul,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) ul {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul {
                 padding-left: 0.5rem !important;
                 padding-right: 0.5rem !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item > a,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item > button {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item > a,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item > button {
                 padding-left: 0 !important;
                 padding-right: 0 !important;
                 justify-content: center !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item .flex.items-center,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item .flex.items-center {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item .flex.items-center,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item .flex.items-center {
                 justify-content: center !important;
                 width: 100% !important;
             }
 
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item span,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item span {
-                display: none !important;
-                opacity: 0 !important;
-            }
-
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item svg.transition-transform,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) .nav-item svg.transition-transform,
-            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover) ul[x-show="open"],
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover) ul[x-show="open"] {
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item span,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item span {
                 display: none !important;
             }
 
-            /* 2. Hover to Expand (Floating Full 260px Sidebar) */
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item svg.transition-transform,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) .nav-item svg.transition-transform,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul[x-show="open"],
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul[x-show="open"],
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul[x-show="childOpen"],
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) ul[x-show="childOpen"] {
+                display: none !important;
+            }
+
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) #sidebar-scroll,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:not(:hover):not(:focus-within) #sidebar-scroll {
+                overflow: hidden !important;
+            }
+
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover #sidebar-scroll,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover #sidebar-scroll,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within #sidebar-scroll,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within #sidebar-scroll,
+            html.pinned-sidebar body #sidebar-scroll,
+            body.pinned-sidebar #sidebar-scroll {
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }
+
+            /* 2. Hover / Active Focus to Expand (Floating Full 260px Sidebar) */
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within {
                 width: 260px !important;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
                 z-index: 60 !important;
-                overflow-y: auto !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .sidebar-header,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .sidebar-header {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .sidebar-header,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .sidebar-header,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .sidebar-header {
                 justify-content: space-between !important;
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .main-logo,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .main-logo {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .main-logo,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .main-logo,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .main-logo {
                 margin: 0 !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .main-logo span,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .main-logo span {
-                opacity: 1 !important;
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .main-logo span,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .main-logo span,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .main-logo span {
                 display: inline-block !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .sidebar-pin-btn,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .sidebar-pin-btn {
-                opacity: 1 !important;
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .sidebar-pin-btn,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .sidebar-pin-btn,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .sidebar-pin-btn {
                 display: flex !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover ul,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover ul {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover ul,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within ul,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within ul {
                 padding-left: 0.75rem !important;
                 padding-right: 0.75rem !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .nav-item > a,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item > button {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item > button,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .nav-item > a,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .nav-item > button {
                 padding-left: 0.625rem !important;
                 padding-right: 0.625rem !important;
                 justify-content: space-between !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .nav-item .flex.items-center,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item .flex.items-center {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item .flex.items-center,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .nav-item .flex.items-center,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .nav-item .flex.items-center {
                 justify-content: flex-start !important;
                 width: auto !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .nav-item span,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item span {
-                opacity: 1 !important;
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item span,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .nav-item span,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .nav-item span {
                 display: inline-block !important;
             }
 
             html.mini-sidebar body:not(.pinned-sidebar) .sidebar:hover .nav-item svg.transition-transform,
-            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item svg.transition-transform {
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:hover .nav-item svg.transition-transform,
+            html.mini-sidebar body:not(.pinned-sidebar) .sidebar:focus-within .nav-item svg.transition-transform,
+            body.mini-sidebar:not(.pinned-sidebar) .sidebar:focus-within .nav-item svg.transition-transform {
                 display: inline-block !important;
             }
 
@@ -313,13 +376,12 @@
 </head>
 
 <body x-data="main" class="relative overflow-x-hidden font-nunito text-sm font-normal antialiased"
-    :class="[ $store.app.sidebar ? 'toggle-sidebar' : '', $store.app.sidebarPinned ? 'pinned-sidebar' : 'mini-sidebar', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', $store.app.menu, $store.app.layout,$store.app.rtlClass]">
+    :class="[ $store.app.sidebar ? 'toggle-sidebar' : '', $store.app.sidebarPinned ? 'pinned-sidebar' : 'mini-sidebar', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', 'vertical', $store.app.layout, $store.app.rtlClass]">
 
     @include('admin.layouts.partials.loader')
     @include('admin.layouts.partials.scroll-to-top')
 
     <div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
-        @include('admin.layouts.partials.customizer')
         @include('admin.layouts.sidebar')
 
         <div class="main-content flex min-h-screen flex-col">

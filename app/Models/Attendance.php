@@ -23,6 +23,7 @@ class Attendance extends Model
         'check_out_lng',
         'check_in_distance_meters',
         'check_out_distance_meters',
+        'office_name',
         'status',
         'is_late',
         'late_minutes',

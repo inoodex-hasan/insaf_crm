@@ -163,17 +163,24 @@
 
                                 <td>
                                     @if($attendance->check_in_distance_meters !== null)
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="text-xs font-mono {{ $attendance->check_in_distance_meters > 200 ? 'text-warning font-bold' : 'text-success' }}">
-                                                {{ $attendance->check_in_distance_meters }}m
-                                            </span>
-                                            @if($attendance->check_in_lat && $attendance->check_in_lng)
-                                                <a href="https://maps.google.com/?q={{ $attendance->check_in_lat }},{{ $attendance->check_in_lng }}" 
-                                                   target="_blank" 
-                                                   class="text-primary hover:underline text-xs" 
-                                                   title="View coordinates on Google Maps">
-                                                    📍 Map
-                                                </a>
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-xs font-mono {{ $attendance->check_in_distance_meters > 200 ? 'text-warning font-bold' : 'text-success' }}">
+                                                    {{ $attendance->check_in_distance_meters }}m
+                                                </span>
+                                                @if($attendance->check_in_lat && $attendance->check_in_lng)
+                                                    <a href="https://maps.google.com/?q={{ $attendance->check_in_lat }},{{ $attendance->check_in_lng }}" 
+                                                       target="_blank" 
+                                                       class="text-primary hover:underline text-xs" 
+                                                       title="View coordinates on Google Maps">
+                                                        📍 Map
+                                                    </a>
+                                                @endif
+                                            </div>
+                                            @if($attendance->office_name)
+                                                <div class="text-[10px] text-white-dark font-medium truncate max-w-[160px]" title="{{ $attendance->office_name }}">
+                                                    🏢 {{ $attendance->office_name }}
+                                                </div>
                                             @endif
                                         </div>
                                     @else

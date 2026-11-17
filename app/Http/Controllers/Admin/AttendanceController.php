@@ -219,10 +219,15 @@ class AttendanceController extends Controller
         $this->authorizeAdmin();
 
         $validated = $request->validate([
-            'office_name' => ['required', 'string', 'max:255'],
-            'office_latitude' => ['required', 'numeric', 'between:-90,90'],
-            'office_longitude' => ['required', 'numeric', 'between:-180,180'],
-            'geofence_radius_meters' => ['required', 'integer', 'min:20', 'max:5000'],
+            'office_locations' => ['nullable', 'array'],
+            'office_locations.*.name' => ['nullable', 'string', 'max:255'],
+            'office_locations.*.latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'office_locations.*.longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'office_locations.*.radius_meters' => ['nullable', 'integer', 'min:20', 'max:5000'],
+            'office_name' => ['nullable', 'string', 'max:255'],
+            'office_latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'office_longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'geofence_radius_meters' => ['nullable', 'integer', 'min:20', 'max:5000'],
             'enforce_geofence' => ['nullable', 'boolean'],
             'enforce_ip' => ['nullable', 'boolean'],
             'allowed_ips' => ['nullable', 'string'],
@@ -249,11 +254,34 @@ class AttendanceController extends Controller
 
         $settings = AttendanceSetting::getSettings();
 
+        // Process Multi-Office Branch Locations
+        $officeLocations = [];
+        if ($request->has('office_locations') && is_array($request->input('office_locations'))) {
+            foreach ($request->input('office_locations') as $loc) {
+                if (!empty($loc['name']) && isset($loc['latitude'], $loc['longitude']) && $loc['latitude'] !== '' && $loc['longitude'] !== '') {
+                    $officeLocations[] = [
+                        'name' => trim($loc['name']),
+                        'latitude' => (float) $loc['latitude'],
+                        'longitude' => (float) $loc['longitude'],
+                        'radius_meters' => max(20, (int) ($loc['radius_meters'] ?? 100)),
+                    ];
+                }
+            }
+        }
+
+        $primaryOffice = $officeLocations[0] ?? [
+            'name' => $validated['office_name'] ?? $settings->office_name,
+            'latitude' => $validated['office_latitude'] ?? $settings->office_latitude,
+            'longitude' => $validated['office_longitude'] ?? $settings->office_longitude,
+            'radius_meters' => $validated['geofence_radius_meters'] ?? $settings->geofence_radius_meters,
+        ];
+
         $settings->update([
-            'office_name' => $validated['office_name'],
-            'office_latitude' => $validated['office_latitude'],
-            'office_longitude' => $validated['office_longitude'],
-            'geofence_radius_meters' => $validated['geofence_radius_meters'],
+            'office_name' => $primaryOffice['name'],
+            'office_latitude' => $primaryOffice['latitude'],
+            'office_longitude' => $primaryOffice['longitude'],
+            'geofence_radius_meters' => $primaryOffice['radius_meters'],
+            'office_locations' => !empty($officeLocations) ? $officeLocations : null,
             'enforce_geofence' => $request->boolean('enforce_geofence'),
             'enforce_ip' => $request->boolean('enforce_ip'),
             'allowed_ips' => $validated['allowed_ips'],

@@ -1,4 +1,28 @@
 <style>
+    .sidebar {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+    .sidebar > div {
+        height: 100% !important;
+        max-height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+    #sidebar-scroll {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        min-height: 0 !important;
+        flex: 1 1 0% !important;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: #9ca3af #f1f1f1;
+        -webkit-overflow-scrolling: touch;
+    }
+    .dark #sidebar-scroll {
+        scrollbar-color: #4b5563 #1b2e4b;
+    }
     #sidebar-scroll::-webkit-scrollbar {
         width: 6px;
     }
@@ -22,11 +46,8 @@
     .dark #sidebar-scroll::-webkit-scrollbar-thumb:hover {
         background-color: #6b7280;
     }
-    #sidebar-scroll {
-        overscroll-behavior: contain;
-    }
 </style>
-<nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-[100vh] w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ltr:left-0 rtl:right-0 dark:bg-[#0e1726] dark:text-white-dark"
+<nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-[100vh] w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ltr:left-0 rtl:right-0 bg-white dark:bg-[#0e1726] dark:text-white-dark"
     :class="$store.app.sidebar ? 'translate-x-0' : '-translate-x-full ltr:ml-[-260px] rtl:mr-[-260px]'">
     <div class="flex h-full flex-col bg-white dark:bg-[#0e1726]">
         <div class="sidebar-header flex items-center justify-between px-4 py-3">
@@ -58,7 +79,7 @@
             </button>
         </div>
 
-        <div class="relative flex-1 overflow-y-auto scroll-smooth perfect-scrollbar" id="sidebar-scroll" style="scrollbar-width: thin; scrollbar-color: #9ca3af #f1f1f1;">
+        <div class="relative flex-1 overflow-y-auto scroll-smooth" id="sidebar-scroll" style="min-height: 0; flex: 1 1 0%; scrollbar-width: thin; scrollbar-color: #9ca3af #f1f1f1;">
             <ul class="space-y-0.5 p-3 font-semibold pb-20">
                 <!-- Dashboard -->
                 <li class="nav-item">
@@ -75,7 +96,7 @@
 
                 <!-- Editor -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,7 +112,7 @@
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Countries</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -104,7 +125,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Universities</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -116,7 +137,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Courses</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -136,7 +157,7 @@
 
                 <!-- Data Collection -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +180,7 @@
 
                 <!-- Digital Marketing -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -239,7 +260,7 @@
 
                 <!-- Attendance & Work Shift -->
                 <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.attendance.*') ? 'true' : 'false' }} }">
-                    <a href="javascript:;" @click="open = !open" class="group {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -255,19 +276,19 @@
                             </div>
                         </div>
                     </a>
-                    <ul x-show="open" x-collapse class="sub-menu">
-                        <li><a href="{{ route('admin.attendance.my-attendance') }}" class="{{ request()->routeIs('admin.attendance.my-attendance') ? 'active' : '' }}">My Attendance</a></li>
+                    <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
+                        <li><a href="{{ route('admin.attendance.my-attendance') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.attendance.my-attendance') ? 'active font-semibold text-primary' : '' }}">My Attendance</a></li>
                         @if(auth()->check() && auth()->user()->isAdminOrSuperAdmin())
-                            <li><a href="{{ route('admin.attendance.index') }}" class="{{ request()->routeIs('admin.attendance.index') ? 'active' : '' }}">Daily Board</a></li>
-                            <li><a href="{{ route('admin.attendance.report') }}" class="{{ request()->routeIs('admin.attendance.report') ? 'active' : '' }}">Monthly Deductions</a></li>
-                            <li><a href="{{ route('admin.attendance.settings') }}" class="{{ request()->routeIs('admin.attendance.settings') ? 'active' : '' }}">Settings</a></li>
+                            <li><a href="{{ route('admin.attendance.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.attendance.index') ? 'active font-semibold text-primary' : '' }}">Daily Board</a></li>
+                            <li><a href="{{ route('admin.attendance.report') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.attendance.report') ? 'active font-semibold text-primary' : '' }}">Monthly Deductions</a></li>
+                            <li><a href="{{ route('admin.attendance.settings') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.attendance.settings') ? 'active font-semibold text-primary' : '' }}">Settings</a></li>
                         @endif
                     </ul>
                 </li>
 
                 <!-- Consulting -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -292,7 +313,7 @@
 
                 <!-- Application -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -317,7 +338,7 @@
 
                 <!-- Invoice -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -342,7 +363,7 @@
 
                 <!-- VFS Checklist -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -367,7 +388,7 @@
                 <!-- My Commissions - All authenticated users -->
                 @if (auth()->check())
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -390,7 +411,7 @@
 
                 <!-- Accounting -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -414,7 +435,7 @@
 
                 <!-- Payments -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -436,7 +457,7 @@
 
                 <!-- Invoices -->
                 <!-- <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -456,7 +477,7 @@
 
                 <!-- Operations -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -472,7 +493,7 @@
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Salaries</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -484,7 +505,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Expenses</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -496,7 +517,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Bank</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -507,7 +528,7 @@
                             </ul>
                         </li>
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Currencies</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -522,7 +543,7 @@
                         </li>
                         <!-- <li><a href="{{ route('admin.budgets.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Budgets</a></li> -->
                         <li class="nav-item" x-data="{ childOpen: false }">
-                            <a href="javascript:;" @click="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
+                            <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Reports</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
                                     <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -537,7 +558,7 @@
 
                 <!-- Commissions -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -578,9 +599,55 @@
                         <li><a href="{{ route('admin.commissions.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">All Commissions</a></li>
                     </ul>
                 </li>
+
+                <!-- Partner Commission (University & Agency B2B) -->
+                <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.partner-commissions.*') || request()->routeIs('admin.partner-agencies.*') ? 'true' : 'false' }} }">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group {{ request()->routeIs('admin.partner-commissions.*') || request()->routeIs('admin.partner-agencies.*') ? 'active' : '' }}">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center">
+                                <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 21V19C16 16.7909 14.2091 15 12 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M20 8V14M23 11H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="px-3">Partner Commission</span>
+                            </div>
+                            <svg class="h-4 w-4 transition-transform" :class="open ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
+                                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                    </a>
+                    <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
+                        <li>
+                            <a href="{{ route('admin.partner-commissions.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.partner-commissions.index') && !request()->filled('type') ? 'font-semibold text-primary' : '' }}">
+                                All Commissions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.partner-commissions.index', ['type' => 'university']) }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->get('type') === 'university' ? 'font-semibold text-primary' : '' }}">
+                                University Commissions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.partner-commissions.index', ['type' => 'agency']) }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->get('type') === 'agency' ? 'font-semibold text-primary' : '' }}">
+                                Agency Commissions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.partner-commissions.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.partner-commissions.create') ? 'font-semibold text-primary' : '' }}">
+                                Record Commission
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.partner-agencies.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.partner-agencies.*') ? 'font-semibold text-primary' : '' }}">
+                                Partner Agencies
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <!-- Administration -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -603,7 +670,7 @@
 
                 <!-- Settings -->
                 <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click="open = !open" class="group">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -619,7 +686,6 @@
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
                         <li><a href="{{ route('admin.settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Settings</a></li>
-                        <li><a href="{{ route('admin.program-settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Program Taxonomies</a></li>
                     </ul>
                 </li>
             </ul>

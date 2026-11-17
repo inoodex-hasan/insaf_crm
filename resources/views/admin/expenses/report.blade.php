@@ -168,6 +168,10 @@
     $bgSrc = file_exists($bgPath) ? 'file:///' . str_replace('\\', '/', $bgPath) : null;
     $filters = [];
 
+    if ($request->get('investment_filter')) {
+        $filters[] = $request->get('investment_filter') === 'investment' ? 'Type: Tour Investments Only' : 'Type: General Operations Only';
+    }
+
     if ($request->get('search')) {
         $filters[] = 'Search: ' . $request->get('search');
     }
@@ -238,7 +242,14 @@
                         <tr>
                             <td class="table-shade">{{ $loop->index + 1 }}</td>
                             <td>{{ $expense->expense_date->format('Y-m-d') }}</td>
-                            <td class="text-left">{{ $expense->description }}</td>
+                            <td class="text-left">
+                                {{ $expense->description }}
+                                @if($expense->is_investment)
+                                    <div style="font-size: 10px; color: #6b21a8; margin-top: 2px;">
+                                        [Tour: {{ $expense->staff->name ?? 'Staff' }} @if($expense->country) &bull; {{ $expense->country->name }} @endif @if($expense->investment_purpose) &bull; {{ $expense->investment_purpose }} @endif]
+                                    </div>
+                                @endif
+                            </td>
                             <td class="table-shade">{{ $expense->chartOfAccount->name ?? 'General' }}</td>
                             <td class="text-right">{{ number_format($expense->amount, 2) }}</td>
                             <td>{{ ucwords(str_replace('_', ' ', $expense->payment_method)) ?: '-' }}</td>
