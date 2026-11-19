@@ -137,6 +137,36 @@ class Course extends Model
         return $this->degree_level ?? 'Degree';
     }
 
+    public function getFormattedDurationAttribute(): string
+    {
+        if (!empty($this->duration)) {
+            $dur = trim($this->duration);
+            if (preg_match('/[a-zA-Z]/', $dur)) {
+                return $dur;
+            }
+            if (is_numeric($dur)) {
+                $num = (int)$dur;
+                if ($num <= 5) {
+                    return $num . ($num == 1 ? ' Year' : ' Years');
+                }
+                return $num . ' Months';
+            }
+            return $dur;
+        }
+
+        if (!empty($this->duration_type)) {
+            return match ($this->duration_type) {
+                'less_than_1_year' => '< 1 Year',
+                '1_2_years' => '1 - 2 Years',
+                '3_4_years' => '3 - 4 Years',
+                '4_plus_years' => '4+ Years',
+                default => str_replace('_', ' ', $this->duration_type),
+            };
+        }
+
+        return 'N/A';
+    }
+
     public function getFormattedFeeAttribute(): string
     {
         if ($this->tuition_fee === null) {

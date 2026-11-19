@@ -102,7 +102,7 @@
                                     {{ $course->program_level_label }}
                                 </span>
                             </td>
-                            <td>{{ $course->duration ? $course->duration . ' Months' : 'N/A' }}</td>
+                            <td>{{ $course->formatted_duration }}</td>
                             <td>
                                 <span class="font-bold text-success text-xs">
                                     {{ $course->formatted_fee }}
@@ -232,7 +232,7 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
-                                <span class="font-bold text-dark dark:text-white-light text-sm" x-text="selectedCourse?.duration ? selectedCourse.duration + ' Months' : 'Standard Term'"></span>
+                                <span class="font-bold text-dark dark:text-white-light text-sm" x-text="selectedCourse?.duration || (selectedCourse?.duration_type ? selectedCourse.duration_type.replace(/_/g, ' ') : 'N/A')"></span>
                             </div>
                         </div>
 

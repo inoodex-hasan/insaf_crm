@@ -84,7 +84,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="font-bold text-white-dark">Duration:</span>
-                    <span>{{ $course->duration ? $course->duration . ' Months' : 'N/A' }}</span>
+                    <span>{{ $course->formatted_duration }}</span>
                 </div>
                 <!-- <div class="flex items-center justify-between">
                     <span class="font-bold text-white-dark">Tuition Fee:</span>

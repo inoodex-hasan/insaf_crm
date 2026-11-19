@@ -7,7 +7,8 @@
 
     <!-- Main Search Card matching Reference Screenshot Exactly -->
     <div class="search-program-card">
-        <form method="GET" action="{{ route('admin.search-program.index') }}" id="searchProgramForm">
+        <form method="GET" action="{{ route('admin.search-program.index') }}#search-results" id="searchProgramForm" @submit="sessionStorage.setItem('scroll_to_results', '1')">
+            <input type="hidden" name="applied_search" value="1">
             
             <!-- Top Search Bar -->
             <div class="top-filter-bar">
@@ -305,7 +306,7 @@
     </div>
 
     <!-- Search Results Section -->
-    <div class="results-container">
+    <div class="results-container" id="search-results">
         
         <!-- Results Counter & Status -->
         <div class="results-header-bar">
@@ -354,11 +355,9 @@
                                     @click="openDetailModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})">
                                     {{ $course->name }}
                                 </h4>
-                                @if($course->duration)
-                                    <div class="course-duration-header">
-                                        Duration: {{ $course->duration }}
-                                    </div>
-                                @endif
+                                <div class="course-duration-header">
+                                    Duration: {{ $course->formatted_duration }}
+                                </div>
                             </div>
 
                             <!-- University & Location Details -->
@@ -441,7 +440,7 @@
 
             <!-- Pagination -->
             <div class="pagination-wrapper">
-                {{ $courses->links() }}
+                {{ $courses->fragment('search-results')->links() }}
             </div>
         @else
             <!-- Empty State -->
@@ -517,7 +516,7 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
-                                <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.duration || 'Standard Term'"></span>
+                                <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.duration || (selectedCourse?.duration_type ? selectedCourse.duration_type.replace(/_/g, ' ') : 'N/A')"></span>
                             </div>
                         </div>
 
@@ -1811,6 +1810,10 @@
         margin: 0;
     }
 
+    #search-results {
+        scroll-margin-top: 80px;
+    }
+
     .pagination-wrapper {
         display: flex;
         justify-content: center;
@@ -1849,6 +1852,38 @@
                         this.filterDisciplineArea = discVal;
                     }
                 });
+
+                // Smoothly scroll down to results if search was applied or filters/pagination active
+                const shouldScroll = sessionStorage.getItem('scroll_to_results') === '1' 
+                    || window.location.hash === '#search-results'
+                    || @js(request()->hasAny(['applied_search', 'keyword', 'country_id', 'state_province', 'program_levels', 'study_area', 'discipline_area', 'duration_type', 'requirements', 'esl_available', 'stem_program', 'page']));
+
+                if (shouldScroll) {
+                    sessionStorage.removeItem('scroll_to_results');
+                    if ('scrollRestoration' in history) {
+                        history.scrollRestoration = 'manual';
+                    }
+
+                    const doScroll = () => {
+                        const target = document.getElementById('search-results');
+                        if (target) {
+                            const offset = 80;
+                            const bodyRect = document.body.getBoundingClientRect().top;
+                            const elementRect = target.getBoundingClientRect().top;
+                            const elementPosition = elementRect - bodyRect;
+                            const offsetPosition = elementPosition - offset;
+
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    };
+
+                    this.$nextTick(() => doScroll());
+                    setTimeout(doScroll, 120);
+                    setTimeout(doScroll, 300);
+                }
             },
 
             get availableDisciplines() {
