@@ -228,11 +228,38 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Tuition Fee</span>
-                                <span class="font-extrabold text-[#10b981] text-sm" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() : 'Contact University'"></span>
+                                <span class="font-extrabold text-[#10b981] text-sm" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : 'Contact University'"></span>
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
                                 <span class="font-bold text-dark dark:text-white-light text-sm" x-text="selectedCourse?.duration ? selectedCourse.duration + ' Months' : 'Standard Term'"></span>
+                            </div>
+                        </div>
+
+                        <!-- 5-Pill Costing Breakdown -->
+                        <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] p-3.5 rounded-lg bg-white dark:bg-[#1b2e4b]">
+                            <span class="text-white-dark block text-[10px] uppercase font-semibold mb-2">Costing Breakdown</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Tuition</span>
+                                    <span class="font-bold text-primary" x-text="Number(selectedCourse?.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Admission</span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Living</span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Additional</span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Scholarship</span>
+                                    <span class="font-bold text-success" x-text="Number(selectedCourse?.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
                             </div>
                         </div>
 

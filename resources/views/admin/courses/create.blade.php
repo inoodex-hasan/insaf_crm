@@ -112,23 +112,31 @@
 
             <!-- Section 3: Tuition & Financials -->
             <div class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
-                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">3. Tuition Fees & Availability</h5>
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">3. Financial Costing Breakdown & Status</h5>
+                
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-3 mb-4">
                     <div class="form-group">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Currency</label>
                         <select name="currency" class="form-select text-xs">
                             <option value="USD" {{ old('currency', 'USD') == 'USD' ? 'selected' : '' }}>USD ($)</option>
+                            <option value="CAD" {{ old('currency') == 'CAD' ? 'selected' : '' }}>CAD (C$)</option>
                             <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR (€)</option>
+                            <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP (£)</option>
+                            <option value="AUD" {{ old('currency') == 'AUD' ? 'selected' : '' }}>AUD (A$)</option>
                             <option value="MYR" {{ old('currency') == 'MYR' ? 'selected' : '' }}>MYR (RM)</option>
                             <option value="RUB" {{ old('currency') == 'RUB' ? 'selected' : '' }}>RUB (₽)</option>
                             <option value="BDT" {{ old('currency') == 'BDT' ? 'selected' : '' }}>BDT (৳)</option>
-                            <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP (£)</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tuition Fee (Per Year / Total)</label>
-                        <input type="number" step="0.01" name="tuition_fee" class="form-input text-xs" placeholder="e.g. 8500.00" value="{{ old('tuition_fee') }}">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Fee Period / Frequency</label>
+                        <select name="fee_period" class="form-select text-xs">
+                            <option value="year" {{ old('fee_period', 'year') == 'year' ? 'selected' : '' }}>Per Year (/year)</option>
+                            <option value="semester" {{ old('fee_period') == 'semester' ? 'selected' : '' }}>Per Semester (/sem)</option>
+                            <option value="month" {{ old('fee_period') == 'month' ? 'selected' : '' }}>Per Month (/mo)</option>
+                            <option value="total" {{ old('fee_period') == 'total' ? 'selected' : '' }}>Total Program Fee</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -137,6 +145,44 @@
                             <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>Active (Accepting Applications)</option>
                             <option value="0" {{ old('status', 1) == 0 ? 'selected' : '' }}>Inactive / Suspended</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- 5 Core Costing Breakdown Fields -->
+                <div class="rounded-xl border border-[#e0e6ed] bg-[#fbfbfb] p-4 dark:border-[#1b2e4b] dark:bg-[#121e32] mb-2">
+                    <div class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
+                        Cost Breakdown Items (Shown on Course Card)
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="form-group">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tuition Fee</label>
+                            <input type="number" step="0.01" name="tuition_fee" class="form-input text-xs" placeholder="e.g. 7797.00" value="{{ old('tuition_fee') }}">
+                            <span class="text-[10px] text-slate-400">e.g. $7797/year</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Admission Fee</label>
+                            <input type="number" step="0.01" name="admission_fee" class="form-input text-xs" placeholder="e.g. 600.00" value="{{ old('admission_fee') }}">
+                            <span class="text-[10px] text-slate-400">Application / entry</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Living Cost</label>
+                            <input type="number" step="0.01" name="living_cost" class="form-input text-xs" placeholder="e.g. 7797.00" value="{{ old('living_cost') }}">
+                            <span class="text-[10px] text-slate-400">Est. accommodation</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Additional</label>
+                            <input type="number" step="0.01" name="additional_cost" class="form-input text-xs" placeholder="e.g. 350.00" value="{{ old('additional_cost') }}">
+                            <span class="text-[10px] text-slate-400">Insurance, misc</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Scholarship</label>
+                            <input type="number" step="0.01" name="scholarship_amount" class="form-input text-xs" placeholder="e.g. 4500.00" value="{{ old('scholarship_amount') }}">
+                            <span class="text-[10px] text-slate-400">Max waiver / grant</span>
+                        </div>
                     </div>
                 </div>
             </div>

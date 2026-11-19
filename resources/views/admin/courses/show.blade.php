@@ -43,6 +43,32 @@
                         {!! $course->description ?? 'No description available.' !!}
                     </div>
                 </div>
+                <hr class="border-white-light dark:border-[#1b2e4b]">
+                <div>
+                    <h6 class="font-bold text-xs uppercase tracking-wider text-slate-500 mb-3">Costing Breakdown</h6>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                        <div class="rounded-lg bg-slate-50 p-2 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Tuition Fee</span>
+                            <span class="text-sm font-bold text-primary">{{ $course->formatted_tuition_display }}</span>
+                        </div>
+                        <div class="rounded-lg bg-slate-50 p-2 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Admission Fee</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $course->formatted_admission_display }}</span>
+                        </div>
+                        <div class="rounded-lg bg-slate-50 p-2 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Living Cost</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $course->formatted_living_display }}</span>
+                        </div>
+                        <div class="rounded-lg bg-slate-50 p-2 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Additional</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $course->formatted_additional_display }}</span>
+                        </div>
+                        <div class="rounded-lg bg-slate-50 p-2 dark:bg-[#121e32] border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Scholarship</span>
+                            <span class="text-sm font-bold text-success">{{ $course->formatted_scholarship_display }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

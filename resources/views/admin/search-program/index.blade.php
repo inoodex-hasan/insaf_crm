@@ -348,11 +348,18 @@
                                 @endif
                             </div>
 
-                            <!-- Course Title -->
-                            <h4 class="course-card-title" 
-                                @click="openDetailModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})">
-                                {{ $course->name }}
-                            </h4>
+                            <!-- Course Title & Duration Row (Matching Reference Layout) -->
+                            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                                <h4 class="course-card-title" 
+                                    @click="openDetailModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})">
+                                    {{ $course->name }}
+                                </h4>
+                                @if($course->duration)
+                                    <div class="course-duration-header">
+                                        Duration: {{ $course->duration }}
+                                    </div>
+                                @endif
+                            </div>
 
                             <!-- University & Location Details -->
                             <div class="course-meta-row">
@@ -375,16 +382,30 @@
                                         @endif
                                     </span>
                                 </div>
+                            </div>
 
-                                @if($course->duration)
-                                    <div class="course-meta-item">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                        <span>{{ $course->duration }}</span>
-                                    </div>
-                                @endif
+                            <!-- 5-Pill Costing Breakdown (Directly Matching Reference Image) -->
+                            <div class="course-costing-row">
+                                <div class="costing-box">
+                                    <div class="costing-pill">Tuition Fee</div>
+                                    <div class="costing-amount">{{ $course->formatted_tuition_display }}</div>
+                                </div>
+                                <div class="costing-box">
+                                    <div class="costing-pill">Admission Fee</div>
+                                    <div class="costing-amount">{{ $course->formatted_admission_display }}</div>
+                                </div>
+                                <div class="costing-box">
+                                    <div class="costing-pill">Living Cost</div>
+                                    <div class="costing-amount">{{ $course->formatted_living_display }}</div>
+                                </div>
+                                <div class="costing-box">
+                                    <div class="costing-pill">Additional</div>
+                                    <div class="costing-amount">{{ $course->formatted_additional_display }}</div>
+                                </div>
+                                <div class="costing-box">
+                                    <div class="costing-pill">Scholarship</div>
+                                    <div class="costing-amount">{{ $course->formatted_scholarship_display }}</div>
+                                </div>
                             </div>
 
                             <!-- Intakes & Requirements Tags -->
@@ -412,54 +433,6 @@
                                 @endif
                             </div>
 
-                        </div>
-
-                        <!-- Card Right Side: Fee & Action Buttons -->
-                        <div class="course-card-side">
-                            <div class="fee-block">
-                                <span class="fee-label">Tuition Fee</span>
-                                <span class="fee-amount">{{ $course->formatted_fee }}</span>
-                                <span class="est-total-pill" 
-                                      @click.stop="openCostingModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
-                                      title="View complete financial breakdown">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                    <span>Est. Total: BDT ~<span x-text="formatNumber(getEstTotalBdt({{ json_encode($course) }}, {{ json_encode($course->university?->country) }}))"></span></span>
-                                </span>
-                            </div>
-
-                            <div class="actions-block">
-                                <button type="button" 
-                                        @click="openCostingModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
-                                        class="btn-costing-view"
-                                        title="Itemized Costing Breakdown & Quotation">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                                    </svg>
-                                    <span>Cost Breakdown</span>
-                                </button>
-
-                                <button type="button" 
-                                        @click="openDetailModal({{ json_encode($course) }}, {{ json_encode($course->university) }}, {{ json_encode($course->university?->country) }})"
-                                        class="btn-detail-view">
-                                    View Details
-                                </button>
-
-                                @can('*consultant|*application|*marketing')
-                                    <a href="{{ route('admin.applications.create', ['university_id' => $course->university_id, 'course_id' => $course->id]) }}" 
-                                       class="btn-apply-fast">
-                                        <span>Apply</span>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            <polyline points="12 5 19 12 12 19"></polyline>
-                                        </svg>
-                                    </a>
-                                @endcan
-                            </div>
                         </div>
 
                     </div>
@@ -540,11 +513,38 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Tuition Fee</span>
-                                <span class="font-bold text-[#10b981]" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() : 'Contact University'"></span>
+                                <span class="font-bold text-[#10b981]" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : 'Contact University'"></span>
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
                                 <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.duration || 'Standard Term'"></span>
+                            </div>
+                        </div>
+
+                        <!-- 5-Pill Costing Breakdown in Detail Modal -->
+                        <div class="border border-[#e0e6ed] dark:border-[#1b2e4b] p-3.5 rounded-xl bg-white dark:bg-[#1b2e4b]">
+                            <span class="text-white-dark block text-[10px] uppercase font-semibold mb-2">Financial Costing Breakdown</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Tuition Fee</span>
+                                    <span class="font-bold text-primary text-xs" x-text="Number(selectedCourse?.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Admission</span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Living Cost</span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Additional</span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : 'N/A'"></span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
+                                    <span class="block text-[10px] text-slate-400 font-semibold uppercase">Scholarship</span>
+                                    <span class="font-bold text-success text-xs" x-text="Number(selectedCourse?.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -1455,11 +1455,7 @@
         background: #ffffff;
         border: 1px solid #e0e6ed;
         border-radius: 12px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
+        padding: 20px 24px;
         transition: box-shadow 0.2s, border-color 0.2s;
     }
     .dark .course-card {
@@ -1470,18 +1466,12 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         border-color: #cbd5e1;
     }
-    @media (max-width: 768px) {
-        .course-card {
-            flex-direction: column;
-            align-items: stretch;
-        }
-    }
 
     .course-card-main {
-        flex: 1;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
     }
     .course-badges-row {
         display: flex;
@@ -1702,6 +1692,52 @@
         align-items: center;
         gap: 8px;
     }
+
+    /* 5-Pill Costing Row (Matching Reference Image) */
+    .course-costing-row {
+        display: flex;
+        gap: 16px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+    .costing-box {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+    }
+    .costing-pill {
+        background: #eaeff5;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 8px;
+        line-height: 1.2;
+    }
+    .dark .costing-pill {
+        background: #1e293b;
+        color: #e2e8f0;
+    }
+    .costing-amount {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0e3562;
+        line-height: 1.2;
+    }
+    .dark .costing-amount {
+        color: #93c5fd;
+    }
+    .course-duration-header {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0e3562;
+        white-space: nowrap;
+    }
+    .dark .course-duration-header {
+        color: #93c5fd;
+    }
     .btn-detail-view {
         background: transparent;
         color: #2563eb;
@@ -1903,24 +1939,25 @@
                     : this.defaultCostingTemplate;
 
                 const rate = Number(tpl?.default_exchange_rate) || (course.currency === 'EUR' ? 135 : (course.currency === 'MYR' ? 30 : 125));
-                const tuition = Number(course.tuition_fee) || 4500;
-                let total = tuition * rate;
+                const tuition = Math.max(0, (Number(course.tuition_fee) || 0) - (Number(course.scholarship_amount) || 0));
+                const admission = Number(course.admission_fee) || 0;
+                const living = Number(course.living_cost) || 0;
+                const additional = Number(course.additional_cost) || 0;
+
+                let total = (tuition + admission + living + additional) * rate;
+
+                // Fallback for older courses with 0 values
+                if (tuition === 0 && admission === 0 && living === 0 && additional === 0) {
+                    total = 4500 * rate;
+                }
 
                 if (tpl && tpl.items) {
-                    tpl.items.forEach(item => {
-                        if (item.category === 'application_fee') {
-                            total += (Number(item.default_foreign_amount) || 0) * rate;
-                        } else if (item.category === 'additional_cost') {
-                            if (item.currency === 'BDT') {
-                                total += Number(item.default_bdt_amount) || 0;
-                            } else {
-                                total += (Number(item.default_foreign_amount) || 0) * rate;
-                            }
-                        } else if (item.category === 'agency_fee') {
-                            total += Number(item.default_bdt_amount) || 0;
-                        }
-                    });
+                    const agencyItem = tpl.items.find(i => i.category === 'agency_fee');
+                    if (agencyItem) {
+                        total += Number(agencyItem.default_bdt_amount) || 0;
+                    }
                 }
+
                 return Math.round(total);
             },
 
@@ -1936,25 +1973,61 @@
                 this.costingCurrency = course.currency || tpl?.currency || 'USD';
                 this.costingExchangeRate = Number(tpl?.default_exchange_rate) || (this.costingCurrency === 'EUR' ? 135 : (this.costingCurrency === 'MYR' ? 30 : 125));
                 
-                // 1. Tuition Fee (Auto-pulled from course or template)
+                // 1. Tuition Fee (Auto-pulled directly from course, or fallback to template)
                 this.costingTuitionFee = Number(course.tuition_fee) > 0 
                     ? Number(course.tuition_fee) 
                     : (tpl?.items?.find(i => i.category === 'tuition')?.default_foreign_amount || 5000);
 
-                // 2. Scholarship (Default 0, customizable)
-                this.costingScholarshipAmount = 0;
+                // 2. Scholarship (Pulls from course scholarship_amount if set)
+                this.costingScholarshipAmount = Number(course.scholarship_amount) > 0 
+                    ? Number(course.scholarship_amount) 
+                    : 0;
 
-                // 3. Application Fee
+                // 3. Admission / Application Fee (Pulls from course admission_fee if set)
                 const appItem = tpl?.items?.find(i => i.category === 'application_fee');
                 this.costingApplicationTitle = appItem ? appItem.title : 'University Application / Admission Fee';
-                this.costingApplicationFee = appItem ? Number(appItem.default_foreign_amount) : (this.costingCurrency === 'MYR' ? 500 : 100);
+                this.costingApplicationFee = Number(course.admission_fee) > 0 
+                    ? Number(course.admission_fee) 
+                    : (appItem ? Number(appItem.default_foreign_amount) : (this.costingCurrency === 'MYR' ? 500 : 100));
 
                 // 4. Agency Fee
                 const agencyItem = tpl?.items?.find(i => i.category === 'agency_fee');
                 this.costingAgencyFee = agencyItem ? Number(agencyItem.default_bdt_amount) : 50000;
 
-                // 5. Additional Items (EMGS, State fee, CVU, Embassy, Medical)
+                // 5. Additional Items (Living Cost, Insurance, EMGS, State fee, CVU, Embassy, Medical)
                 this.costingAdditionalItems = [];
+
+                // If course has living_cost saved, add it as a primary line item
+                if (Number(course.living_cost) > 0) {
+                    const lAmount = Number(course.living_cost);
+                    this.costingAdditionalItems.push({
+                        category: 'additional_cost',
+                        title: 'Estimated Living Cost (' + (course.fee_period || 'year') + ')',
+                        payable_to: 'third_party',
+                        currency: this.costingCurrency,
+                        foreign_amount: lAmount,
+                        exchange_rate: this.costingExchangeRate,
+                        bdt_amount: lAmount * this.costingExchangeRate,
+                        is_deduction: false
+                    });
+                }
+
+                // If course has additional_cost saved, add it
+                if (Number(course.additional_cost) > 0) {
+                    const addAmount = Number(course.additional_cost);
+                    this.costingAdditionalItems.push({
+                        category: 'additional_cost',
+                        title: 'University Additional Fees & Insurance',
+                        payable_to: 'university',
+                        currency: this.costingCurrency,
+                        foreign_amount: addAmount,
+                        exchange_rate: this.costingExchangeRate,
+                        bdt_amount: addAmount * this.costingExchangeRate,
+                        is_deduction: false
+                    });
+                }
+
+                // Append any country template additional costs (e.g. embassy / visa / legal fees)
                 if (tpl && tpl.items) {
                     tpl.items.filter(i => i.category === 'additional_cost').forEach(i => {
                         const isBdt = i.currency === 'BDT';

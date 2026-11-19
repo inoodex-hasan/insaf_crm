@@ -20,6 +20,11 @@ class Course extends Model
         'duration',
         'duration_type',
         'tuition_fee',
+        'fee_period',
+        'admission_fee',
+        'living_cost',
+        'additional_cost',
+        'scholarship_amount',
         'currency',
         'requirements',
         'available_intake_months',
@@ -37,6 +42,10 @@ class Course extends Model
         'stem_program' => 'boolean',
         'status' => 'boolean',
         'tuition_fee' => 'decimal:2',
+        'admission_fee' => 'decimal:2',
+        'living_cost' => 'decimal:2',
+        'additional_cost' => 'decimal:2',
+        'scholarship_amount' => 'decimal:2',
     ];
 
     /**
@@ -136,5 +145,80 @@ class Course extends Model
 
         $currency = $this->currency ?? 'USD';
         return $currency . ' ' . number_format($this->tuition_fee, 2);
+    }
+
+    public function getCurrencySymbolAttribute(): string
+    {
+        return match (strtoupper($this->currency ?? 'USD')) {
+            'USD', 'CAD', 'AUD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'BDT' => '৳',
+            'MYR' => 'RM ',
+            'RUB' => '₽',
+            default => ($this->currency ?? '$') . ' ',
+        };
+    }
+
+    public function getPeriodSuffixAttribute(): string
+    {
+        $p = strtolower($this->fee_period ?? 'year');
+        return match ($p) {
+            'year', 'per_year', 'annual' => '/year',
+            'semester', 'per_semester', 'sem' => '/sem',
+            'month', 'per_month' => '/mo',
+            'total', 'course', 'full' => '',
+            default => '/' . $p,
+        };
+    }
+
+    public function getFormattedTuitionDisplayAttribute(): string
+    {
+        if ($this->tuition_fee === null || (float)$this->tuition_fee <= 0) {
+            return 'N/A';
+        }
+        return $this->currency_symbol . number_format($this->tuition_fee, 0) . $this->period_suffix;
+    }
+
+    public function getFormattedAdmissionDisplayAttribute(): string
+    {
+        if ($this->admission_fee === null || (float)$this->admission_fee <= 0) {
+            return 'N/A';
+        }
+        return $this->currency_symbol . number_format($this->admission_fee, 0);
+    }
+
+    public function getFormattedLivingDisplayAttribute(): string
+    {
+        if ($this->living_cost === null || (float)$this->living_cost <= 0) {
+            return 'N/A';
+        }
+        return $this->currency_symbol . number_format($this->living_cost, 0) . $this->period_suffix;
+    }
+
+    public function getFormattedAdditionalDisplayAttribute(): string
+    {
+        if ($this->additional_cost === null || (float)$this->additional_cost <= 0) {
+            return 'N/A';
+        }
+        return $this->currency_symbol . number_format($this->additional_cost, 0);
+    }
+
+    public function getFormattedScholarshipDisplayAttribute(): string
+    {
+        if ($this->scholarship_amount === null || (float)$this->scholarship_amount <= 0) {
+            return 'N/A';
+        }
+        return $this->currency_symbol . number_format($this->scholarship_amount, 0) . $this->period_suffix;
+    }
+
+    public function getNetTuitionFeeAttribute(): float
+    {
+        return max(0, (float)($this->tuition_fee ?? 0) - (float)($this->scholarship_amount ?? 0));
+    }
+
+    public function getTotalEstimatedAnnualCostAttribute(): float
+    {
+        return $this->net_tuition_fee + (float)($this->admission_fee ?? 0) + (float)($this->living_cost ?? 0) + (float)($this->additional_cost ?? 0);
     }
 }
