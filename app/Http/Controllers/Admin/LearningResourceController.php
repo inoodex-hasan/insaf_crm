@@ -337,11 +337,33 @@ class LearningResourceController extends Controller
     {
         Settings::setOutputEscapingEnabled(true);
 
-        $processor = new TemplateProcessor($masterPath);
+        // Normalize template XML so that both [VARIABLE] and ${VARIABLE} are supported
+        $tempMaster = tempnam(sys_get_temp_dir(), 'tmpl_norm_') . '.docx';
+        copy($masterPath, $tempMaster);
+
+        $zip = new \ZipArchive();
+        if ($zip->open($tempMaster) === true) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $entryName = $zip->getNameIndex($i);
+                if (str_ends_with($entryName, '.xml')) {
+                    $xml = $zip->getFromIndex($i);
+                    // Convert [TOKEN] to ${TOKEN} for standard TemplateProcessor
+                    $newXml = preg_replace('/\[([A-Z0-9_]+)\]/', '${$1}', $xml);
+                    if ($newXml !== $xml) {
+                        $zip->addFromString($entryName, $newXml);
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        $processor = new TemplateProcessor($tempMaster);
         $processor->setValues($plainTokens);
 
         $tempPath = tempnam(sys_get_temp_dir(), 'docx_') . '.docx';
         $processor->saveAs($tempPath);
+
+        @unlink($tempMaster);
 
         return response()->download($tempPath, "{$cleanTitle}.docx", [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -556,6 +578,11 @@ class LearningResourceController extends Controller
         $tokens = $this->buildTemplateTokenMap($template, $validated);
 
         $renderedContent = str_replace(array_keys($tokens['bracket']), array_values($tokens['bracket']), $template->content);
+        $dollarTokens = [];
+        foreach ($tokens['plain'] as $k => $v) {
+            $dollarTokens['${' . $k . '}'] = $v;
+        }
+        $renderedContent = str_replace(array_keys($dollarTokens), array_values($dollarTokens), $renderedContent);
 
         // Create a clone object for view rendering without modifying DB
         $populatedTemplate = clone $template;

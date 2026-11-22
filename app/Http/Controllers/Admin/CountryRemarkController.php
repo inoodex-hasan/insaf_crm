@@ -34,6 +34,11 @@ class CountryRemarkController extends Controller
             $query->where('country_id', (int) $selectedCountryId);
         }
 
+        $search = trim((string) $request->query('search'));
+        if ($search !== '') {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
         $remarks = $query->get();
 
         // Calculate counts per country
