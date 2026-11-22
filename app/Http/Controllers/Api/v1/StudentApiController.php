@@ -58,6 +58,11 @@ class StudentApiController extends BaseApiController
             $query->where('remarks', $remarks);
         }
 
+        // Collected / Created By filter
+        if ($collectedBy = $request->get('collected_by', $request->get('created_by'))) {
+            $query->where('created_by', $collectedBy);
+        }
+
         // Payment status filter
         if ($paymentStatus = $request->get('payment_status')) {
             if ($paymentStatus === 'paid') {

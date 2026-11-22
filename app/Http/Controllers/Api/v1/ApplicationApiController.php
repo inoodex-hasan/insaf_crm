@@ -62,6 +62,16 @@ class ApplicationApiController extends BaseApiController
             $query->where('final_payment_status', $request->boolean('final_payment'));
         }
 
+        // Filter by creator / collector
+        if ($creatorId = $request->get('created_by', $request->get('collected_by'))) {
+            $query->where(function ($q) use ($creatorId) {
+                $q->where('created_by', $creatorId)
+                  ->orWhereHas('student', function ($sq) use ($creatorId) {
+                      $sq->where('created_by', $creatorId);
+                  });
+            });
+        }
+
         $perPage = (int) $request->get('per_page', 15);
         $applications = $query->latest('id')->paginate($perPage);
 
