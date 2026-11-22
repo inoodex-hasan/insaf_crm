@@ -95,7 +95,7 @@
                 </li>
 
                 <!-- Editor -->
-                <li class="nav-item" x-data="{ open: false }">
+                <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.countries.*') || request()->routeIs('admin.country-remarks.*') || request()->routeIs('admin.universities.*') || request()->routeIs('admin.courses.*') || request()->routeIs('admin.course-intakes.*') || request()->routeIs('admin.program-settings.*') || request()->routeIs('admin.search-program.*') ? 'true' : 'false' }} }">
                     <a href="javascript:;" @click.prevent="open = !open" class="group">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
@@ -136,7 +136,7 @@
                                 <li><a href="{{ route('admin.universities.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">University List</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item" x-data="{ childOpen: false }">
+                        <li class="nav-item" x-data="{ childOpen: {{ request()->routeIs('admin.courses.*') || request()->routeIs('admin.course-intakes.*') || request()->routeIs('admin.program-settings.*') || request()->routeIs('admin.search-program.*') ? 'true' : 'false' }} }">
                             <a href="javascript:;" @click.prevent="childOpen = !childOpen" class="group flex items-center justify-between rounded-md px-3 py-2 hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">
                                 <span class="text-sm">Courses</span>
                                 <svg class="h-3 w-3 transition-transform" :class="childOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none">
@@ -147,6 +147,7 @@
                                 <li><a href="{{ route('admin.search-program.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b] text-primary font-semibold">Search Programs</a></li>
                                 <li><a href="{{ route('admin.courses.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Add Course</a></li>
                                 <li><a href="{{ route('admin.courses.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Course List</a></li>
+                                <li><a href="{{ route('admin.course-intakes.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b] {{ request()->routeIs('admin.course-intakes.*') ? 'font-semibold text-primary' : '' }}">Course Intakes</a></li>
                                 <li><a href="{{ route('admin.program-settings.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#1b2e4b]">Program Settings</a></li>
                             </ul>
                         </li>

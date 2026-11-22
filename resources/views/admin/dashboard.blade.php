@@ -6,13 +6,16 @@
     <!-- Staff Attendance Tracking Widget (Visible for regular staff, hidden for Super Admin) -->
     @include('admin.attendance.partials.dashboard-widget')
 
+    <!-- Application & Admission Pipeline Intelligence Filter Widget -->
+    @include('admin.dashboard.partials.pipeline-filter-widget')
+
     <!-- Breadcrumb -->
     @if (auth()->check() && auth()->user()->hasRole('admin'))
         <h5 class="text-xs font-semibold text-[#506690]">Administration</h5>
         <div class="pt-5">
             <!-- Stats Grid -->
             <div class="mb-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('tyro-dashboard.roles.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-success">
@@ -29,9 +32,9 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Roles</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('tyro-dashboard.privileges.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-info">
@@ -49,9 +52,9 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Privileges</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('tyro-dashboard.users.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-warning">
@@ -68,7 +71,7 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Users</h5>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     @endif
@@ -79,9 +82,9 @@
             auth()->user()->hasRole('super-admin'))
         <h5 class="mt-6 text-xs font-semibold text-[#506690]">Education Data</h5>
         <div class="pb-6 pt-5">
-            <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 dashboard-grid-4">
                 <!-- Country -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.countries.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-info">
@@ -102,10 +105,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Countries</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- University -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.universities.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-info">
@@ -130,10 +133,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Universities</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Course -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.courses.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-info">
@@ -163,7 +166,27 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Courses</h5>
                         </div>
                     </div>
-                </div>
+                </a>
+
+                <!-- Course Intakes -->
+                <a href="{{ route('admin.course-intakes.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
+                    <div class="flex items-center">
+                        <div class="shrink-0">
+                            <div class="text-warning">
+                                <svg width="60" height="40" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                    <path d="M8 14H8.01M12 14H12.01M16 14H16.01M8 18H8.01M12 18H12.01M16 18H16.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full ltr:ml-3 rtl:mr-3">
+                            <p class="dark:text-white-light text-xl">{{ number_format($stats['total_course_intakes'] ?? 0) }}</p>
+                            <h5 class="text-xs font-semibold text-[#506690]">Course Intakes</h5>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     @endif
@@ -171,9 +194,9 @@
     @if ((auth()->check() && auth()->user()->hasRole('admin')) || auth()->user()->hasRole('super-admin'))
         <h5 class="mt-6 text-xs font-semibold text-[#506690]">Overall Overview</h5>
         <div class="pb-6 pt-5">
-            <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 dashboard-grid-4">
                 <!-- Total Leads -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.marketing.leads.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-warning">
@@ -194,10 +217,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Leads</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Active Students -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.students.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-info">
@@ -217,10 +240,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Active Students</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Total Applications -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.applications.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-primary">
@@ -246,10 +269,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Applications</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Pending Applications -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.applications.index', ['status' => 'pending']) }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-warning">
@@ -268,10 +291,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Pending Applications</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Total Invoices -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.invoices.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-primary">
@@ -291,10 +314,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Invoices</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Total Payments -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.payments.index') }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-success">
@@ -313,10 +336,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Payments</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Pending Payments -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.payments.index', ['payment_status' => 'pending']) }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-success">
@@ -335,10 +358,10 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Pending Payments</h5>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Total Revenue -->
-                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                <a href="{{ route('admin.payments.index', ['payment_status' => 'completed']) }}" class="panel h-full sm:col-span-2 xl:col-span-1 block transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer text-inherit">
                     <div class="flex items-center">
                         <div class="shrink-0">
                             <div class="text-warning">
@@ -356,7 +379,7 @@
                             <h5 class="text-xs font-semibold text-[#506690]">Total Revenue</h5>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     @endif
@@ -378,3 +401,14 @@
     @endif
     </div>
 @endsection
+
+@push('styles')
+<style>
+@media (min-width: 1024px) {
+    .dashboard-grid-4 {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+}
+</style>
+@endpush
