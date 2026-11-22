@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{Application, Attendance, AttendanceSetting, Country, Course, CourseIntake, Currency, Lead, Payment, Salary, Student, University};
+use App\Models\{Application, Attendance, AttendanceSetting, Country, Course, CourseIntake, Currency, Lead, Payment, Salary, Student, University, User};
 use HasinHayder\Tyro\Models\{Privilege, Role};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
