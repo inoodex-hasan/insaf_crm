@@ -203,19 +203,25 @@ class LearningResourceController extends Controller
     }
 
     /**
-     * Delete a custom "Other" template.
+     * Delete an agreement, clearance, or other template.
      */
     public function destroyTemplate(AgreementTemplate $template): RedirectResponse
     {
-        if ($template->type !== 'other') {
-            return redirect()->back()->with('error', 'Core agreement and clearance templates cannot be deleted.');
+        $tab = $this->resolveTemplateTab($template);
+        $title = $template->title;
+
+        // Clean up custom uploaded docx file if exists
+        if (!empty($template->docx_path)) {
+            $absPath = base_path($template->docx_path);
+            if (file_exists($absPath) && (str_contains($absPath, 'templates/agreements/') || str_contains($absPath, 'templates/custom/') || str_contains($absPath, 'templates/clearances/'))) {
+                @unlink($absPath);
+            }
         }
 
-        $title = $template->title;
         $template->delete();
 
-        return redirect()->route('admin.learning-resources.index', ['tab' => 'other'])
-            ->with('success', "Template '{$title}' deleted successfully.");
+        return redirect()->route('admin.learning-resources.index', ['tab' => $tab])
+            ->with('success', "Template '{$title}' removed successfully.");
     }
 
     /**

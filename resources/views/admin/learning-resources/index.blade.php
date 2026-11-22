@@ -3,39 +3,7 @@
 @section('title', 'Learning Resources & Templates')
 
 @section('content')
-<div x-data="{
-    activeTab: '{{ $activeTab ?? 'agreements' }}',
-    agreementFilterCountry: 'all',
-    agreementSearch: '',
-    editModalOpen: false,
-    editTemplateId: null,
-    editTemplateTitle: '',
-    editTemplateHeaderSpace: 0,
-    editTemplateContent: '',
-    editTemplateLayout: 'pad',
-    editTemplateActive: true,
-    
-    agreementModalOpen: false,
-    clearanceModalOpen: false,
-    createAgreementLayout: 'pad',
-    createAgreementHeaderSpace: 90,
-    createClearanceLayout: 'pad',
-    createClearanceHeaderSpace: 90,
-
-    otherModalOpen: false,
-    docModalOpen: false,
-    interviewModalOpen: false,
-
-    openEditModal(template) {
-        this.editTemplateId = template.id;
-        this.editTemplateTitle = template.title;
-        this.editTemplateHeaderSpace = template.header_space_mm || 0;
-        this.editTemplateContent = template.content;
-        this.editTemplateLayout = template.layout_type;
-        this.editTemplateActive = !!template.is_active;
-        this.editModalOpen = true;
-    }
-}" class="space-y-6">
+<div x-data="learningResourcesManager()" class="space-y-6">
 
     <!-- Page Header -->
     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -87,22 +55,6 @@
             </template>
         </div>
     </div>
-
-    <!-- Alert Messages -->
-    @if(session('success'))
-        <div class="flex items-center rounded bg-success-light p-3.5 text-success dark:bg-success-dark-light">
-            <span class="ltr:pr-2 rtl:pl-2"><strong class="ltr:mr-1 rtl:ml-1">Success!</strong> {{ session('success') }}</span>
-        </div>
-    @endif
-    @if($errors->any())
-        <div class="rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
-            <ul class="list-disc pl-5 text-xs">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <!-- Main Navigation Tabs -->
     <div class="border-b border-[#e0e6ed] dark:border-[#1b2e4b]">
@@ -329,14 +281,24 @@
                                                 </span>
                                             @endif
 
-                                            <button type="button" 
-                                                    @click="openEditModal({{ json_encode($template) }})" 
-                                                    class="text-slate-400 hover:text-primary transition p-1" 
-                                                    title="Edit Template Settings & Content">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                                </svg>
-                                            </button>
+                                            <div class="flex items-center gap-1">
+                                                <button type="button" 
+                                                        @click="openEditModal({{ json_encode($template) }})" 
+                                                        class="text-slate-400 hover:text-primary transition p-1" 
+                                                        title="Edit Template Settings & Content">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                    </svg>
+                                                </button>
+                                                <button type="button" 
+                                                        @click="deleteTemplate({{ $template->id }}, '{{ addslashes($template->title) }}')" 
+                                                        class="text-slate-400 hover:text-danger transition p-1" 
+                                                        title="Delete Template">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <h6 class="text-sm font-bold text-dark dark:text-white-light leading-snug mb-2">
@@ -448,35 +410,28 @@
                         </h5>
                     </div>
 
-                    <button type="button" 
-                            @click="openEditModal({{ json_encode($template) }})" 
-                            class="text-slate-400 hover:text-primary transition p-1" 
-                            title="Edit Template">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                        </svg>
-                    </button>
+                    <div class="flex items-center gap-1">
+                        <button type="button" 
+                                @click="openEditModal({{ json_encode($template) }})" 
+                                class="text-slate-400 hover:text-primary transition p-1" 
+                                title="Edit Template">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
+                        <button type="button" 
+                                @click="deleteTemplate({{ $template->id }}, '{{ addslashes($template->title) }}')" 
+                                class="text-slate-400 hover:text-danger transition p-1" 
+                                title="Delete Template">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="mt-5 pt-4 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center gap-2">
-                    <a href="{{ route('admin.learning-resources.templates.preview', $template) }}" 
-                       target="_blank" 
-                       class="btn btn-outline-primary btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        Preview / Print
-                    </a>
-
-                    <a href="{{ route('admin.learning-resources.templates.download-pdf', $template) }}" 
-                       class="btn btn-danger btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5" style="background-color: #e11d48; color: white;">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        PDF
-                    </a>
 
                     <a href="{{ route('admin.learning-resources.templates.download-docx', $template) }}" 
                        class="btn btn-primary btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5" style="background-color: #2563eb; color: white;">
@@ -486,15 +441,6 @@
                         DOCX
                     </a>
 
-                    <button type="button" 
-                            @click="openEditModal({{ json_encode($template) }})" 
-                            class="btn btn-outline-dark btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5 ml-auto"
-                            title="Upload Master .docx File or Edit Template Terms">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/>
-                        </svg>
-                        <span>Upload .docx / Edit</span>
-                    </button>
                 </div>
             </div>
             @endforeach
@@ -551,14 +497,24 @@
                                     </h5>
                                 </div>
 
-                                <button type="button"
-                                        @click="openEditModal({{ json_encode($template) }})"
-                                        class="text-slate-400 hover:text-primary transition p-1"
-                                        title="Edit Template">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                    </svg>
-                                </button>
+                                <div class="flex items-center gap-1">
+                                    <button type="button"
+                                            @click="openEditModal({{ json_encode($template) }})"
+                                            class="text-slate-400 hover:text-primary transition p-1"
+                                            title="Edit Template">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" 
+                                            @click="deleteTemplate({{ $template->id }}, '{{ addslashes($template->title) }}')" 
+                                            class="text-slate-400 hover:text-danger transition p-1" 
+                                            title="Delete Template">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
                         </div>
@@ -912,9 +868,20 @@
                         </div>
 
                         <!-- Modal Footer -->
-                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
-                            <button type="button" @click="editModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
-                            <button type="submit" class="btn btn-primary btn-sm text-xs">Save Template Changes</button>
+                        <div class="flex items-center justify-between border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" 
+                                    @click="confirmDeleteCurrentTemplate()" 
+                                    class="btn btn-outline-danger btn-sm text-xs flex items-center gap-1.5"
+                                    title="Permanently remove this template">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                <span>Delete Template</span>
+                            </button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="editModalOpen = false" class="btn btn-outline-secondary btn-sm text-xs">Cancel</button>
+                                <button type="submit" class="btn btn-primary btn-sm text-xs">Save Template Changes</button>
+                            </div>
                         </div>
                     </form>
 
@@ -1398,5 +1365,66 @@
         </div>
     </template>
 
+    <!-- Hidden Delete Template Form -->
+    <form id="global-delete-template-form" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function learningResourcesManager() {
+    return {
+        activeTab: '{{ $activeTab ?? 'agreements' }}',
+        agreementFilterCountry: 'all',
+        agreementSearch: '',
+        editModalOpen: false,
+        editTemplateId: null,
+        editTemplateTitle: '',
+        editTemplateHeaderSpace: 0,
+        editTemplateContent: '',
+        editTemplateLayout: 'pad',
+        editTemplateActive: true,
+        
+        agreementModalOpen: false,
+        clearanceModalOpen: false,
+        createAgreementLayout: 'pad',
+        createAgreementHeaderSpace: 90,
+        createClearanceLayout: 'pad',
+        createClearanceHeaderSpace: 90,
+
+        otherModalOpen: false,
+        docModalOpen: false,
+        interviewModalOpen: false,
+
+        openEditModal(template) {
+            this.editTemplateId = template.id;
+            this.editTemplateTitle = template.title;
+            this.editTemplateHeaderSpace = template.header_space_mm || 0;
+            this.editTemplateContent = template.content;
+            this.editTemplateLayout = template.layout_type;
+            this.editTemplateActive = !!template.is_active;
+            this.editModalOpen = true;
+        },
+
+        deleteTemplate(id, title) {
+            if (confirm(`Are you sure you want to permanently delete template: "${title}"?\n\nThis cannot be undone.`)) {
+                const form = document.getElementById('global-delete-template-form');
+                if (form) {
+                    form.action = `{{ url('dashboard/learning-resources/templates') }}/${id}`;
+                    form.submit();
+                }
+            }
+        },
+
+        confirmDeleteCurrentTemplate() {
+            if (!this.editTemplateId) return;
+            this.deleteTemplate(this.editTemplateId, this.editTemplateTitle);
+        }
+    };
+}
+</script>
+@endpush
