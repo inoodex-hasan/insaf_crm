@@ -69,66 +69,88 @@
         </div>
     </div>
 
-    <!-- Filter Panel (Single Line) -->
+    <!-- Filter Panel (2 Rows) -->
     <div class="panel mt-5">
-        <form action="{{ route('admin.student-search.index') }}" method="GET">
-            <div class="student-search-filter-row" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; width: 100%;">
-                <!-- Search Keyword -->
-                <div style="flex: 2; min-width: 180px;">
-                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Keyword Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search name, phone, email, passport..."
-                        class="form-input text-sm w-full" style="height: 38px;" />
+        <form action="{{ route('admin.student-search.index') }}" method="GET" id="student_search_filter_form">
+            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                
+                <!-- Row 1: Keyword, Country, Remarks -->
+                <div class="student-search-filter-row" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; width: 100%;">
+                    <!-- Search Keyword -->
+                    <div style="flex: 2; min-width: 200px;">
+                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Keyword Search</label>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Search name, phone, email, passport, parent..."
+                            class="form-input text-sm w-full" style="height: 38px;" />
+                    </div>
+
+                    <!-- Country Filter -->
+                    <div style="flex: 1.2; min-width: 140px;">
+                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Country</label>
+                        <select name="country_id" id="filter_country_id" class="form-select text-sm w-full" style="height: 38px;">
+                            <option value="">All Countries</option>
+                            @foreach($countries as $c)
+                                <option value="{{ $c->id }}" {{ request('country_id') == $c->id ? 'selected' : '' }}>
+                                    {{ $c->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Remarks Filter (Dynamic based on Country) -->
+                    <div style="flex: 1.5; min-width: 170px;">
+                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Remarks</label>
+                        <select name="remarks" id="filter_remarks" class="form-select text-sm w-full" style="height: 38px;" {{ empty(request('country_id')) ? 'disabled' : '' }}>
+                            @if(empty(request('country_id')))
+                                <option value="">-- Select Country First --</option>
+                            @else
+                                <option value="">All Remarks</option>
+                                @foreach($filterRemarks as $rKey => $rLabel)
+                                    <option value="{{ $rLabel }}" {{ request('remarks') == $rLabel ? 'selected' : '' }}>
+                                        {{ $rLabel }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Country Filter -->
-                <div style="flex: 1; min-width: 125px;">
-                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Country</label>
-                    <select name="country_id" id="filter_country_id" class="form-select text-sm w-full" style="height: 38px;">
-                        <option value="">All Countries</option>
-                        @foreach($countries as $c)
-                            <option value="{{ $c->id }}" {{ request('country_id') == $c->id ? 'selected' : '' }}>
-                                {{ $c->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                <!-- Row 2: University, Payment Status, Action Buttons -->
+                <div class="student-search-filter-row" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; width: 100%;">
+                    <!-- University Filter (Searchable) -->
+                    <div style="flex: 2; min-width: 200px;">
+                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">University</label>
+                        <select name="university_id" id="filter_university_id" class="form-select text-sm w-full" style="height: 38px;">
+                            <option value="">All Universities</option>
+                            @foreach($universities as $u)
+                                <option value="{{ $u->id }}" {{ request('university_id') == $u->id ? 'selected' : '' }}>
+                                    {{ $u->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div style="flex: 1.2; min-width: 140px;">
+                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Payment Status</label>
+                        <select name="payment_status" class="form-select text-sm w-full" style="height: 38px;">
+                            <option value="">All Status</option>
+                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Fully Paid</option>
+                            <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>Partial Due</option>
+                            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                            <option value="no_package" {{ request('payment_status') == 'no_package' ? 'selected' : '' }}>No Package Set</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="flex: 0 0 auto; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                        <button type="submit" class="btn btn-primary gap-1.5 px-4 text-xs font-semibold" style="height: 38px;">
+                            Filter
+                        </button>
+                        <a href="{{ route('admin.student-search.index') }}" class="btn btn-outline-danger px-3 text-xs font-semibold" style="height: 38px; display: inline-flex; align-items: center;">Reset</a>
+                    </div>
                 </div>
 
-                <!-- University Filter (Searchable) -->
-                <div style="flex: 1.4; min-width: 165px;">
-                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">University</label>
-                    <select name="university_id" id="filter_university_id" class="form-select text-sm w-full" style="height: 38px;">
-                        <option value="">All Universities</option>
-                        @foreach($universities as $u)
-                            <option value="{{ $u->id }}" {{ request('university_id') == $u->id ? 'selected' : '' }}>
-                                {{ $u->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Payment Status -->
-                <div style="flex: 1; min-width: 130px;">
-                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Payment Status</label>
-                    <select name="payment_status" class="form-select text-sm w-full" style="height: 38px;">
-                        <option value="">All Status</option>
-                        <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Fully Paid</option>
-                        <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>Partial Due</option>
-                        <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                        <option value="no_package" {{ request('payment_status') == 'no_package' ? 'selected' : '' }}>No Package Set</option>
-                    </select>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="flex: 0 0 auto; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
-                    <button type="submit" class="btn btn-primary gap-1.5 px-4" style="height: 38px;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                        </svg>
-                        Filter
-                    </button>
-                    <a href="{{ route('admin.student-search.index') }}" class="btn btn-outline-danger px-3" style="height: 38px; display: inline-flex; align-items: center;">Reset</a>
-                </div>
             </div>
         </form>
     </div>
@@ -443,6 +465,63 @@ document.addEventListener('DOMContentLoaded', function() {
             searchable: true,
             placeholder: 'All Universities',
             searchtext: 'Search university...'
+        });
+    }
+
+    // Dynamic Country -> Remarks filter dropdown
+    const remarksByCountry = @json($remarksByCountry ?? []);
+    const countrySelect = document.getElementById('filter_country_id');
+    const remarksSelect = document.getElementById('filter_remarks');
+    const selectedRemark = @json(request('remarks', ''));
+
+    if (countrySelect && remarksSelect) {
+        countrySelect.addEventListener('change', async function() {
+            const countryId = this.value;
+            remarksSelect.innerHTML = '';
+
+            if (!countryId) {
+                remarksSelect.disabled = true;
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '-- Select Country First --';
+                remarksSelect.appendChild(opt);
+                return;
+            }
+
+            let list = remarksByCountry[countryId] || [];
+
+            // If not found in pre-grouped map, fallback to AJAX endpoint
+            if (list.length === 0) {
+                try {
+                    const res = await fetch(`{{ route('admin.student-search.country-remarks') }}?country_id=${countryId}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.remarks) {
+                            list = Object.values(data.remarks);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error fetching country remarks:', err);
+                }
+            }
+
+            remarksSelect.disabled = false;
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = 'All Remarks';
+            remarksSelect.appendChild(defaultOpt);
+
+            if (list && list.length > 0) {
+                list.forEach(remark => {
+                    const opt = document.createElement('option');
+                    opt.value = remark;
+                    opt.textContent = remark;
+                    if (selectedRemark && selectedRemark === remark) {
+                        opt.selected = true;
+                    }
+                    remarksSelect.appendChild(opt);
+                });
+            }
         });
     }
 });

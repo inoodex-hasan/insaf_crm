@@ -86,12 +86,24 @@ class StudentSearchController extends Controller
         }
         $filterRemarks = CountryRemark::getRemarksForCountry($countryId ? (int) $countryId : null, $activeCountryName);
 
+        // Group remarks by country_id for instant client-side dynamic switching
+        $remarksByCountry = [];
+        $activeRemarksList = CountryRemark::active()->ordered()->get();
+        foreach ($activeRemarksList as $ar) {
+            if ($ar->country_id) {
+                $remarksByCountry[$ar->country_id][] = $ar->name;
+            } else {
+                $remarksByCountry['others'][] = $ar->name;
+            }
+        }
+
         return view('admin.student-search.index', compact(
             'students',
             'countries',
             'universities',
             'allRemarksConfig',
-            'filterRemarks'
+            'filterRemarks',
+            'remarksByCountry'
         ));
     }
 
