@@ -100,17 +100,16 @@
                     <!-- Remarks Filter (Dynamic based on Country) -->
                     <div style="flex: 1.5; min-width: 170px;">
                         <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Remarks</label>
-                        <select name="remarks" id="filter_remarks" class="form-select text-sm w-full" style="height: 38px;" {{ empty(request('country_id')) ? 'disabled' : '' }}>
-                            @if(empty(request('country_id')))
-                                <option value="">-- Select Country First --</option>
-                            @else
-                                <option value="">All Remarks</option>
-                                @foreach($filterRemarks as $rKey => $rLabel)
-                                    <option value="{{ $rLabel }}" {{ request('remarks') == $rLabel ? 'selected' : '' }}>
-                                        {{ $rLabel }}
-                                    </option>
-                                @endforeach
-                            @endif
+                        <select name="remarks" id="filter_remarks" class="form-select text-sm w-full" style="height: 38px;">
+                            <option value="">{{ !empty($activeCountryName) ? 'All Remarks (' . $activeCountryName . ')' : 'All Remarks' }}</option>
+                            @php
+                                $displayRemarks = !empty($filterRemarks) ? $filterRemarks : ($allRemarks ?? []);
+                            @endphp
+                            @foreach($displayRemarks as $rKey => $rLabel)
+                                <option value="{{ $rLabel }}" {{ request('remarks') == $rLabel ? 'selected' : '' }}>
+                                    {{ $rLabel }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -470,6 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Dynamic Country -> Remarks filter dropdown
     const remarksByCountry = @json($remarksByCountry ?? []);
+    const allRemarksList = @json(array_values($allRemarks ?? []));
     const countrySelect = document.getElementById('filter_country_id');
     const remarksSelect = document.getElementById('filter_remarks');
     const selectedRemark = @json(request('remarks', ''));
@@ -477,38 +477,39 @@ document.addEventListener('DOMContentLoaded', function() {
     if (countrySelect && remarksSelect) {
         countrySelect.addEventListener('change', async function() {
             const countryId = this.value;
+            const countryText = this.options[this.selectedIndex]?.text?.trim() || '';
+            const previousVal = remarksSelect.value;
             remarksSelect.innerHTML = '';
 
+            let list = [];
+            let placeholder = 'All Remarks';
+
             if (!countryId) {
-                remarksSelect.disabled = true;
-                const opt = document.createElement('option');
-                opt.value = '';
-                opt.textContent = '-- Select Country First --';
-                remarksSelect.appendChild(opt);
-                return;
-            }
+                list = allRemarksList;
+                placeholder = 'All Remarks';
+            } else {
+                list = remarksByCountry[countryId] || [];
+                placeholder = countryText && countryText !== 'All Countries' ? `All Remarks (${countryText})` : 'All Remarks';
 
-            let list = remarksByCountry[countryId] || [];
-
-            // If not found in pre-grouped map, fallback to AJAX endpoint
-            if (list.length === 0) {
-                try {
-                    const res = await fetch(`{{ route('admin.student-search.country-remarks') }}?country_id=${countryId}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.remarks) {
-                            list = Object.values(data.remarks);
+                // If not found in pre-grouped map, fallback to AJAX endpoint
+                if (list.length === 0) {
+                    try {
+                        const res = await fetch(`{{ route('admin.student-search.country-remarks') }}?country_id=${countryId}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.remarks) {
+                                list = Object.values(data.remarks);
+                            }
                         }
+                    } catch (err) {
+                        console.error('Error fetching country remarks:', err);
                     }
-                } catch (err) {
-                    console.error('Error fetching country remarks:', err);
                 }
             }
 
-            remarksSelect.disabled = false;
             const defaultOpt = document.createElement('option');
             defaultOpt.value = '';
-            defaultOpt.textContent = 'All Remarks';
+            defaultOpt.textContent = placeholder;
             remarksSelect.appendChild(defaultOpt);
 
             if (list && list.length > 0) {
@@ -516,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const opt = document.createElement('option');
                     opt.value = remark;
                     opt.textContent = remark;
-                    if (selectedRemark && selectedRemark === remark) {
+                    if (previousVal === remark || selectedRemark === remark) {
                         opt.selected = true;
                     }
                     remarksSelect.appendChild(opt);

@@ -85,6 +85,7 @@ class StudentSearchController extends Controller
             $activeCountryName = $activeCountry?->name;
         }
         $filterRemarks = CountryRemark::getRemarksForCountry($countryId ? (int) $countryId : null, $activeCountryName);
+        $allRemarks = CountryRemark::getAllDistinctRemarks();
 
         // Group remarks by country_id for instant client-side dynamic switching
         $remarksByCountry = [];
@@ -97,13 +98,23 @@ class StudentSearchController extends Controller
             }
         }
 
+        // Ensure every country has remarks even if database table is unseeded
+        $fallbackMap = CountryRemark::getDefaultFallbackRemarks();
+        foreach ($countries as $c) {
+            if (empty($remarksByCountry[$c->id])) {
+                $cKey = strtolower(trim($c->name));
+                $remarksByCountry[$c->id] = $fallbackMap[$cKey] ?? $fallbackMap['others'];
+            }
+        }
+
         return view('admin.student-search.index', compact(
             'students',
             'countries',
             'universities',
             'allRemarksConfig',
             'filterRemarks',
-            'remarksByCountry'
+            'remarksByCountry',
+            'allRemarks'
         ));
     }
 
