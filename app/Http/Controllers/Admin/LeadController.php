@@ -44,8 +44,8 @@ class LeadController extends Controller
             $query->where('priority', $request->priority);
         }
 
-        // Admin users can filter by the user who collected the lead.
-        if ($canViewAllLeads && $request->has('collected_by') && $request->collected_by != '') {
+        // Filter by the user who collected the lead.
+        if ($request->filled('collected_by')) {
             $query->where('created_by', $request->collected_by);
         }
 
@@ -95,12 +95,12 @@ class LeadController extends Controller
         $leads = $query->paginate(15)
             ->withQueryString();
 
-        $collectors = $canViewAllLeads
-            ? User::whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['marketing', 'consultant', 'application'])
-                  ->orWhereIn('name', ['Marketing', 'Consultant', 'Application']);
-            })->orderBy('name')->get(['id', 'name'])
-            : collect();
+        $collectors = User::whereHas('roles', function ($q) {
+            $q->whereIn('slug', ['marketing', 'consultant', 'application', 'admin', 'super-admin'])
+              ->orWhereIn('name', ['Marketing', 'Consultant', 'Application', 'Admin', 'Super Admin']);
+        })->orWhereIn('id', Lead::select('created_by')->distinct())
+          ->orderBy('name')
+          ->get(['id', 'name']);
 
         return view('admin.marketing.leads.index', compact('leads', 'collectors', 'canViewAllLeads'));
     }
@@ -239,6 +239,9 @@ class LeadController extends Controller
                 $user->hasRole('admin')
                 || $user->hasRole('super-admin')
                 || $user->hasRole('superadmin')
+                || $user->hasRole('consultant')
+                || $user->hasRole('marketing')
+                || $user->hasRole('application')
             );
     }
 

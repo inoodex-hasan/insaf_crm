@@ -48,10 +48,15 @@ class DashboardController extends Controller
 
         $payments = Payment::latest()->paginate(15);
 
+        $collectors = User::whereHas('roles', function ($q) {
+            $q->whereIn('slug', ['marketing', 'consultant', 'application', 'admin', 'super-admin'])
+              ->orWhereIn('name', ['Marketing', 'Consultant', 'Application', 'Admin', 'Super Admin']);
+        })->orderBy('name')->get(['id', 'name']);
+
         $user = auth()->user();
         $todayAttendance = $user ? Attendance::where('user_id', $user->id)->where('date', now()->toDateString())->first() : null;
         $attendanceSettings = AttendanceSetting::getSettings();
 
-        return view('admin.dashboard', compact('stats', 'leads', 'students', 'applications', 'payments', 'activeCurrencies', 'todayAttendance', 'attendanceSettings'));
+        return view('admin.dashboard', compact('stats', 'leads', 'students', 'applications', 'payments', 'collectors', 'activeCurrencies', 'todayAttendance', 'attendanceSettings'));
     }
 }

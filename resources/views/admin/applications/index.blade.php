@@ -26,20 +26,21 @@
         <form action="{{ route('admin.applications.index') }}" method="GET" class="flex flex-col gap-3 w-full">
 
             {{-- Row 1: Search + Status + Offer Letter + Visa --}}
-            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-                <div class="relative" style="flex: 2; min-width: 150px;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%;">
+                <div class="relative" style="position: relative; flex: 2; min-width: 180px;">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search..." class="form-input ltr:pr-11 rtl:pl-11" style="width: 100%;" />
+                        placeholder="Search ID, student name..." class="form-input text-xs w-full" style="height: 38px; padding-right: 36px;" />
                     <button type="submit"
-                        class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5" />
-                            <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        style="position: absolute; right: 8px; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0; cursor: pointer;"
+                        class="text-gray-400 hover:text-primary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                     </button>
                 </div>
 
-                <select name="status" class="form-select" style="flex: 1; min-width: 120px;">
+                <select name="status" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
                     <option value="">Status</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="applied" {{ request('status') == 'applied' ? 'selected' : '' }}>Applied</option>
@@ -49,13 +50,13 @@
                     <option value="enrolled" {{ request('status') == 'enrolled' ? 'selected' : '' }}>Enrolled</option>
                 </select>
 
-                <select name="offer_letter" class="form-select" style="flex: 1; min-width: 120px;">
+                <select name="offer_letter" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
                     <option value="">Offer Letter</option>
                     <option value="1" {{ request('offer_letter') == '1' ? 'selected' : '' }}>Received</option>
                     <option value="0" {{ request('offer_letter') == '0' ? 'selected' : '' }}>Not Received</option>
                 </select>
 
-                <select name="visa_status" class="form-select" style="flex: 1; min-width: 120px;">
+                <select name="visa_status" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
                     <option value="">Visa</option>
                     <option value="not_applied" {{ request('visa_status') == 'not_applied' ? 'selected' : '' }}>Not Applied</option>
                     <option value="pending" {{ request('visa_status') == 'pending' ? 'selected' : '' }}>Pending</option>
@@ -64,38 +65,40 @@
                 </select>
             </div>
 
-            {{-- Row 2: EMGS Score + Security Deposit + CVU Fee + Filter/Reset buttons --}}
-            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-                <select name="emgs_score" class="form-select" style="flex: 1; min-width: 120px;">
+            {{-- Row 2: EMGS Score + Security Deposit + CVU Fee + Created/Collected By + Filter/Reset buttons --}}
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%;">
+                <select name="emgs_score" class="form-select text-xs" style="flex: 1; min-width: 110px; height: 38px;">
                     <option value="">EMGS Score</option>
                     @foreach([5, 15, 32, 35, 70] as $score)
                         <option value="{{ $score }}" {{ request('emgs_score') == $score ? 'selected' : '' }}>{{ $score }}%</option>
                     @endforeach
                 </select>
 
-                <select name="security_deposit" class="form-select" style="flex: 1; min-width: 150px;">
-                    <option value="">Security Deposit Fee</option>
+                <select name="security_deposit" class="form-select text-xs" style="flex: 1; min-width: 140px; height: 38px;">
+                    <option value="">Security Deposit</option>
                     <option value="1" {{ request('security_deposit') == '1' ? 'selected' : '' }}>Paid</option>
                     <option value="0" {{ request('security_deposit') == '0' ? 'selected' : '' }}>Pending</option>
                 </select>
 
-                <select name="cvu_fee" class="form-select" style="flex: 1; min-width: 120px;">
+                <select name="cvu_fee" class="form-select text-xs" style="flex: 1; min-width: 110px; height: 38px;">
                     <option value="">CVU Fee</option>
                     <option value="1" {{ request('cvu_fee') == '1' ? 'selected' : '' }}>Paid</option>
                     <option value="0" {{ request('cvu_fee') == '0' ? 'selected' : '' }}>Pending</option>
                 </select>
 
-                {{-- <select name="final_payment" class="form-select" style="flex: 1; min-width: 120px;">
-                    <option value="">Final Pay</option>
-                    <option value="1" {{ request('final_payment') == '1' ? 'selected' : '' }}>Paid</option>
-                    <option value="0" {{ request('final_payment') == '0' ? 'selected' : '' }}>Pending</option>
-                </select> --}}
+                <select name="created_by" class="form-select text-xs" style="flex: 1.5; min-width: 160px; height: 38px;">
+                    <option value="">Created / Collected By</option>
+                    @foreach($creators ?? [] as $creator)
+                        <option value="{{ $creator->id }}" {{ (request('created_by') == $creator->id || request('collected_by') == $creator->id) ? 'selected' : '' }}>
+                            {{ $creator->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-                {{-- Spacer to push buttons to the right --}}
-                <div style="flex: 2;"></div>
-
-                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">Filter</button>
-                <a href="{{ route('admin.applications.index') }}" class="btn btn-outline-danger" style="white-space: nowrap;">Reset</a>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                    <button type="submit" class="btn btn-primary text-xs font-semibold px-4" style="height: 38px; white-space: nowrap;">Filter</button>
+                    <a href="{{ route('admin.applications.index') }}" class="btn btn-outline-danger text-xs font-semibold px-4" style="height: 38px; white-space: nowrap; display: inline-flex; align-items: center;">Reset</a>
+                </div>
             </div>
 
         </form>
@@ -126,8 +129,10 @@
                         <td class="font-bold text-primary">{{ $app->application_id }}</td>
                         <td>
                             @if ($app->student)
-                                <div class="font-semibold">{{ $app->student->first_name }}
-                                    {{ $app->student->last_name }}
+                                <div class="font-semibold">
+                                    <a href="{{ route('admin.students.show', $app->student->id) }}" class="text-primary hover:underline">
+                                        {{ $app->student->first_name }} {{ $app->student->last_name }}
+                                    </a>
                                 </div>
                                 <div class="text-xs text-white-dark">{{ $app->student->phone }}</div>
                             @else

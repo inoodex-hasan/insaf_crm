@@ -15,6 +15,13 @@
     editTemplateLayout: 'pad',
     editTemplateActive: true,
     
+    agreementModalOpen: false,
+    clearanceModalOpen: false,
+    createAgreementLayout: 'pad',
+    createAgreementHeaderSpace: 90,
+    createClearanceLayout: 'pad',
+    createClearanceHeaderSpace: 90,
+
     otherModalOpen: false,
     docModalOpen: false,
     interviewModalOpen: false,
@@ -38,6 +45,22 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <template x-if="activeTab === 'agreements'">
+                <button type="button" @click="agreementModalOpen = true" class="btn btn-primary flex items-center gap-2 text-xs">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Agreement Format
+                </button>
+            </template>
+            <template x-if="activeTab === 'clearances'">
+                <button type="button" @click="clearanceModalOpen = true" class="btn btn-primary flex items-center gap-2 text-xs">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Clearance Format
+                </button>
+            </template>
             <template x-if="activeTab === 'other'">
                 <button type="button" @click="otherModalOpen = true" class="btn btn-primary flex items-center gap-2 text-xs">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -380,16 +403,6 @@
                                             </a>
                                         </div>
 
-                                        <!-- Edit Template Button -->
-                                        <button type="button" 
-                                                @click="openEditModal({{ json_encode($template) }})" 
-                                                class="btn btn-outline-dark btn-sm px-2.5 py-1 text-xs flex items-center gap-1"
-                                                title="Edit Template Content & Settings">
-                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                            </svg>
-                                            Edit
-                                        </button>
                                     </div>
 
                                 </div>
@@ -475,8 +488,12 @@
 
                     <button type="button" 
                             @click="openEditModal({{ json_encode($template) }})" 
-                            class="btn btn-outline-dark btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5 ml-auto">
-                        Edit
+                            class="btn btn-outline-dark btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5 ml-auto"
+                            title="Upload Master .docx File or Edit Template Terms">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/>
+                        </svg>
+                        <span>Upload .docx / Edit</span>
                     </button>
                 </div>
             </div>
@@ -880,10 +897,11 @@
 
                             <div>
                                 <div class="flex items-center justify-between mb-1">
-                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Contract Content / Clauses (Web Preview &amp; PDF) *</label>
-                                    <span class="text-[10px] text-primary">Supports standard HTML tags, tables, and lists</span>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Contract Content / Clauses (Web Preview &amp; PDF)</label>
+                                    <span class="text-[10px] text-primary">Optional if managing via Word .docx file</span>
                                 </div>
-                                <textarea name="content" x-model="editTemplateContent" rows="14" required 
+                                <textarea name="content" x-model="editTemplateContent" rows="10" 
+                                          placeholder="Optional HTML clauses for instant in-browser web preview / PDF"
                                           class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
                             </div>
 
@@ -1138,16 +1156,240 @@
 
                             <div>
                                 <div class="flex items-center justify-between mb-1">
-                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Template Content (Web Preview &amp; PDF) *</label>
-                                    <span class="text-[10px] text-primary">Supports [DATE], [APPLICANT_NAME], [PASSPORT_NO], etc.</span>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Template Content (Web Preview &amp; PDF)</label>
+                                    <span class="text-[10px] text-primary">Optional if uploading .docx file</span>
                                 </div>
-                                <textarea name="content" rows="10" required placeholder="<div class='agreement-document'>...</div>" class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
+                                <textarea name="content" rows="8" placeholder="<div class='agreement-document'>...</div>" class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
                             </div>
                         </div>
 
                         <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
                             <button type="button" @click="otherModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
                             <button type="submit" class="btn btn-primary btn-sm text-xs">Create Template</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ========================================== -->
+    <!-- MODAL 5: ADD AGREEMENT FORMAT (FULL VIEWPORT) -->
+    <!-- ========================================== -->
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="agreementModalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="agreementModalOpen = false"
+                     x-show="agreementModalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-2xl rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+
+                    <form action="{{ route('admin.learning-resources.templates.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="type" value="agreement">
+
+                        <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <div>
+                                <h5 class="text-base font-bold text-dark dark:text-white-light">Add Agreement Format</h5>
+                                <p class="text-xs text-white-dark mt-0.5">Upload master Word (.docx) file and configure contract clauses for a destination country.</p>
+                            </div>
+                            <button type="button"
+                                    @click="agreementModalOpen = false"
+                                    class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition"
+                                    style="display: flex; align-items: center; justify-content: center;"
+                                    title="Close Modal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Agreement Title *</label>
+                                <input type="text" name="title" placeholder="e.g. Malaysia Study Permit Agreement (Official Pad)" required class="form-input text-xs w-full">
+                            </div>
+
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1.5; min-width: 200px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Destination Country *</label>
+                                    <select name="country_id" required class="form-select text-xs w-full">
+                                        <option value="">Select Destination Country</option>
+                                        @foreach($countries as $c)
+                                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Layout Type *</label>
+                                    <select name="layout_type" x-model="createAgreementLayout" class="form-select text-xs w-full">
+                                        <option value="pad">Official Agency Pad</option>
+                                        <option value="stamp">Stamp Paper (Clearance Margin)</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1; min-width: 140px;" x-show="createAgreementLayout === 'stamp'">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Top Margin (mm)</label>
+                                    <input type="number" name="header_space_mm" x-model="createAgreementHeaderSpace" min="0" max="200" class="form-input text-xs w-full">
+                                    <span class="text-[10px] text-white-dark">Standard is 90mm for stamp papers.</span>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4 dark:border-primary/40 dark:bg-primary/10">
+                                <label class="block text-xs font-bold text-primary mb-1">Upload Master Word (.docx) File (Recommended)</label>
+                                <p class="text-[11px] text-white-dark mb-2">
+                                    Upload a <code>.docx</code> contract template with official letterhead / watermark. Supported variables:
+                                    <code class="text-primary font-bold">${DATE}</code>,
+                                    <code class="text-primary font-bold">${APPLICANT_NAME}</code>,
+                                    <code class="text-primary font-bold">${FATHER_NAME}</code>,
+                                    <code class="text-primary font-bold">${MOTHER_NAME}</code>,
+                                    <code class="text-primary font-bold">${PASSPORT_NO}</code>,
+                                    <code class="text-primary font-bold">${ADDRESS}</code>,
+                                    <code class="text-primary font-bold">${PHONE}</code>,
+                                    <code class="text-primary font-bold">${SERVICE_CHARGE}</code>,
+                                    <code class="text-primary font-bold">${SERVICE_CHARGE_WORDS}</code>.
+                                </p>
+                                <input type="file" name="docx_template" accept=".docx" class="form-input text-xs w-full bg-white dark:bg-[#121e32]">
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Contract Content / Clauses (Web Preview &amp; PDF)</label>
+                                    <span class="text-[10px] text-primary">Optional if uploading .docx file</span>
+                                </div>
+                                <textarea name="content" rows="8" placeholder="<div class='agreement-document'>
+    <div class='agreement-meta'>
+        <p><strong>Date:</strong> [DATE]</p>
+        <p><strong>First Party:</strong> INSAF IMMIGRATION CONSULTANCY</p>
+        <p><strong>Second Party (Applicant):</strong> [APPLICANT_NAME], Passport No: [PASSPORT_NO]</p>
+    </div>
+    <ol class='agreement-clauses'>
+        <li>The applicant undertakes that all submitted academic and personal documents are genuine...</li>
+    </ol>
+</div>" class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" @click="agreementModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm text-xs">Create Agreement Format</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ========================================== -->
+    <!-- MODAL 6: ADD CLEARANCE FORMAT (FULL VIEWPORT) -->
+    <!-- ========================================== -->
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+             x-show="clearanceModalOpen"
+             class="modal-overlay-full"
+             style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="clearanceModalOpen = false"
+                     x-show="clearanceModalOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="w-full max-w-2xl rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+
+                    <form action="{{ route('admin.learning-resources.templates.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <div>
+                                <h5 class="text-base font-bold text-dark dark:text-white-light">Add Clearance Format</h5>
+                                <p class="text-xs text-white-dark mt-0.5">Upload master Word (.docx) file and configure clearance certificate clauses.</p>
+                            </div>
+                            <button type="button"
+                                    @click="clearanceModalOpen = false"
+                                    class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition"
+                                    style="display: flex; align-items: center; justify-content: center;"
+                                    title="Close Modal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Clearance Certificate Title *</label>
+                                <input type="text" name="title" placeholder="e.g. Student Withdrawal File & Document Discharge Certificate" required class="form-input text-xs w-full">
+                            </div>
+
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                                <div style="flex: 1.5; min-width: 200px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Clearance Type *</label>
+                                    <select name="type" required class="form-select text-xs w-full">
+                                        <option value="clearance_withdrawal">Withdrawal &amp; Document Return</option>
+                                        <option value="clearance_full">Full Clearance (All Done)</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Layout Type *</label>
+                                    <select name="layout_type" x-model="createClearanceLayout" class="form-select text-xs w-full">
+                                        <option value="pad">Official Agency Pad</option>
+                                        <option value="stamp">Stamp Paper (Clearance Margin)</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1; min-width: 140px;" x-show="createClearanceLayout === 'stamp'">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Top Margin (mm)</label>
+                                    <input type="number" name="header_space_mm" x-model="createClearanceHeaderSpace" min="0" max="200" class="form-input text-xs w-full">
+                                    <span class="text-[10px] text-white-dark">Standard is 90mm for stamp papers.</span>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4 dark:border-primary/40 dark:bg-primary/10">
+                                <label class="block text-xs font-bold text-primary mb-1">Upload Master Word (.docx) File (Recommended)</label>
+                                <p class="text-[11px] text-white-dark mb-2">
+                                    Upload a <code>.docx</code> certificate template with official letterhead. Supported variables:
+                                    <code class="text-primary font-bold">${DATE}</code>,
+                                    <code class="text-primary font-bold">${APPLICANT_NAME}</code>,
+                                    <code class="text-primary font-bold">${PASSPORT_NO}</code>,
+                                    <code class="text-primary font-bold">${DOCUMENTS_LIST}</code>,
+                                    <code class="text-primary font-bold">${AMOUNT}</code>,
+                                    <code class="text-primary font-bold">${AMOUNT_WORDS}</code>,
+                                    <code class="text-primary font-bold">${CHEQUE_NO}</code>.
+                                </p>
+                                <input type="file" name="docx_template" accept=".docx" class="form-input text-xs w-full bg-white dark:bg-[#121e32]">
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Certificate Content (Web Preview &amp; PDF)</label>
+                                    <span class="text-[10px] text-primary">Optional if uploading .docx file</span>
+                                </div>
+                                <textarea name="content" rows="8" placeholder="<div class='agreement-document'>
+    <div class='agreement-meta'>
+        <p><strong>Date:</strong> [DATE]</p>
+        <p><strong>Subject:</strong> FULL SETTLEMENT & CLEARANCE CERTIFICATE</p>
+        <p>This is to certify that [APPLICANT_NAME], Passport No: [PASSPORT_NO], has completed all procedures...</p>
+    </div>
+</div>" class="form-textarea font-mono text-xs w-full leading-relaxed rounded-lg border border-[#e0e6ed] p-3 dark:border-[#1b2e4b] dark:bg-[#0e1726]"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-6 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" @click="clearanceModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm text-xs">Create Clearance Format</button>
                         </div>
                     </form>
 

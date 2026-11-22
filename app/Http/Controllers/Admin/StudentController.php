@@ -34,9 +34,20 @@ class StudentController extends Controller
             $query->where('current_status', $status);
         }
 
+        if ($collectedBy = $request->get('collected_by', $request->get('created_by'))) {
+            $query->where('created_by', $collectedBy);
+        }
+
         $students = $query->latest()->paginate(15)->withQueryString();
 
-        return view('admin.students.index', compact('students'));
+        $collectors = User::whereHas('roles', function ($q) {
+            $q->whereIn('slug', ['marketing', 'consultant', 'application', 'admin', 'super-admin'])
+              ->orWhereIn('name', ['Marketing', 'Consultant', 'Application', 'Admin', 'Super Admin']);
+        })->orWhereIn('id', Student::select('created_by')->distinct())
+          ->orderBy('name')
+          ->get(['id', 'name']);
+
+        return view('admin.students.index', compact('students', 'collectors'));
     }
 
     public function create(Request $request)

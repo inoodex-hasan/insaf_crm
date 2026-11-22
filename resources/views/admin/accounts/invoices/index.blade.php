@@ -73,8 +73,14 @@
                                 <a href="{{ route('admin.invoices.show', $invoice) }}">{{ $invoice->invoice_number }}</a>
                             </td>
                             <td class="font-semibold text-sm">
-                                {{ $invoice->student->first_name }} {{ $invoice->student->last_name }}
-                                <span class="block text-[10px] text-white-dark">{{ $invoice->student->id_number }}</span>
+                                @if ($invoice->student)
+                                    <a href="{{ route('admin.students.show', $invoice->student->id) }}" class="text-primary hover:underline">
+                                        {{ $invoice->student->first_name }} {{ $invoice->student->last_name }}
+                                    </a>
+                                    <span class="block text-[10px] text-white-dark">{{ $invoice->student->id_number }}</span>
+                                @else
+                                    <span class="text-danger italic">N/A</span>
+                                @endif
                             </td>
                             <td class="text-xs">{{ $invoice->university->name ?? 'N/A' }}</td>
                             <td class="font-black text-dark dark:text-white-light font-mono">

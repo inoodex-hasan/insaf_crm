@@ -20,39 +20,65 @@
     </div>
 
     <div class="panel mt-6">
-        <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+        <div class="mb-5">
             <form action="{{ route('admin.students.index') }}" method="GET"
-                class="flex flex-1 flex-col gap-5 md:flex-row md:items-center w-full">
-                <div class="relative w-full md:w-80">
+                style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%;">
+                
+                <!-- Search Box -->
+                <div class="relative" style="position: relative; flex: 2; min-width: 220px;">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search name, phone or email..." class="form-input ltr:pr-11 rtl:pl-11" />
+                        placeholder="Search name, phone or email..." class="form-input text-xs w-full"
+                        style="height: 38px; padding-right: 36px;" />
                     <button type="submit"
-                        class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5" />
-                            <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        style="position: absolute; right: 8px; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0; cursor: pointer;"
+                        class="text-gray-400 hover:text-primary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                     </button>
                 </div>
-                <div class="flex gap-2">
-                    <select name="stage" class="form-select w-full md:w-44 pr-10">
-                        <option value="">Stage</option>
+
+                <!-- Stage -->
+                <div style="flex: 1; min-width: 120px;">
+                    <select name="stage" class="form-select text-xs w-full" style="height: 38px;">
+                        <option value="">All Stages</option>
                         @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $stage)
                             <option value="{{ $stage }}" {{ request('stage') == $stage ? 'selected' : '' }}>
                                 {{ ucfirst($stage) }}
                             </option>
                         @endforeach
                     </select>
-                    <select name="status" class="form-select w-full md:w-44 pr-10">
-                        <option value="">Status</option>
+                </div>
+
+                <!-- Status -->
+                <div style="flex: 1; min-width: 120px;">
+                    <select name="status" class="form-select text-xs w-full" style="height: 38px;">
+                        <option value="">All Statuses</option>
                         @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $status)
                             <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
                                 {{ ucfirst($status) }}
                             </option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{{ route('admin.students.index') }}" class="btn btn-outline-danger">Reset</a>
+                </div>
+
+                <!-- Collected By -->
+                <div style="flex: 1.2; min-width: 150px;">
+                    <select name="collected_by" class="form-select text-xs w-full" style="height: 38px;">
+                        <option value="">Collected By</option>
+                        @foreach ($collectors ?? [] as $collector)
+                            <option value="{{ $collector->id }}" {{ (request('collected_by') == $collector->id || request('created_by') == $collector->id) ? 'selected' : '' }}>
+                                {{ $collector->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div style="display: flex; align-items: center; gap: 8px; flex: 0 0 auto;">
+                    <button type="submit" class="btn btn-primary px-4 text-xs font-semibold" style="height: 38px;">Filter</button>
+                    <a href="{{ route('admin.students.index') }}" class="btn btn-outline-danger px-4 text-xs font-semibold" style="height: 38px; display: inline-flex; align-items: center;">Reset</a>
                 </div>
             </form>
         </div>
@@ -77,7 +103,11 @@
                         @forelse($students as $student)
                             <tr>
                                 <td>
-                                    <div class="font-semibold">{{ $student->first_name }} {{ $student->last_name }}</div>
+                                    <div class="font-semibold">
+                                        <a href="{{ route('admin.students.show', $student->id) }}" class="text-primary hover:underline">
+                                            {{ $student->first_name }} {{ $student->last_name }}
+                                        </a>
+                                    </div>
                                     <div class="text-xs text-white-dark">{{ $student->email ?? 'No Email' }}</div>
                                 </td>
                                 <td>{{ $student->father_name }}</td>

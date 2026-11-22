@@ -63,9 +63,27 @@ class ApplicationController extends Controller
             $query->where('final_payment_status', $finalPayment === '1');
         }
 
+        // Filter by creator / collector
+        if ($creatorId = $request->get('created_by', $request->get('collected_by'))) {
+            $query->where(function ($q) use ($creatorId) {
+                $q->where('created_by', $creatorId)
+                  ->orWhereHas('student', function ($sq) use ($creatorId) {
+                      $sq->where('created_by', $creatorId);
+                  });
+            });
+        }
+
         $applications = $query->latest()->paginate(15)->withQueryString();
 
-        return view('admin.applications.index', compact('applications'));
+        $creators = User::whereHas('roles', function ($q) {
+            $q->whereIn('slug', ['application', 'consultant', 'marketing', 'admin', 'super-admin'])
+              ->orWhereIn('name', ['Application', 'Consultant', 'Marketing', 'Admin', 'Super Admin']);
+        })->orWhereIn('id', Application::select('created_by')->distinct())
+          ->orWhereIn('id', Student::select('created_by')->distinct())
+          ->orderBy('name')
+          ->get(['id', 'name']);
+
+        return view('admin.applications.index', compact('applications', 'creators'));
     }
 
     public function create(Request $request)

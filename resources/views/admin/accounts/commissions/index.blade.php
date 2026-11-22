@@ -85,7 +85,15 @@
                         @forelse($commissions as $commission)
                             <tr>
                                 <td>{{ $commission->application->application_id ?? '-' }}</td>
-                                <td>{{ $commission->application->student->full_name ?? '-' }}</td>
+                                <td>
+                                    @if($commission->application?->student)
+                                        <a href="{{ route('admin.students.show', $commission->application->student->id) }}" class="text-primary hover:underline font-semibold">
+                                            {{ $commission->application->student->full_name }}
+                                        </a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td>{{ $commission->user->name ?? '-' }}</td>
                                 <td>BDT {{ number_format($commission->proposed_amount, 2) }}</td>
                                 <td>

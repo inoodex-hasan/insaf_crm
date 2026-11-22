@@ -24,12 +24,11 @@ Homestead.yaml
 Thumbs.db
 project.md
 *.md
-insaf_backend.sql
+*.sql
 .qwen
 .qwen-agent
 .qwen-agent.json
 .qwen-agent.md
-.sql
 .bladeformatterrc.json
 __pycache__/
 *.pyc

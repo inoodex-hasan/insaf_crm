@@ -33,7 +33,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="text-xs text-gray-500 dark:text-gray-400">Name</label>
-                <p class="font-semibold text-lg">{{ $application->student->full_name ?? 'N/A' }}</p>
+                @if($application->student)
+                    <p class="font-semibold text-lg">
+                        <a href="{{ route('admin.students.show', $application->student->id) }}" class="text-primary hover:underline">
+                            {{ $application->student->full_name }}
+                        </a>
+                    </p>
+                @else
+                    <p class="font-semibold text-lg text-danger italic">N/A</p>
+                @endif
             </div>
             <div>
                 <label class="text-xs text-gray-500 dark:text-gray-400">Email</label>

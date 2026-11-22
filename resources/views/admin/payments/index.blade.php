@@ -101,10 +101,16 @@
                             {{ $payment->application->application_id ?? 'N/A' }}
                         </td>
                         <td>
-                            <div class="font-semibold">
-                                {{ $payment->student->first_name }} {{ $payment->student->last_name }}
-                            </div>
-                            <div class="text-xs text-white-dark">{{ $payment->student->phone }}</div>
+                            @if ($payment->student)
+                                <div class="font-semibold">
+                                    <a href="{{ route('admin.students.show', $payment->student->id) }}" class="text-primary hover:underline">
+                                        {{ $payment->student->first_name }} {{ $payment->student->last_name }}
+                                    </a>
+                                </div>
+                                <div class="text-xs text-white-dark">{{ $payment->student->phone }}</div>
+                            @else
+                                <span class="text-danger italic">N/A</span>
+                            @endif
                         </td>
                         <td class="capitalize">{{ $payment->payment_type }}</td>
                         <td>BDT {{ number_format($payment->amount, 2) }}</td>

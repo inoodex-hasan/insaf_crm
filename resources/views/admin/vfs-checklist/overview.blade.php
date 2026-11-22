@@ -60,8 +60,16 @@
                                     <div class="text-[10px] text-info font-bold uppercase mt-1">Attempt #{{ $app->total_vfs_attempts }}</div>
                                 </td>
                             <td>
-                                <div class="font-medium">{{ $app->student->first_name }} {{ $app->student->last_name }}</div>
-                                <div class="text-xs text-white-dark">{{ $app->student->email }}</div>
+                                @if($app->student)
+                                    <div class="font-medium">
+                                        <a href="{{ route('admin.students.show', $app->student->id) }}" class="text-primary hover:underline font-semibold">
+                                            {{ $app->student->first_name }} {{ $app->student->last_name }}
+                                        </a>
+                                    </div>
+                                    <div class="text-xs text-white-dark">{{ $app->student->email }}</div>
+                                @else
+                                    <span class="text-danger italic">N/A</span>
+                                @endif
                             </td>
                             <td>{{ $app->student->passport_number ?? 'N/A' }}</td>
                             <td>

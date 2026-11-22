@@ -47,7 +47,15 @@
                         @endphp
                         <tr>
                             <td class="font-bold text-primary">{{ $app->application_id }}</td>
-                            <td>{{ $app->student->first_name }} {{ $app->student->last_name }}</td>
+                            <td>
+                                @if($app->student)
+                                    <a href="{{ route('admin.students.show', $app->student->id) }}" class="font-semibold text-primary hover:underline">
+                                        {{ $app->student->first_name }} {{ $app->student->last_name }}
+                                    </a>
+                                @else
+                                    <span class="text-danger italic">N/A</span>
+                                @endif
+                            </td>
                             <td>{{ $app->university?->name ?? '-' }}</td>
                             <td class="text-center">{{ $checkedItems }}</td>
                             <td class="text-center">{{ $totalItems }}</td>

@@ -98,33 +98,45 @@ class LearningResourceController extends Controller
     }
 
     /**
-     * Store a newly created template (used for the "Other" templates tab).
+     * Store a newly created template (used for Agreements, Clearances, and Other templates).
      */
     public function storeTemplate(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'nullable|string|in:other,agreement,clearance_withdrawal,clearance_full',
+            'country_id' => 'nullable|exists:countries,id',
             'layout_type' => 'nullable|string|in:pad,stamp',
             'header_space_mm' => 'nullable|integer|min:0|max:200',
-            'content' => 'required|string',
+            'content' => 'nullable|string',
             'docx_template' => 'nullable|file|mimes:docx|max:20480',
         ]);
 
         $type = $validated['type'] ?? 'other';
+        $countryId = $type === 'agreement' ? ($validated['country_id'] ?? null) : null;
+
+        $fallbackContent = '<div style="padding: 30px; text-align: center; color: #64748b; border: 1px dashed #cbd5e1; border-radius: 8px;">
+            <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #1e293b;">Official Template Managed via Word Document</h3>
+            <p style="font-size: 13px; margin: 0;">This format is provided as an official Microsoft Word (.docx) file. Please click <strong>Download DOCX</strong> above to view, fill, and print.</p>
+        </div>';
+
         $template = AgreementTemplate::create([
             'type' => $type,
-            'country_id' => null,
+            'country_id' => $countryId,
             'layout_type' => $validated['layout_type'] ?? 'pad',
             'header_space_mm' => $validated['header_space_mm'] ?? 0,
             'title' => $validated['title'],
-            'content' => $validated['content'],
+            'content' => !empty($validated['content']) ? $validated['content'] : $fallbackContent,
             'is_active' => true,
             'sort_order' => (AgreementTemplate::where('type', $type)->max('sort_order') ?? 0) + 1,
         ]);
 
         if ($request->hasFile('docx_template')) {
-            $subDir = $type === 'other' ? 'other' : 'custom';
+            $subDir = match($type) {
+                'agreement' => 'agreements',
+                'clearance_withdrawal', 'clearance_full' => 'clearances',
+                default => 'other',
+            };
             $filename = Str::slug($template->title) . "_{$template->id}.docx";
             $relPath = "storage/app/templates/{$subDir}/{$filename}";
             $absDir = base_path("storage/app/templates/{$subDir}");
@@ -147,17 +159,22 @@ class LearningResourceController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'header_space_mm' => 'nullable|integer|min:0|max:200',
-            'content' => 'required|string',
+            'content' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'docx_template' => 'nullable|file|mimes:docx|max:20480',
         ]);
 
-        $template->update([
+        $updateData = [
             'title' => $validated['title'],
             'header_space_mm' => $validated['header_space_mm'] ?? 0,
-            'content' => $validated['content'],
             'is_active' => $request->has('is_active') ? true : false,
-        ]);
+        ];
+
+        if (!empty($validated['content'])) {
+            $updateData['content'] = $validated['content'];
+        }
+
+        $template->update($updateData);
 
         // If user uploaded a customized master DOCX file directly in the CRM
         if ($request->hasFile('docx_template')) {
