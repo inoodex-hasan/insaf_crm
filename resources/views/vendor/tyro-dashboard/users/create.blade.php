@@ -1,266 +1,175 @@
-@extends('tyro-dashboard::layouts.admin')
+@extends('admin.layouts.master')
 
 @section('title', 'Create User')
 
-@section('breadcrumb')
-    <a href="{{ route('tyro-dashboard.index') }}">Dashboard</a>
-    <span class="breadcrumb-separator">/</span>
-    <a href="{{ route('tyro-dashboard.users.index') }}">Users</a>
-    <span class="breadcrumb-separator">/</span>
-    <span>Create</span>
-@endsection
-
 @section('content')
-    <div class="page-header">
-        <div class="page-header-row">
-            <div>
-                <h1 class="page-title">Create User</h1>
-                <p class="page-description">Add a new user to the system.</p>
-            </div>
-            <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-secondary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+<div>
+
+    {{-- Page Header --}}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h2 class="text-xl font-bold uppercase tracking-wide text-dark dark:text-white-light">Create User</h2>
+            <p class="text-xs text-white-dark mt-1">Add a new staff account, set credentials, and assign system roles.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-secondary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                Back to Users
+                <span>Back to Users</span>
             </a>
         </div>
     </div>
 
-    <!-- <div class="card">
+    {{-- Error Alert --}}
+    @if($errors->any())
+        <div class="mb-5 rounded-lg border border-danger/20 bg-danger/5 p-4 text-danger dark:border-danger/30">
+            <div class="flex items-center gap-2 font-bold text-xs uppercase mb-1">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Please correct the errors below:</span>
+            </div>
+            <ul class="list-disc pl-5 text-xs space-y-0.5">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Form Panel --}}
+    <div class="panel mt-6">
         <form action="{{ route('tyro-dashboard.users.store') }}" method="POST">
             @csrf
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" name="name" class="form-input @error('name') is-invalid @enderror"
-                            value="{{ old('name') }}" required placeholder="John Doe">
+
+            {{-- Section 1: Account Information --}}
+            <div class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">1. Account Identification</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label for="name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Full Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="name" name="name"
+                               class="form-input text-xs @error('name') border-danger @enderror"
+                               value="{{ old('name') }}" required placeholder="e.g. John Doe">
                         @error('name')
-                            <span class="form-error">{{ $message }}</span>
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-input @error('email') is-invalid @enderror"
-                            value="{{ old('email') }}" required placeholder="john@example.com">
-                        @error('email')
-                            <span class="form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username" class="form-label">User ID</label>
-                        <input type="text" id="username" name="username" class="form-input @error('username') is-invalid @enderror"
-                            value="{{ old('username') }}" required placeholder="EMP001">
+                    <div>
+                        <label for="username" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            User ID / Employee Code <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="username" name="username"
+                               class="form-input text-xs @error('username') border-danger @enderror"
+                               value="{{ old('username') }}" required placeholder="e.g. EMP001">
                         @error('username')
-                            <span class="form-error">{{ $message }}</span>
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
+                    <div>
+                        <label for="email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Email Address <span class="text-danger">*</span>
+                        </label>
+                        <input type="email" id="email" name="email"
+                               class="form-input text-xs @error('email') border-danger @enderror"
+                               value="{{ old('email') }}" required placeholder="e.g. user@domain.com">
+                        @error('email')
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            {{-- Section 2: Security & Designation --}}
+            <div class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">2. Credentials & Designation</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label for="password" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Password <span class="text-danger">*</span>
+                        </label>
                         <input type="password" id="password" name="password"
-                            class="form-input @error('password') is-invalid @enderror" required placeholder="••••••••">
+                               class="form-input text-xs @error('password') border-danger @enderror"
+                               required placeholder="••••••••">
                         @error('password')
-                            <span class="form-error">{{ $message }}</span>
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="password_confirmation" class="form-label">Confirm Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" class="form-input"
-                            required placeholder="••••••••">
+                    <div>
+                        <label for="password_confirmation" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Confirm Password <span class="text-danger">*</span>
+                        </label>
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                               class="form-input text-xs"
+                               required placeholder="••••••••">
+                    </div>
+
+                    <div>
+                        <label for="designation" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Designation Level
+                        </label>
+                        <select id="designation" name="designation" class="form-select text-xs @error('designation') border-danger @enderror">
+                            <option value="">None</option>
+                            <option value="senior" {{ old('designation') == 'senior' ? 'selected' : '' }}>Senior (can claim commission)</option>
+                            <option value="junior" {{ old('designation') == 'junior' ? 'selected' : '' }}>Junior (cannot claim commission)</option>
+                        </select>
+                        @error('designation')
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="designation" class="form-label">Designation</label>
-                    <select id="designation" name="designation" class="form-input @error('designation') is-invalid @enderror">
-                        <option value="">None</option>
-                        <option value="senior" {{ old('designation') == 'senior' ? 'selected' : '' }}>Senior</option>
-                        <option value="junior" {{ old('designation') == 'junior' ? 'selected' : '' }}>Junior</option>
-                    </select>
-                    @error('designation')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Assign Roles</label>
-                    <div class="checkbox-list">
-                        @foreach($roles as $role)
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" class="checkbox-input" {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }}>
-                                <div class="checkbox-item-content">
-                                    <div class="checkbox-item-title">{{ $role->name }}</div>
-                                    <div class="checkbox-item-description">{{ $role->slug }}</div>
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                    @error('roles')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-            <div class="card-footer" style="display: flex; gap: 0.75rem;">
-                <button type="submit" class="btn btn-primary">Create User</button>
-                <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div> -->
-
-    <div class="card">
-    <form action="{{ route('tyro-dashboard.users.store') }}" method="POST">
-        @csrf
-
-        <div class="card-body">
-
-            {{-- Row 1 --}}
-            <div class="form-row three-column">
-                <div class="form-group">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" id="name" name="name"
-                        class="form-input @error('name') is-invalid @enderror"
-                        value="{{ old('name') }}" required placeholder="John Doe">
-
-                    @error('name')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="username" class="form-label">User ID</label>
-                    <input type="text" id="username" name="username"
-                        class="form-input @error('username') is-invalid @enderror"
-                        value="{{ old('username') }}" required placeholder="EMP001">
-
-                    @error('username')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" name="email"
-                        class="form-input @error('email') is-invalid @enderror"
-                        value="{{ old('email') }}" required placeholder="john@example.com">
-
-                    @error('email')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
             </div>
 
-            {{-- Row 2 --}}
-            <div class="form-row three-column">
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password"
-                        class="form-input @error('password') is-invalid @enderror"
-                        required placeholder="••••••••">
+            {{-- Section 3: Role Assignments --}}
+            <div class="pb-3">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">3. Assign Roles</h5>
+                <p class="text-xs text-white-dark mb-4">Select the roles that grant permissions to this user account.</p>
 
-                    @error('password')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password_confirmation" class="form-label">
-                        Confirm Password
-                    </label>
-
-                    <input type="password" id="password_confirmation"
-                        name="password_confirmation"
-                        class="form-input"
-                        required
-                        placeholder="••••••••">
-                </div>
-
-                <div class="form-group">
-                    <label for="designation" class="form-label">Designation</label>
-
-                    <select id="designation" name="designation"
-                        class="form-input @error('designation') is-invalid @enderror">
-
-                        <option value="">None</option>
-
-                        <option value="senior"
-                            {{ old('designation') == 'senior' ? 'selected' : '' }}>
-                            Senior
-                        </option>
-
-                        <option value="junior"
-                            {{ old('designation') == 'junior' ? 'selected' : '' }}>
-                            Junior
-                        </option>
-                    </select>
-
-                    @error('designation')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-
-            {{-- Roles --}}
-            <div class="form-group">
-                <label class="form-label">Assign Roles</label>
-
-                <div class="checkbox-list">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     @foreach($roles as $role)
-                        <label class="checkbox-item">
+                        <label class="relative flex items-start gap-3 rounded-xl border border-[#e0e6ed] p-3.5 hover:border-primary transition cursor-pointer dark:border-[#1b2e4b] dark:bg-[#121e32]">
                             <input type="checkbox"
-                                name="roles[]"
-                                value="{{ $role->id }}"
-                                class="checkbox-input"
-                                {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }}>
-
-                            <div class="checkbox-item-content">
-                                <div class="checkbox-item-title">
-                                    {{ $role->name }}
-                                </div>
-
-                                <div class="checkbox-item-description">
-                                    {{ $role->slug }}
-                                </div>
+                                   name="roles[]"
+                                   value="{{ $role->id }}"
+                                   class="form-checkbox text-primary mt-0.5"
+                                   {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }}>
+                            <div>
+                                <div class="text-xs font-bold text-dark dark:text-white-light">{{ $role->name }}</div>
+                                <code class="text-[11px] text-primary font-mono block mt-0.5">{{ $role->slug }}</code>
                             </div>
                         </label>
                     @endforeach
                 </div>
-
                 @error('roles')
-                    <span class="form-error">{{ $message }}</span>
+                    <span class="text-danger text-xs mt-2 block">{{ $message }}</span>
                 @enderror
             </div>
-        </div>
 
-        <div class="card-footer" style="display: flex; gap: 0.75rem;">
-            <button type="submit" class="btn btn-primary">
-                Create User
-            </button>
+            {{-- Form Actions --}}
+            <div class="flex items-center gap-3 border-t border-[#e0e6ed] pt-5 mt-5 dark:border-[#1b2e4b]">
+                <button type="submit" class="btn btn-primary gap-2">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <span>Create User</span>
+                </button>
+                <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-outline-danger">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 
-            <a href="{{ route('tyro-dashboard.users.index') }}"
-                class="btn btn-secondary">
-                Cancel
-            </a>
-        </div>
-    </form>
 </div>
-
-<style>
-    .three-column {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-    }
-
-    @media (max-width: 768px) {
-        .three-column {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
 @endsection

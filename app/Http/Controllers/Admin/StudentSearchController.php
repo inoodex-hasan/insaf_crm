@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\CountryRemark;
 use App\Models\Student;
+use App\Models\StudentPaymentStatus;
 use App\Models\University;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,24 +52,50 @@ class StudentSearchController extends Controller
             $query->where('remarks', $remarks);
         }
 
-        // Payment status filter
+        // Payment status filter (supports both explicit student payment_status and calculated fallback)
         if ($paymentStatus = $request->get('payment_status')) {
             if ($paymentStatus === 'paid') {
-                $query->whereNotNull('package_amount')
-                    ->where('package_amount', '>', 0)
-                    ->havingRaw('COALESCE(payments_sum_amount, 0) >= package_amount');
+                $query->where(function ($q) {
+                    $q->where('payment_status', 'paid')
+                        ->orWhere(function ($sq) {
+                            $sq->whereNull('payment_status')
+                                ->whereNotNull('package_amount')
+                                ->where('package_amount', '>', 0)
+                                ->havingRaw('COALESCE(payments_sum_amount, 0) >= package_amount');
+                        });
+                });
             } elseif ($paymentStatus === 'partial') {
-                $query->whereNotNull('package_amount')
-                    ->where('package_amount', '>', 0)
-                    ->havingRaw('COALESCE(payments_sum_amount, 0) > 0 AND COALESCE(payments_sum_amount, 0) < package_amount');
+                $query->where(function ($q) {
+                    $q->where('payment_status', 'partial')
+                        ->orWhere(function ($sq) {
+                            $sq->whereNull('payment_status')
+                                ->whereNotNull('package_amount')
+                                ->where('package_amount', '>', 0)
+                                ->havingRaw('COALESCE(payments_sum_amount, 0) > 0 AND COALESCE(payments_sum_amount, 0) < package_amount');
+                        });
+                });
             } elseif ($paymentStatus === 'unpaid') {
-                $query->whereNotNull('package_amount')
-                    ->where('package_amount', '>', 0)
-                    ->havingRaw('COALESCE(payments_sum_amount, 0) = 0');
+                $query->where(function ($q) {
+                    $q->where('payment_status', 'unpaid')
+                        ->orWhere(function ($sq) {
+                            $sq->whereNull('payment_status')
+                                ->whereNotNull('package_amount')
+                                ->where('package_amount', '>', 0)
+                                ->havingRaw('COALESCE(payments_sum_amount, 0) = 0');
+                        });
+                });
             } elseif ($paymentStatus === 'no_package') {
                 $query->where(function ($q) {
-                    $q->whereNull('package_amount')->orWhere('package_amount', 0);
+                    $q->where('payment_status', 'no_package')
+                        ->orWhere(function ($sq) {
+                            $sq->whereNull('payment_status')
+                                ->where(function ($nsq) {
+                                    $nsq->whereNull('package_amount')->orWhere('package_amount', 0);
+                                });
+                        });
                 });
+            } else {
+                $query->where('payment_status', $paymentStatus);
             }
         }
 
@@ -107,6 +134,8 @@ class StudentSearchController extends Controller
             }
         }
 
+        $paymentStatuses = StudentPaymentStatus::getActiveStatuses();
+
         return view('admin.student-search.index', compact(
             'students',
             'countries',
@@ -114,35 +143,40 @@ class StudentSearchController extends Controller
             'allRemarksConfig',
             'filterRemarks',
             'remarksByCountry',
-            'allRemarks'
+            'allRemarks',
+            'paymentStatuses'
         ));
     }
 
     /**
-     * Quick update remarks and notes via AJAX or standard form.
+     * Quick update remarks, notes, and payment status via AJAX or standard form.
      */
     public function updateRemarksNotes(Request $request, Student $student)
     {
         $validated = $request->validate([
             'remarks' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
+            'payment_status' => ['nullable', 'string', 'max:50'],
         ]);
 
-        $student->update([
-            'remarks' => $validated['remarks'] ?? null,
-            'notes' => $validated['notes'] ?? null,
-        ]);
+        $data = [];
+        if ($request->has('remarks')) $data['remarks'] = $validated['remarks'] ?? null;
+        if ($request->has('notes')) $data['notes'] = $validated['notes'] ?? null;
+        if ($request->has('payment_status')) $data['payment_status'] = $validated['payment_status'] ?? null;
+
+        $student->update($data);
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Student remarks and notes updated successfully.',
+                'message' => 'Student updated successfully.',
                 'remarks' => $student->remarks,
                 'notes' => $student->notes,
+                'payment_status' => $student->payment_status,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Remarks and notes updated successfully.');
+        return redirect()->back()->with('success', 'Student updated successfully.');
     }
 
     /**

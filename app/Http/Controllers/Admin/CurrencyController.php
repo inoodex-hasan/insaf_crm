@@ -19,8 +19,10 @@ class CurrencyController extends Controller
         }
 
         $currencies = $query->latest()->paginate(15)->withQueryString();
+        $totalCount = Currency::count();
+        $activeCount = Currency::where('is_active', true)->count();
 
-        return view('admin.currencies.index', compact('currencies'));
+        return view('admin.currencies.index', compact('currencies', 'totalCount', 'activeCount'));
     }
 
     public function create()

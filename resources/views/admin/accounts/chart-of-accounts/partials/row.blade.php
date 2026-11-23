@@ -121,6 +121,8 @@
     </td>
 </tr>
 
-@foreach ($account->children as $child)
-    @include('admin.accounts.chart-of-accounts.partials.row', ['account' => $child, 'depth' => $depth + 1])
-@endforeach
+@if ($renderChildren ?? true)
+    @foreach ($account->children as $child)
+        @include('admin.accounts.chart-of-accounts.partials.row', ['account' => $child, 'depth' => $depth + 1, 'renderChildren' => true])
+    @endforeach
+@endif

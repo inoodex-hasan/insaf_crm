@@ -13,35 +13,47 @@
     </div>
 
     <div class="panel mt-6">
-        <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-            <form action="{{ route('admin.courses.index') }}" method="GET"
-                class="flex flex-1 flex-col gap-5 md:flex-row md:items-center w-full">
-                <div class="relative w-full md:w-80">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search course name..."
-                        class="form-input ltr:pr-11 rtl:pl-11" />
+        <!-- Toolbar: KPI summary & Search -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 20px;" class="dark:border-[#1b2e4b]">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Total: {{ $totalCount ?? $courses->total() }} Courses
+                </span>
+                <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Active: {{ $activeCount ?? 0 }}
+                </span>
+            </div>
+
+            <form action="{{ route('admin.courses.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                <select name="university_id" class="form-select text-xs" style="height: 36px; width: 190px; border-radius: 6px;" onchange="this.form.submit()">
+                    <option value="">All Universities</option>
+                    @foreach ($universities as $university)
+                        <option value="{{ $university->id }}" {{ request('university_id') == $university->id ? 'selected' : '' }}>
+                            {{ $university->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <div style="position: relative; width: 220px;">
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search course name..."
+                           class="form-input text-xs w-full"
+                           style="height: 36px; padding-right: 36px; border-radius: 6px;" />
                     <button type="submit"
-                        class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5"
-                                opacity="0.5" />
-                            <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" />
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                            class="text-gray-400 hover:text-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </button>
                 </div>
-                <div class="flex gap-2">
-                    <select name="university_id" class="form-select w-full md:w-80 pr-10">
-                        <option value="">All Universities</option>
-                        @foreach ($universities as $university)
-                            <option value="{{ $university->id }}" {{ request('university_id') == $university->id ? 'selected' : '' }}>
-                                {{ $university->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-danger">Reset</a>
-                </div>
+
+                @if(request('search') || request('university_id'))
+                    <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                @endif
             </form>
         </div>
 
@@ -228,7 +240,7 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Tuition Fee</span>
-                                <span class="font-extrabold text-[#10b981] text-sm" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : 'Contact University'"></span>
+                                <span class="font-extrabold text-[#10b981] text-sm" x-text="selectedCourse?.tuition_fee ? (!isNaN(Number(selectedCourse.tuition_fee)) && Number(selectedCourse.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : selectedCourse.tuition_fee) : 'Contact University'"></span>
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
@@ -242,23 +254,23 @@
                             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Tuition</span>
-                                    <span class="font-bold text-primary" x-text="Number(selectedCourse?.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-primary" x-text="selectedCourse?.tuition_fee ? (!isNaN(Number(selectedCourse.tuition_fee)) && Number(selectedCourse.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.tuition_fee) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Admission</span>
-                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.admission_fee ? (!isNaN(Number(selectedCourse.admission_fee)) && Number(selectedCourse.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : selectedCourse.admission_fee) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Living</span>
-                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.living_cost ? (!isNaN(Number(selectedCourse.living_cost)) && Number(selectedCourse.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.living_cost) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Additional</span>
-                                    <span class="font-bold text-dark dark:text-white-light" x-text="Number(selectedCourse?.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light" x-text="selectedCourse?.additional_cost ? (!isNaN(Number(selectedCourse.additional_cost)) && Number(selectedCourse.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : selectedCourse.additional_cost) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Scholarship</span>
-                                    <span class="font-bold text-success" x-text="Number(selectedCourse?.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-success" x-text="selectedCourse?.scholarship_amount ? (!isNaN(Number(selectedCourse.scholarship_amount)) && Number(selectedCourse.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.scholarship_amount) : 'N/A'"></span>
                                 </div>
                             </div>
                         </div>

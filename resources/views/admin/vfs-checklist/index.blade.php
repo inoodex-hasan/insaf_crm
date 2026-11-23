@@ -8,17 +8,40 @@
     </div>
 
     <div class="panel mt-6">
-        <!-- Search -->
-        <form action="{{ route('admin.vfs-checklist.index') }}" method="GET" class="mb-6">
-            <div class="flex gap-3">
-                <input type="text" name="search" placeholder="Search by Application ID or Student Name..."
-                    value="{{ request('search') }}" class="form-input flex-1" />
-                <button type="submit" class="btn btn-primary">Search</button>
-                @if(request('search'))
-                    <a href="{{ route('admin.vfs-checklist.index') }}" class="btn btn-outline-danger">Clear</a>
-                @endif
+        <!-- Toolbar: KPI summary & Search -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 20px;" class="dark:border-[#1b2e4b]">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Total: {{ $totalApplications ?? $applications->total() }} Applications
+                </span>
+                <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    VFS Scheduled: {{ $vfsScheduled ?? 0 }}
+                </span>
             </div>
-        </form>
+
+            <form action="{{ route('admin.vfs-checklist.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                <div style="position: relative; width: 260px;">
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search ID, student name..."
+                           class="form-input text-xs w-full"
+                           style="height: 36px; padding-right: 36px; border-radius: 6px;" />
+                    <button type="submit"
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                            class="text-gray-400 hover:text-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                @if(request('search'))
+                    <a href="{{ route('admin.vfs-checklist.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                @endif
+            </form>
+        </div>
 
         <!-- Table -->
         <div class="table-responsive" style="min-height: 280px;">

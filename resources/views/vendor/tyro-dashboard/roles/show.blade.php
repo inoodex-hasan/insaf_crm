@@ -1,145 +1,154 @@
-@extends('tyro-dashboard::layouts.admin')
+@extends('admin.layouts.master')
 
-@section('title', $role->name)
-
-@section('breadcrumb')
-<a href="{{ route('tyro-dashboard.index') }}">Dashboard</a>
-<span class="breadcrumb-separator">/</span>
-<a href="{{ route('tyro-dashboard.roles.index') }}">Roles</a>
-<span class="breadcrumb-separator">/</span>
-<span>{{ $role->name }}</span>
-@endsection
+@section('title', $role->name . ' - Role Details')
 
 @section('content')
-<div class="page-header">
-    <div class="page-header-row">
+<div>
+
+    {{-- Page Header --}}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="page-title">{{ $role->name }}</h1>
-            <p class="page-description">
-                <code style="padding: 0.375rem 0.625rem; background-color: var(--muted); border-radius: 0.375rem; font-size: 0.9375rem;">{{ $role->slug }}</code>
-            </p>
+            <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold uppercase tracking-wide text-dark dark:text-white-light">{{ $role->name }}</h2>
+                <code class="px-2 py-0.5 rounded text-xs bg-slate-100 font-mono text-primary font-bold dark:bg-dark/60">{{ $role->slug }}</code>
+                <span class="badge {{ $role->is_active ? 'bg-success/10 text-success border border-success/20' : 'bg-danger/10 text-danger border border-danger/20' }} font-bold text-xs px-2.5 py-0.5 rounded">
+                    {{ $role->is_active ? 'Active' : 'Inactive' }}
+                </span>
+            </div>
+            <p class="text-xs text-white-dark mt-1">Review permissions and member staff assigned to this role.</p>
         </div>
-        <div class="btn-group">
-            <a href="{{ route('tyro-dashboard.roles.edit', $role->id) }}" class="btn btn-primary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <div class="flex items-center gap-2">
+            <a href="{{ route('tyro-dashboard.roles.edit', $role->id) }}" class="btn btn-primary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
-                Edit Role
+                <span>Edit Role</span>
             </a>
-            <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-secondary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-secondary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                Back to Roles
+                <span>Back to Roles</span>
             </a>
         </div>
     </div>
-</div>
 
-<div class="grid-2">
-    <!-- Privileges -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title" style="font-size: 1.0625rem;">Privileges ({{ $role->privileges->count() }})</h3>
-        </div>
-        <div class="card-body" style="padding: 0;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {{-- Privileges Section --}}
+        <div class="panel">
+            <div class="flex items-center justify-between border-b border-[#e0e6ed] pb-4 mb-4 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-dark dark:text-white-light flex items-center gap-2">
+                    <span>Assigned Privileges</span>
+                    <span class="badge bg-primary/10 text-primary border border-primary/20 text-xs px-2 py-0.5 rounded">
+                        {{ $role->privileges->count() }}
+                    </span>
+                </h5>
+                <a href="{{ route('tyro-dashboard.roles.edit', $role->id) }}" class="text-xs font-semibold text-primary hover:underline">
+                    Manage
+                </a>
+            </div>
+
             @if($role->privileges->count())
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="font-size: 0.9375rem;">Privilege</th>
-                            <th style="font-size: 0.9375rem;">Slug</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($role->privileges as $privilege)
-                        <tr>
-                            <td>
-                                <a href="{{ route('tyro-dashboard.privileges.show', $privilege->id) }}" style="font-weight: 500; font-size: 0.9375rem; color: var(--foreground); text-decoration: none;">
-                                    {{ $privilege->name }}
-                                </a>
-                            </td>
-                            <td>
-                                <code style="padding: 0.375rem 0.625rem; background-color: var(--muted); border-radius: 0.375rem; font-size: 0.875rem;">{{ $privilege->slug }}</code>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-responsive overflow-x-auto">
+                    <table class="table-auto w-full text-xs">
+                        <thead>
+                            <tr>
+                                <th>Privilege</th>
+                                <th>Slug</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($role->privileges as $privilege)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('tyro-dashboard.privileges.show', $privilege->id) }}" class="font-bold text-dark hover:text-primary dark:text-white-light dark:hover:text-primary transition">
+                                            {{ $privilege->name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <code class="px-2 py-0.5 rounded text-[11px] bg-slate-100 font-mono text-primary font-bold dark:bg-dark/60">
+                                            {{ $privilege->slug }}
+                                        </code>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
-            <div class="empty-state">
-                <p class="empty-state-description" style="font-size: 0.9375rem;">No privileges assigned to this role.</p>
-                <a href="{{ route('tyro-dashboard.roles.edit', $role->id) }}" class="btn btn-sm btn-secondary">Assign Privileges</a>
-            </div>
+                <div class="text-center py-6 text-white-dark text-xs">
+                    No privileges assigned to this role yet.
+                </div>
             @endif
         </div>
+
+        {{-- Users Section --}}
+        <div class="panel">
+            <div class="flex items-center justify-between border-b border-[#e0e6ed] pb-4 mb-4 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-dark dark:text-white-light flex items-center gap-2">
+                    <span>Users with this Role</span>
+                    <span class="badge bg-secondary/10 text-secondary border border-secondary/20 text-xs px-2 py-0.5 rounded">
+                        {{ $role->users->count() }}
+                    </span>
+                </h5>
+                @if($role->users->count() > 10)
+                    <a href="{{ route('tyro-dashboard.users.index', ['role' => $role->slug]) }}" class="text-xs font-semibold text-primary hover:underline">
+                        View All
+                    </a>
+                @endif
+            </div>
+
+            @if($role->users->count())
+                <div class="table-responsive overflow-x-auto">
+                    <table class="table-auto w-full text-xs">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th class="text-center w-20">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($role->users->take(10) as $roleUser)
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-[10px] uppercase dark:bg-primary/20">
+                                                {{ strtoupper(substr($roleUser->name, 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <a href="{{ route('tyro-dashboard.users.edit', $roleUser->id) }}" class="font-bold text-dark hover:text-primary dark:text-white-light dark:hover:text-primary transition">
+                                                    {{ $roleUser->name }}
+                                                </a>
+                                                <div class="text-[11px] text-white-dark">{{ $roleUser->email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <form action="{{ route('tyro-dashboard.roles.remove-user', ['id' => $role->id, 'userId' => $roleUser->id]) }}" method="POST"
+                                              onsubmit="return confirm('Remove {{ addslashes($roleUser->name) }} from the {{ addslashes($role->name) }} role?');" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-danger hover:underline text-xs font-semibold" title="Remove user from role">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="text-center py-6 text-white-dark text-xs">
+                    No users currently have this role.
+                </div>
+            @endif
+        </div>
+
     </div>
 
-    <!-- Users -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title" style="font-size: 1.0625rem;">Users with this Role ({{ $role->users->count() }})</h3>
-        </div>
-        <div class="card-body" style="padding: 0;">
-            @if($role->users->count())
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="font-size: 0.9375rem;">User</th>
-                            <th style="text-align: right; font-size: 0.9375rem;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($role->users->take(10) as $roleUser)
-                        <tr>
-                            <td>
-                                <a href="{{ route('tyro-dashboard.users.edit', $roleUser->id) }}" class="user-cell" style="text-decoration: none;">
-                                    <div class="user-cell-avatar">
-                                        {{ strtoupper(substr($roleUser->name, 0, 1)) }}
-                                    </div>
-                                    <div class="user-cell-info">
-                                        <div class="user-cell-name" style="font-size: 0.9375rem;">{{ $roleUser->name }}</div>
-                                        <div class="user-cell-email" style="font-size: 0.8125rem;">{{ $roleUser->email }}</div>
-                                    </div>
-                                </a>
-                            </td>
-                            <td style="text-align: right;">
-                                <div class="action-buttons" style="justify-content: flex-end;">
-                                    <a href="{{ route('tyro-dashboard.users.edit', $roleUser->id) }}" class="action-btn" title="Edit User">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </a>
-                                    <form action="{{ route('tyro-dashboard.roles.remove-user', ['id' => $role->id, 'userId' => $roleUser->id]) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="action-btn action-btn-danger" title="Remove from Role" onclick="return confirm('Are you sure you want to remove this user from the {{ $role->name }} role?')">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            @if($role->users->count() > 10)
-            <div style="padding: 1rem; text-align: center; border-top: 1px solid var(--border);">
-                <a href="{{ route('tyro-dashboard.users.index', ['role' => $role->slug]) }}" class="btn btn-sm btn-secondary">View All {{ $role->users->count() }} Users</a>
-            </div>
-            @endif
-            @else
-            <div class="empty-state">
-                <p class="empty-state-description" style="font-size: 0.9375rem;">No users have this role.</p>
-            </div>
-            @endif
-        </div>
-    </div>
 </div>
 @endsection

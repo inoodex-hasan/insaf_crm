@@ -20,66 +20,65 @@
     </div>
 
     <div class="panel mt-6">
-        <div class="mb-5">
-            <form action="{{ route('admin.students.index') }}" method="GET"
-                style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%;">
-                
-                <!-- Search Box -->
-                <div class="relative" style="position: relative; flex: 2; min-width: 220px;">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search name, phone or email..." class="form-input text-xs w-full"
-                        style="height: 38px; padding-right: 36px;" />
+        <!-- Toolbar: KPI summary & Search -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 20px;" class="dark:border-[#1b2e4b]">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Total: {{ $totalCount ?? $students->total() }} Students
+                </span>
+                <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Enrolled: {{ $enrolledCount ?? 0 }}
+                </span>
+            </div>
+
+            <form action="{{ route('admin.students.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                <select name="stage" class="form-select text-xs" style="height: 36px; width: 125px; border-radius: 6px;" onchange="this.form.submit()">
+                    <option value="">All Stages</option>
+                    @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $stage)
+                        <option value="{{ $stage }}" {{ request('stage') == $stage ? 'selected' : '' }}>
+                            {{ ucfirst($stage) }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select name="status" class="form-select text-xs" style="height: 36px; width: 125px; border-radius: 6px;" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $status)
+                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                            {{ ucfirst($status) }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select name="collected_by" class="form-select text-xs" style="height: 36px; width: 145px; border-radius: 6px;" onchange="this.form.submit()">
+                    <option value="">Collected By</option>
+                    @foreach ($collectors ?? [] as $collector)
+                        <option value="{{ $collector->id }}" {{ (request('collected_by') == $collector->id || request('created_by') == $collector->id) ? 'selected' : '' }}>
+                            {{ $collector->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <div style="position: relative; width: 220px;">
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search name, phone, email..."
+                           class="form-input text-xs w-full"
+                           style="height: 36px; padding-right: 36px; border-radius: 6px;" />
                     <button type="submit"
-                        style="position: absolute; right: 8px; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0; cursor: pointer;"
-                        class="text-gray-400 hover:text-primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                            class="text-gray-400 hover:text-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </button>
                 </div>
 
-                <!-- Stage -->
-                <div style="flex: 1; min-width: 120px;">
-                    <select name="stage" class="form-select text-xs w-full" style="height: 38px;">
-                        <option value="">All Stages</option>
-                        @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $stage)
-                            <option value="{{ $stage }}" {{ request('stage') == $stage ? 'selected' : '' }}>
-                                {{ ucfirst($stage) }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Status -->
-                <div style="flex: 1; min-width: 120px;">
-                    <select name="status" class="form-select text-xs w-full" style="height: 38px;">
-                        <option value="">All Statuses</option>
-                        @foreach (['lead', 'counseling', 'payment', 'application', 'offer', 'visa', 'enrolled'] as $status)
-                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                {{ ucfirst($status) }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Collected By -->
-                <div style="flex: 1.2; min-width: 150px;">
-                    <select name="collected_by" class="form-select text-xs w-full" style="height: 38px;">
-                        <option value="">Collected By</option>
-                        @foreach ($collectors ?? [] as $collector)
-                            <option value="{{ $collector->id }}" {{ (request('collected_by') == $collector->id || request('created_by') == $collector->id) ? 'selected' : '' }}>
-                                {{ $collector->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Buttons -->
-                <div style="display: flex; align-items: center; gap: 8px; flex: 0 0 auto;">
-                    <button type="submit" class="btn btn-primary px-4 text-xs font-semibold" style="height: 38px;">Filter</button>
-                    <a href="{{ route('admin.students.index') }}" class="btn btn-outline-danger px-4 text-xs font-semibold" style="height: 38px; display: inline-flex; align-items: center;">Reset</a>
-                </div>
+                @if(request('search') || request('stage') || request('status') || request('collected_by') || request('created_by'))
+                    <a href="{{ route('admin.students.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                @endif
             </form>
         </div>
 
@@ -141,7 +140,7 @@
                                                                                                                                 <td>
                                                                                                                                     <span class="badge badge-outline-primary capitalize">{{ $student->current_status }}</span>
                                                                                                                                 </td> -->
-                                <td>{{ \Illuminate\Support\Str::limit($student->address, 30) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($student->address ?? '', 30) }}</td>
                                 <td>
                                     @if ($student->creator)
                                         <span class="badge badge-outline-primary">{{ $student->creator->name }}</span>

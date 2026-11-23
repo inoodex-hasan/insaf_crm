@@ -28,12 +28,13 @@ class BudgetController extends Controller
         }
 
         $budgets = $query->latest()->paginate(15)->withQueryString();
+        $totalCount = Budget::count();
         $accounts = ChartOfAccount::where('is_active', true)
             ->where('type', 'expense')
             ->orderBy('code')
             ->get();
 
-        return view('admin.budgets.index', compact('budgets', 'accounts'));
+        return view('admin.budgets.index', compact('budgets', 'accounts', 'totalCount'));
     }
 
     public function create()

@@ -102,7 +102,15 @@ class LeadController extends Controller
           ->orderBy('name')
           ->get(['id', 'name']);
 
-        return view('admin.marketing.leads.index', compact('leads', 'collectors', 'canViewAllLeads'));
+        $baseCountQuery = Lead::query();
+        if (!$canViewAllLeads) {
+            $baseCountQuery->where('created_by', Auth::id());
+        }
+        $totalCount = (clone $baseCountQuery)->count();
+        $highPriorityCount = (clone $baseCountQuery)->where('priority', 'high')->count();
+        $todayCount = (clone $baseCountQuery)->whereDate('created_at', Carbon::today())->count();
+
+        return view('admin.marketing.leads.index', compact('leads', 'collectors', 'canViewAllLeads', 'totalCount', 'highPriorityCount', 'todayCount'));
     }
 
     /**

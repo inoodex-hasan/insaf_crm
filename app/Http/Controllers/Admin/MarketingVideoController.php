@@ -22,8 +22,10 @@ class MarketingVideoController extends Controller
         }
 
         $videos = $query->paginate(15)->withQueryString();
+        $totalCount = MarketingVideo::count();
+        $readyCount = MarketingVideo::where('status', 'ready')->orWhere('status', 'uploaded')->count();
 
-        return view('admin.marketing.videos.index', compact('videos'));
+        return view('admin.marketing.videos.index', compact('videos', 'totalCount', 'readyCount'));
     }
 
     public function store(Request $request)

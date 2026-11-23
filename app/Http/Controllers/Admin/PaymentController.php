@@ -47,8 +47,10 @@ class PaymentController extends Controller
         }
 
         $payments = $query->latest()->paginate(15)->withQueryString();
+        $totalCount = Payment::count();
+        $completedCount = Payment::where('payment_status', 'completed')->count();
 
-        return view('admin.payments.index', compact('payments'));
+        return view('admin.payments.index', compact('payments', 'totalCount', 'completedCount'));
     }
 
     public function create(Request $request)

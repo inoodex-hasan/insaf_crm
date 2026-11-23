@@ -24,8 +24,10 @@ class CourseIntakeController extends Controller
 
         $intakes = $query->latest()->paginate(15)->withQueryString();
         $courses = Course::where('status', 1)->orderBy('name')->get();
+        $totalCount = CourseIntake::count();
+        $activeCount = CourseIntake::where('status', '1')->orWhere('status', 1)->count();
 
-        return view('admin.course-intakes.index', compact('intakes', 'courses'));
+        return view('admin.course-intakes.index', compact('intakes', 'courses', 'totalCount', 'activeCount'));
     }
 
     public function create()

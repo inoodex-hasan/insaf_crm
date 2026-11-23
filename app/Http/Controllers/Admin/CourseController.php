@@ -30,8 +30,10 @@ class CourseController extends Controller
 
         $courses = $query->latest()->paginate(15)->withQueryString();
         $universities = University::where('status', 1)->orderBy('name')->get();
+        $totalCount = Course::count();
+        $activeCount = Course::where('status', '1')->orWhere('status', 1)->count();
 
-        return view('admin.courses.index', compact('courses', 'universities'));
+        return view('admin.courses.index', compact('courses', 'universities', 'totalCount', 'activeCount'));
     }
 
     public function create()
@@ -110,12 +112,12 @@ class CourseController extends Controller
             'discipline_area' => ['nullable', 'string', 'max:255'],
             'duration' => ['nullable', 'string', 'max:100'],
             'duration_type' => ['nullable', 'string', 'max:50'],
-            'tuition_fee' => ['nullable', 'numeric', 'min:0'],
+            'tuition_fee' => ['nullable', 'string', 'max:255'],
             'fee_period' => ['nullable', 'string', 'max:30'],
-            'admission_fee' => ['nullable', 'numeric', 'min:0'],
-            'living_cost' => ['nullable', 'numeric', 'min:0'],
-            'additional_cost' => ['nullable', 'numeric', 'min:0'],
-            'scholarship_amount' => ['nullable', 'numeric', 'min:0'],
+            'admission_fee' => ['nullable', 'string', 'max:255'],
+            'living_cost' => ['nullable', 'string', 'max:255'],
+            'additional_cost' => ['nullable', 'string', 'max:255'],
+            'scholarship_amount' => ['nullable', 'string', 'max:255'],
             'currency' => ['nullable', 'string', 'max:10'],
             'requirements' => ['nullable', 'array'],
             'available_intake_months' => ['nullable', 'array'],

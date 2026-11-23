@@ -63,8 +63,9 @@ class JournalEntryController extends Controller
             ->withQueryString();
 
         $periods = AccountingPeriod::orderBy('start_date', 'desc')->get();
+        $totalCount = JournalEntry::count();
 
-        return view('admin.accounts.journal-entries.index', compact('entries', 'periods'));
+        return view('admin.accounts.journal-entries.index', compact('entries', 'periods', 'totalCount'));
     }
 
     /**

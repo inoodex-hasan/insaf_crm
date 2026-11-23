@@ -14,8 +14,51 @@
     <div class="grid grid-cols-1 gap-6 mt-6">
         {{-- Accounts Hierarchy --}}
         <div class="panel">
-            <h5 class="mb-5 text-lg font-semibold text-primary">Ledger Structure</h5>
-            <div class="table-responsive">
+            <!-- Toolbar: KPI summary & Search -->
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 20px;" class="dark:border-[#1b2e4b]">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        Total: {{ $totalCount ?? $accounts->count() }} Heads
+                    </span>
+                    <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        Active: {{ $activeCount ?? 0 }}
+                    </span>
+                </div>
+
+                <form action="{{ route('admin.chart-of-accounts.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                    <select name="type" class="form-select text-xs" style="height: 36px; width: 140px; border-radius: 6px;" onchange="this.form.submit()">
+                        <option value="">All Types</option>
+                        <option value="asset" {{ request('type') == 'asset' ? 'selected' : '' }}>Asset</option>
+                        <option value="liability" {{ request('type') == 'liability' ? 'selected' : '' }}>Liability</option>
+                        <option value="equity" {{ request('type') == 'equity' ? 'selected' : '' }}>Equity</option>
+                        <option value="revenue" {{ request('type') == 'revenue' ? 'selected' : '' }}>Revenue</option>
+                        <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Expense</option>
+                    </select>
+
+                    <div style="position: relative; width: 220px;">
+                        <input type="text"
+                               name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Search code or head name..."
+                               class="form-input text-xs w-full"
+                               style="height: 36px; padding-right: 36px; border-radius: 6px;" />
+                        <button type="submit"
+                                style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                                class="text-gray-400 hover:text-primary">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    @if(request('search') || request('type'))
+                        <a href="{{ route('admin.chart-of-accounts.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                    @endif
+                </form>
+            </div>
+
+            <div class="table-responsive" style="min-height: 280px;">
                 <table>
                     <thead>
                         <tr>
@@ -28,10 +71,10 @@
                     </thead>
                     <tbody>
                         @forelse ($accounts as $account)
-                            @include('admin.accounts.chart-of-accounts.partials.row', ['account' => $account, 'depth' => 0])
+                            @include('admin.accounts.chart-of-accounts.partials.row', ['account' => $account, 'depth' => 0, 'renderChildren' => !($isFiltered ?? false)])
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-gray-400 py-10">Chart of Accounts is empty. Start adding heads.</td>
+                                <td colspan="5" class="text-center text-gray-400 py-10">No account heads found.</td>
                             </tr>
                         @endforelse
                     </tbody>

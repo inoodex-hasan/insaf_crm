@@ -64,8 +64,10 @@ class VfsChecklistController extends Controller
         }
 
         $applications = $query->paginate(15);
+        $totalApplications = Application::count();
+        $vfsScheduled = Application::whereNotNull('vfs_appointment_date')->count();
 
-        return view('admin.vfs-checklist.index', compact('applications'));
+        return view('admin.vfs-checklist.index', compact('applications', 'totalApplications', 'vfsScheduled'));
     }
 
     public function overview(Request $request)

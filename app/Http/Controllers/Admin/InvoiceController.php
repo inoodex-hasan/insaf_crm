@@ -61,7 +61,10 @@ class InvoiceController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.accounts.invoices.index', compact('invoices'));
+        $totalCount = Invoice::count();
+        $paidCount = Invoice::where('status', 'paid')->count();
+
+        return view('admin.accounts.invoices.index', compact('invoices', 'totalCount', 'paidCount'));
     }
 
     /**

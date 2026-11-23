@@ -27,59 +27,41 @@
 
     <div class="panel mt-6">
         <div class="mb-5">
-            <form action="{{ route('admin.marketing.leads.index') }}" method="GET">
-                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                    
-                    <!-- Row 1: Search, Source, Priority, Date Type -->
-                    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; width: 100%;">
-                        <!-- Search Box -->
-                        <div style="flex: 2; min-width: 200px;">
-                            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Search Lead</label>
-                            <div class="relative" style="position: relative; width: 100%;">
-                                <input type="text" name="search" value="{{ request('search') }}"
-                                    placeholder="Name, Phone, Email..." 
-                                    class="form-input text-xs w-full" 
-                                    style="height: 38px; padding-right: 36px;" />
-                                <button type="submit"
-                                    style="position: absolute; right: 8px; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0; cursor: pointer;"
-                                    class="text-gray-400 hover:text-primary"
-                                    title="Search">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="11" cy="11" r="8"/>
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
+            <form action="{{ route('admin.marketing.leads.index') }}" method="GET" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                
+                <!-- Toolbar: KPI summary & Quick Search / Primary Filters -->
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 12px;" class="dark:border-[#1b2e4b]">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                            Total: {{ $totalCount ?? $leads->total() }} Leads
+                        </span>
+                        <span class="badge bg-danger/10 text-danger border border-danger/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                            High Priority: {{ $highPriorityCount ?? 0 }}
+                        </span>
+                        <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                            Today: {{ $todayCount ?? 0 }}
+                        </span>
+                    </div>
 
-                        <!-- Source Dropdown -->
-                        <div style="flex: 1; min-width: 130px;">
-                            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Lead Source</label>
-                            <select name="source" class="form-select text-xs w-full" style="height: 38px;">
-                                <option value="">All Sources</option>
-                                <option value="Phone" {{ request('source') == 'Phone' ? 'selected' : '' }}>Phone Call</option>
-                                <option value="Message" {{ request('source') == 'Message' ? 'selected' : '' }}>WhatsApp/SMS</option>
-                                <option value="Messenger" {{ request('source') == 'Messenger' ? 'selected' : '' }}>FB Messenger</option>
-                                <option value="Online Chat" {{ request('source') == 'Online Chat' ? 'selected' : '' }}>Website Chat</option>
-                                <option value="Walk-in" {{ request('source') == 'Walk-in' ? 'selected' : '' }}>Walk-in</option>
-                            </select>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                        <select name="source" class="form-select text-xs" style="height: 36px; width: 130px; border-radius: 6px;" onchange="this.form.submit()">
+                            <option value="">All Sources</option>
+                            <option value="Phone" {{ request('source') == 'Phone' ? 'selected' : '' }}>Phone Call</option>
+                            <option value="Message" {{ request('source') == 'Message' ? 'selected' : '' }}>WhatsApp/SMS</option>
+                            <option value="Messenger" {{ request('source') == 'Messenger' ? 'selected' : '' }}>FB Messenger</option>
+                            <option value="Online Chat" {{ request('source') == 'Online Chat' ? 'selected' : '' }}>Website Chat</option>
+                            <option value="Walk-in" {{ request('source') == 'Walk-in' ? 'selected' : '' }}>Walk-in</option>
+                        </select>
 
-                        <!-- Priority Dropdown -->
-                        <div style="flex: 1; min-width: 120px;">
-                            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Priority</label>
-                            <select name="priority" class="form-select text-xs w-full" style="height: 38px;">
-                                <option value="">All Priorities</option>
-                                <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
-                                <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
-                                <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
-                            </select>
-                        </div>
+                        <select name="priority" class="form-select text-xs" style="height: 36px; width: 120px; border-radius: 6px;" onchange="this.form.submit()">
+                            <option value="">All Priorities</option>
+                            <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
+                            <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
+                            <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
+                        </select>
 
-                        <!-- Collected By Dropdown -->
-                        <div style="flex: 1.2; min-width: 140px;">
-                            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Collected By</label>
-                            <select name="collected_by" class="form-select text-xs w-full" style="height: 38px;">
+                        @if($canViewAllLeads && $collectors->isNotEmpty())
+                            <select name="collected_by" class="form-select text-xs" style="height: 36px; width: 140px; border-radius: 6px;" onchange="this.form.submit()">
                                 <option value="">All Collectors</option>
                                 @foreach($collectors as $collector)
                                     <option value="{{ $collector->id }}" {{ request('collected_by') == $collector->id ? 'selected' : '' }}>
@@ -87,54 +69,42 @@
                                     </option>
                                 @endforeach
                             </select>
-                        </div>
+                        @endif
 
-                        <!-- Date Target Dropdown -->
-                        <div style="flex: 1.2; min-width: 140px;">
-                            <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Date Type</label>
-                            <select name="date_type" class="form-select text-xs w-full" style="height: 38px;">
-                                <option value="created_at" {{ request('date_type', 'created_at') == 'created_at' ? 'selected' : '' }}>Created Date</option>
-                                <option value="next_follow_up_at" {{ request('date_type') == 'next_follow_up_at' ? 'selected' : '' }}>Follow-up Date</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Date Range Pickers & Filter/Reset Action Buttons -->
-                    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px; width: 100%;">
-                        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; flex: 1; min-width: 280px;">
-                            <!-- From Date -->
-                            <div style="flex: 1; min-width: 140px; max-width: 220px;">
-                                <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">From Date</label>
-                                <input type="date" name="from_date" 
-                                    value="{{ request('from_date', request('created_date', request('created_from', request('follow_up_from')))) }}"
-                                    class="form-input text-xs w-full" style="height: 38px;" title="From Date" />
-                            </div>
-
-                            <!-- To Date -->
-                            <div style="flex: 1; min-width: 140px; max-width: 220px;">
-                                <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">To Date</label>
-                                <input type="date" name="to_date" 
-                                    value="{{ request('to_date', request('created_to', request('follow_up_to'))) }}"
-                                    class="form-input text-xs w-full" style="height: 38px;" title="To Date" />
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div style="display: flex; align-items: center; gap: 8px; flex: 0 0 auto;">
-                            <button type="submit" class="btn btn-primary gap-1.5 px-4 text-xs font-semibold" style="height: 38px;">
+                        <div style="position: relative; width: 220px;">
+                            <input type="text"
+                                   name="search"
+                                   value="{{ request('search') }}"
+                                   placeholder="Search name, phone..."
+                                   class="form-input text-xs w-full"
+                                   style="height: 36px; padding-right: 36px; border-radius: 6px;" />
+                            <button type="submit"
+                                    style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                                    class="text-gray-400 hover:text-primary">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                 </svg>
-                                Filter
                             </button>
-                            <a href="{{ route('admin.marketing.leads.index') }}" 
-                               class="btn btn-outline-danger px-4 text-xs font-semibold" 
-                               style="height: 38px; display: inline-flex; align-items: center;">
-                                Reset
-                            </a>
                         </div>
-                    </div>
 
+                        @if(request('search') || request('source') || request('priority') || request('collected_by') || request('from_date') || request('to_date'))
+                            <a href="{{ route('admin.marketing.leads.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Secondary Row: Date Range Filter -->
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
+                    <span class="text-xs text-gray-500 font-medium">Date Filter:</span>
+                    <select name="date_type" class="form-select text-xs" style="height: 34px; width: 130px; border-radius: 6px;">
+                        <option value="created_at" {{ request('date_type', 'created_at') == 'created_at' ? 'selected' : '' }}>Created Date</option>
+                        <option value="next_follow_up_at" {{ request('date_type') == 'next_follow_up_at' ? 'selected' : '' }}>Follow-up Date</option>
+                    </select>
+                    <input type="date" name="from_date" value="{{ request('from_date', request('created_from', request('follow_up_from'))) }}" class="form-input text-xs" style="height: 34px; width: 140px; border-radius: 6px;" title="From Date">
+                    <span class="text-xs text-gray-400">to</span>
+                    <input type="date" name="to_date" value="{{ request('to_date', request('created_to', request('follow_up_to'))) }}" class="form-input text-xs" style="height: 34px; width: 140px; border-radius: 6px;" title="To Date">
+                    <button type="submit" class="btn btn-primary btn-sm text-xs" style="height: 34px;">Apply</button>
                 </div>
             </form>
         </div>

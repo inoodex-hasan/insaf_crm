@@ -13,19 +13,34 @@ class ChartOfAccountController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all accounts with their nested children
-        $accounts = ChartOfAccount::with('children')
-            ->whereNull('parent_id')
-            ->orderBy('type')
-            ->orderBy('code')
-            ->get();
+        $query = ChartOfAccount::with('children');
 
-        // Get flat list for parent selection in the form
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($type = $request->get('type')) {
+            $query->where('type', $type);
+        }
+
+        if ($request->filled('search') || $request->filled('type')) {
+            $accounts = $query->orderBy('type')->orderBy('code')->get();
+            $isFiltered = true;
+        } else {
+            $accounts = $query->whereNull('parent_id')->orderBy('type')->orderBy('code')->get();
+            $isFiltered = false;
+        }
+
         $parentAccounts = ChartOfAccount::orderBy('name')->get();
+        $totalCount = ChartOfAccount::count();
+        $activeCount = ChartOfAccount::where('is_active', true)->count();
 
-        return view('admin.accounts.chart-of-accounts.index', compact('accounts', 'parentAccounts'));
+        return view('admin.accounts.chart-of-accounts.index', compact('accounts', 'parentAccounts', 'totalCount', 'activeCount', 'isFiltered'));
     }
 
     /**

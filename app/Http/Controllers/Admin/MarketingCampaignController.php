@@ -24,8 +24,10 @@ class MarketingCampaignController extends Controller
         }
 
         $campaigns = $query->paginate(15)->withQueryString();
+        $totalCount = MarketingCampaign::count();
+        $boostingOnCount = MarketingCampaign::where('boosting_status', 'on')->count();
 
-        return view('admin.marketing.campaigns.index', compact('campaigns'));
+        return view('admin.marketing.campaigns.index', compact('campaigns', 'totalCount', 'boostingOnCount'));
     }
 
     public function create()

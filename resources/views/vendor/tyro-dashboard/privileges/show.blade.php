@@ -1,124 +1,116 @@
-@extends('tyro-dashboard::layouts.admin')
+@extends('admin.layouts.master')
 
-@section('title', $privilege->name)
-
-@section('breadcrumb')
-<a href="{{ route('tyro-dashboard.index') }}">Dashboard</a>
-<span class="breadcrumb-separator">/</span>
-<a href="{{ route('tyro-dashboard.privileges.index') }}">Privileges</a>
-<span class="breadcrumb-separator">/</span>
-<span>{{ $privilege->name }}</span>
-@endsection
+@section('title', $privilege->name . ' - Privilege Details')
 
 @section('content')
-<div class="page-header">
-    <div class="page-header-row">
+<div>
+
+    {{-- Page Header --}}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="page-title">{{ $privilege->name }}</h1>
-            <p class="page-description">
-                <code style="padding: 0.375rem 0.625rem; background-color: var(--muted); border-radius: 0.375rem; font-size: 0.9375rem;">{{ $privilege->slug }}</code>
-            </p>
+            <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold uppercase tracking-wide text-dark dark:text-white-light">{{ $privilege->name }}</h2>
+                <code class="px-2 py-0.5 rounded text-xs bg-slate-100 font-mono text-primary font-bold dark:bg-dark/60">{{ $privilege->slug }}</code>
+            </div>
+            <p class="text-xs text-white-dark mt-1">Review privilege capability and authorization roles assigned.</p>
         </div>
-        <div class="btn-group">
-            <a href="{{ route('tyro-dashboard.privileges.edit', $privilege->id) }}" class="btn btn-primary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <div class="flex items-center gap-2">
+            <a href="{{ route('tyro-dashboard.privileges.edit', $privilege->id) }}" class="btn btn-primary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
-                Edit Privilege
+                <span>Edit Privilege</span>
             </a>
-            <a href="{{ route('tyro-dashboard.privileges.index') }}" class="btn btn-secondary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <a href="{{ route('tyro-dashboard.privileges.index') }}" class="btn btn-secondary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                Back to Privileges
+                <span>Back to Privileges</span>
             </a>
         </div>
     </div>
-</div>
 
-<div class="grid-2">
-    <!-- Privilege Details -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title" style="font-size: 1.0625rem;">Details</h3>
-        </div>
-        <div class="card-body">
-            <div style="margin-bottom: 1rem;">
-                <label class="form-label" style="margin-bottom: 0.375rem; font-size: 0.9375rem;">Name</label>
-                <p style="font-size: 1rem; color: var(--foreground);">{{ $privilege->name }}</p>
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label class="form-label" style="margin-bottom: 0.375rem; font-size: 0.9375rem;">Slug</label>
-                <p>
-                    <code style="padding: 0.375rem 0.625rem; background-color: var(--muted); border-radius: 0.375rem; font-size: 0.9375rem;">{{ $privilege->slug }}</code>
-                </p>
-            </div>
-            <div>
-                <label class="form-label" style="margin-bottom: 0.375rem; font-size: 0.9375rem;">Description</label>
-                <p style="font-size: 1rem; color: var(--muted-foreground);">{{ $privilege->description ?: 'No description provided.' }}</p>
-            </div>
-        </div>
-    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <!-- Roles with this Privilege -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title" style="font-size: 1.0625rem;">Roles with this Privilege ({{ $privilege->roles->count() }})</h3>
+        {{-- Details Panel --}}
+        <div class="panel">
+            <h5 class="text-sm font-bold uppercase tracking-wider text-dark dark:text-white-light border-b border-[#e0e6ed] pb-3 mb-4 dark:border-[#1b2e4b]">
+                Privilege Specifications
+            </h5>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <span class="text-white-dark block mb-1 font-medium">Privilege Name</span>
+                    <div class="font-bold text-sm text-dark dark:text-white-light">{{ $privilege->name }}</div>
+                </div>
+
+                <div>
+                    <span class="text-white-dark block mb-1 font-medium">Slug</span>
+                    <code class="px-2 py-1 rounded text-xs bg-slate-100 font-mono text-primary font-bold dark:bg-dark/60">
+                        {{ $privilege->slug }}
+                    </code>
+                </div>
+
+                <div>
+                    <span class="text-white-dark block mb-1 font-medium">Description</span>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-dark/40 p-3 rounded-lg border border-slate-100 dark:border-dark">
+                        {{ $privilege->description ?: 'No description recorded.' }}
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="card-body" style="padding: 0;">
+
+        {{-- Roles Panel --}}
+        <div class="panel">
+            <div class="flex items-center justify-between border-b border-[#e0e6ed] pb-3 mb-4 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-dark dark:text-white-light flex items-center gap-2">
+                    <span>Roles with this Privilege</span>
+                    <span class="badge bg-secondary/10 text-secondary border border-secondary/20 text-xs px-2 py-0.5 rounded">
+                        {{ $privilege->roles->count() }}
+                    </span>
+                </h5>
+                <a href="{{ route('tyro-dashboard.privileges.edit', $privilege->id) }}" class="text-xs font-semibold text-primary hover:underline">
+                    Manage
+                </a>
+            </div>
+
             @if($privilege->roles->count())
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="font-size: 0.9375rem;">Role</th>
-                            <th style="text-align: right; font-size: 0.9375rem;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($privilege->roles as $role)
-                        <tr>
-                            <td>
-                                <a href="{{ route('tyro-dashboard.roles.show', $role->id) }}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                                    <div style="width: 32px; height: 32px; border-radius: 0.5rem; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center;">
-                                        <svg style="width: 14px; height: 14px; color: white;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                    </div>
-                                    <span style="font-weight: 500; font-size: 0.9375rem; color: var(--foreground);">{{ $role->name }}</span>
-                                </a>
-                            </td>
-                            <td style="text-align: right;">
-                                <div class="action-buttons" style="justify-content: flex-end;">
-                                    <a href="{{ route('tyro-dashboard.roles.show', $role->id) }}" class="action-btn" title="View Role">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    </a>
-                                    <form action="{{ route('tyro-dashboard.privileges.remove-role', ['id' => $privilege->id, 'roleId' => $role->id]) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="action-btn action-btn-danger" title="Remove from Role" onclick="return confirm('Are you sure you want to remove this privilege from the {{ $role->name }} role?')">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-responsive overflow-x-auto">
+                    <table class="table-auto w-full text-xs">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Slug</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($privilege->roles as $role)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('tyro-dashboard.roles.show', $role->id) }}" class="font-bold text-dark hover:text-primary dark:text-white-light dark:hover:text-primary transition">
+                                            {{ $role->name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <code class="px-2 py-0.5 rounded text-[11px] bg-slate-100 font-mono text-primary font-bold dark:bg-dark/60">
+                                            {{ $role->slug }}
+                                        </code>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
-            <div class="empty-state">
-                <p class="empty-state-description" style="font-size: 0.9375rem;">No roles have this privilege.</p>
-                <a href="{{ route('tyro-dashboard.privileges.edit', $privilege->id) }}" class="btn btn-sm btn-secondary">Assign to Roles</a>
-            </div>
+                <div class="text-center py-6 text-white-dark text-xs">
+                    No roles are currently assigned this privilege.
+                </div>
             @endif
         </div>
+
     </div>
+
 </div>
 @endsection

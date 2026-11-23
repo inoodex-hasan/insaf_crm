@@ -47,7 +47,10 @@ class StudentController extends Controller
           ->orderBy('name')
           ->get(['id', 'name']);
 
-        return view('admin.students.index', compact('students', 'collectors'));
+        $totalCount = Student::count();
+        $enrolledCount = Student::where('current_stage', 'enrolled')->orWhere('current_status', 'enrolled')->count();
+
+        return view('admin.students.index', compact('students', 'collectors', 'totalCount', 'enrolledCount'));
     }
 
     public function create(Request $request)

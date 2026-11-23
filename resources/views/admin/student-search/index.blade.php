@@ -67,6 +67,15 @@
                 Directory & search across personal, academic, parental, financial & country-specific remarks.
             </p>
         </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.student-payment-statuses.index') }}" class="btn btn-outline-primary btn-sm text-xs font-semibold gap-1.5" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                Manage Payment Statuses
+            </a>
+        </div>
     </div>
 
     <!-- Filter Panel (2 Rows) -->
@@ -131,13 +140,20 @@
 
                     <!-- Payment Status -->
                     <div style="flex: 1.2; min-width: 140px;">
-                        <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-300">Payment Status</label>
-                        <select name="payment_status" class="form-select text-sm w-full" style="height: 38px;">
+                        <div class="flex items-center justify-between mb-1" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300" style="margin-bottom: 0;">Payment Status</label>
+                            <button type="button" @click="openPaymentStatusModal()" class="text-[11px] font-semibold text-primary hover:underline flex items-center gap-0.5" style="display: inline-flex; align-items: center; gap: 2px;">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Add Status
+                            </button>
+                        </div>
+                        <select name="payment_status" id="filter_payment_status" class="form-select text-sm w-full" style="height: 38px;">
                             <option value="">All Status</option>
-                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Fully Paid</option>
-                            <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>Partial Due</option>
-                            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                            <option value="no_package" {{ request('payment_status') == 'no_package' ? 'selected' : '' }}>No Package Set</option>
+                            @foreach($paymentStatuses as $st)
+                                <option value="{{ $st->code }}" {{ request('payment_status') == $st->code ? 'selected' : '' }}>
+                                    {{ $st->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -168,7 +184,7 @@
                         <th class="py-3 px-3">Payments</th>
                         <th class="py-3 px-3 min-w-[200px]">Remarks (Country Based)</th>
                         <th class="py-3 px-3 min-w-[160px]">Notes</th>
-                        <!-- <th class="py-3 px-3 text-center">Action</th> -->
+                        <th class="py-3 px-3 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -271,21 +287,28 @@
                                 </div>
                             </td>
 
-                            <!-- Payments -->
-                            <td class="py-3 px-3 whitespace-nowrap">
-                                <div class="text-xs">
-                                    <div><span class="text-gray-400">Package:</span> <span class="font-semibold">{{ number_format($package, 2) }}</span></div>
-                                    <div><span class="text-gray-400">Paid:</span> <span class="text-success font-semibold">{{ number_format($paid, 2) }}</span></div>
-                                    <div class="mt-0.5">
-                                        @if($package <= 0)
-                                            <span class="badge bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 text-[10px] px-1.5 py-0.5">No Package</span>
-                                        @elseif($due <= 0)
-                                            <span class="badge bg-success/15 text-success text-[10px] px-1.5 py-0.5 font-semibold">Fully Paid</span>
-                                        @else
-                                            <span class="badge bg-danger/15 text-danger text-[10px] px-1.5 py-0.5 font-semibold">
-                                                Due: {{ number_format($due, 2) }}
-                                            </span>
-                                        @endif
+                            <!-- Payments & Dynamic Status Dropdown -->
+                            <td class="py-3 px-3">
+                                <div class="text-xs" style="min-width: 140px;">
+                                    <div class="flex items-center justify-between text-[11px] mb-1">
+                                        <span><span class="text-gray-400">Pkg:</span> <span class="font-semibold">{{ number_format($package, 0) }}</span></span>
+                                        <span><span class="text-gray-400">Paid:</span> <span class="text-success font-semibold">{{ number_format($paid, 0) }}</span></span>
+                                    </div>
+                                    <div class="relative">
+                                        <select class="form-select text-[11px] py-1 px-2 pr-6 w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121e32] rounded student-payment-status-select font-medium"
+                                            @change="updatePaymentStatus({{ $student->id }}, $event.target.value)">
+                                            @foreach($paymentStatuses as $st)
+                                                <option value="{{ $st->code }}" {{ $student->calculated_payment_status == $st->code ? 'selected' : '' }}>
+                                                    {{ $st->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div id="payment-status-notify-{{ $student->id }}" class="text-[10px] mt-0.5 hidden text-success font-semibold flex items-center gap-1">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                            Saved
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -331,7 +354,7 @@
                             </td>
 
                             <!-- Actions -->
-                            <!-- <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <td class="py-3 px-3 text-center whitespace-nowrap">
                                 <div class="dropdown flex items-center justify-center" x-data="dropdown" @click.outside="open = false">
                                     <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-dark/70 hover:bg-gray-100 hover:text-primary dark:text-white-light/70 dark:hover:bg-dark/40 dark:hover:text-primary" @click="toggle">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -375,11 +398,11 @@
                                         @endcan
                                     </ul>
                                 </div>
-                            </td> -->
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-12 text-gray-500">
+                            <td colspan="10" class="text-center py-12 text-gray-500">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <circle cx="11" cy="11" r="8" stroke-width="1.5"></circle>
@@ -448,6 +471,76 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Payment Status Modal -->
+    <template x-teleport="#modal-portal">
+        <div x-cloak
+            x-show="isPaymentStatusModalOpen"
+            class="modal-overlay-full"
+            style="display: none;">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div @click.away="isPaymentStatusModalOpen = false"
+                    x-show="isPaymentStatusModalOpen"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    class="w-full max-w-md rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-5 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                        <h3 class="text-base font-bold text-dark dark:text-white-light">
+                            Add Payment Status
+                        </h3>
+                        <button type="button" @click="isPaymentStatusModalOpen = false" class="text-white-dark hover:text-dark dark:hover:text-white transition">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="savePaymentStatus()">
+                        <div class="p-5 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-700 dark:text-slate-300">
+                                    Status Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" x-model="newStatusName" required class="form-input text-xs" placeholder="e.g. Refunded, 1st Installment Paid">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-700 dark:text-slate-300">
+                                    Unique Code <span class="text-[10px] text-slate-400">(Optional - auto-generated if blank)</span>
+                                </label>
+                                <input type="text" x-model="newStatusCode" class="form-input text-xs" placeholder="e.g. refunded">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-700 dark:text-slate-300">Badge Color</label>
+                                <select x-model="newStatusColor" class="form-select text-xs">
+                                    <option value="info">Info (Blue)</option>
+                                    <option value="success">Success (Green)</option>
+                                    <option value="warning">Warning (Amber)</option>
+                                    <option value="danger">Danger (Red)</option>
+                                    <option value="secondary">Secondary (Gray)</option>
+                                </select>
+                            </div>
+                            <template x-if="newStatusError">
+                                <div class="text-xs text-danger" x-text="newStatusError"></div>
+                            </template>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-5 py-3 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                            <button type="button" @click="isPaymentStatusModalOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
+                            <button type="submit" :disabled="isSavingPaymentStatus" class="btn btn-primary btn-sm text-xs">
+                                <span x-show="!isSavingPaymentStatus">Save & Add Status</span>
+                                <span x-show="isSavingPaymentStatus">Saving...</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -535,6 +628,107 @@ function studentSearchComponent() {
         activeStudentName: '',
         activeStudentNotes: '',
         isSavingNotes: false,
+
+        // Payment Status Modal State
+        isPaymentStatusModalOpen: false,
+        newStatusName: '',
+        newStatusCode: '',
+        newStatusColor: 'info',
+        newStatusError: '',
+        isSavingPaymentStatus: false,
+
+        openPaymentStatusModal() {
+            this.newStatusName = '';
+            this.newStatusCode = '';
+            this.newStatusColor = 'info';
+            this.newStatusError = '';
+            this.isSavingPaymentStatus = false;
+            this.isPaymentStatusModalOpen = true;
+        },
+
+        async savePaymentStatus() {
+            if (!this.newStatusName.trim()) return;
+            this.isSavingPaymentStatus = true;
+            this.newStatusError = '';
+
+            try {
+                const response = await fetch('{{ route('admin.student-payment-statuses.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.newStatusName,
+                        code: this.newStatusCode,
+                        color: this.newStatusColor
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    this.newStatusError = data.message || 'Failed to save payment status.';
+                    this.isSavingPaymentStatus = false;
+                    return;
+                }
+
+                // Append new status to filter dropdown
+                const filterSelect = document.getElementById('filter_payment_status');
+                if (filterSelect && data.status) {
+                    const opt = document.createElement('option');
+                    opt.value = data.status.code;
+                    opt.textContent = data.status.name;
+                    filterSelect.appendChild(opt);
+                }
+
+                // Append new status to all student payment status dropdowns in table
+                document.querySelectorAll('.student-payment-status-select').forEach(sel => {
+                    const opt = document.createElement('option');
+                    opt.value = data.status.code;
+                    opt.textContent = data.status.name;
+                    sel.appendChild(opt);
+                });
+
+                this.isPaymentStatusModalOpen = false;
+                if (typeof window.showMessage === 'function') {
+                    window.showMessage(data.message || 'Payment status created successfully.');
+                }
+            } catch (err) {
+                this.newStatusError = 'Network error. Please try again.';
+            } finally {
+                this.isSavingPaymentStatus = false;
+            }
+        },
+
+        // Quick AJAX update for student payment status dropdown
+        async updatePaymentStatus(studentId, statusValue) {
+            const statusEl = document.getElementById(`payment-status-notify-${studentId}`);
+            try {
+                const response = await fetch(`{{ url('dashboard/search-student') }}/${studentId}/quick-update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ payment_status: statusValue })
+                });
+
+                if (response.ok) {
+                    if (statusEl) {
+                        statusEl.classList.remove('hidden');
+                        setTimeout(() => statusEl.classList.add('hidden'), 2500);
+                    }
+                } else {
+                    alert('Failed to update payment status. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error updating payment status:', error);
+                alert('Network error while updating payment status.');
+            }
+        },
 
         // Quick AJAX update for remarks dropdown
         async updateRemarks(studentId, remarkValue) {

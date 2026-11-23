@@ -9,15 +9,26 @@ use Illuminate\Support\Facades\Auth;
 
 class PartnerAgencyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('*accountant|*consultant|*application|*marketing');
 
-        $agencies = PartnerAgency::withCount('commissions')
-            ->orderBy('name')
-            ->paginate(20);
+        $query = PartnerAgency::withCount('commissions');
 
-        return view('admin.partner-agencies.index', compact('agencies'));
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('contact_person', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $agencies = $query->orderBy('name')->paginate(20)->withQueryString();
+        $totalCount = PartnerAgency::count();
+        $activeCount = PartnerAgency::where('status', 1)->count();
+
+        return view('admin.partner-agencies.index', compact('agencies', 'totalCount', 'activeCount'));
     }
 
     public function store(Request $request)

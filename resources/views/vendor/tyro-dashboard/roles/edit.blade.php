@@ -1,115 +1,156 @@
-@extends('tyro-dashboard::layouts.admin')
+@extends('admin.layouts.master')
 
 @section('title', 'Edit Role')
 
-@section('breadcrumb')
-    <a href="{{ route('tyro-dashboard.index') }}">Dashboard</a>
-    <span class="breadcrumb-separator">/</span>
-    <a href="{{ route('tyro-dashboard.roles.index') }}">Roles</a>
-    <span class="breadcrumb-separator">/</span>
-    <span>Edit</span>
-@endsection
-
 @section('content')
-    <div class="page-header">
-        <div class="page-header-row">
-            <div>
-                <h1 class="page-title">Edit Role</h1>
-                <p class="page-description">Update role information and privileges.</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                @if(!in_array($role->slug, $protectedRoles))
-                    <form action="{{ route('tyro-dashboard.roles.destroy', $role->id) }}" method="POST"
-                        onsubmit="return confirm('Are you sure you want to delete this role? This action cannot be undone.');"
-                        style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Delete Role
-                        </button>
-                    </form>
-                @endif
-                <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-secondary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Roles
-                </a>
-            </div>
+<div>
+
+    {{-- Page Header --}}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h2 class="text-xl font-bold uppercase tracking-wide text-dark dark:text-white-light">Edit Role: {{ $role->name }}</h2>
+            <p class="text-xs text-white-dark mt-1">Update role specifications, active state, and assigned privileges.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if(!in_array($role->slug, $protectedRoles ?? []))
+                <form action="{{ route('tyro-dashboard.roles.destroy', $role->id) }}" method="POST"
+                      onsubmit="return confirm('Are you sure you want to delete this role? All users will be unassigned from this role.');" class="m-0">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline-danger gap-1.5">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span>Delete Role</span>
+                    </button>
+                </form>
+            @endif
+            <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-secondary gap-2">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Back to Roles</span>
+            </a>
         </div>
     </div>
 
-    <div class="card">
+    {{-- Error Alert --}}
+    @if($errors->any())
+        <div class="mb-5 rounded-lg border border-danger/20 bg-danger/5 p-4 text-danger dark:border-danger/30">
+            <div class="flex items-center gap-2 font-bold text-xs uppercase mb-1">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Please correct the errors below:</span>
+            </div>
+            <ul class="list-disc pl-5 text-xs space-y-0.5">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Form Panel --}}
+    <div class="panel mt-6">
         <form action="{{ route('tyro-dashboard.roles.update', $role->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name" class="form-label">Role Name</label>
-                        <input type="text" id="name" name="name" class="form-input @error('name') is-invalid @enderror"
-                            value="{{ old('name', $role->name) }}" required>
+
+            {{-- Section 1: Role Identification --}}
+            <div class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">1. Role Identification</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label for="name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Role Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="name" name="name"
+                               class="form-input text-xs @error('name') border-danger @enderror"
+                               value="{{ old('name', $role->name) }}" required>
                         @error('name')
-                            <span class="form-error">{{ $message }}</span>
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="slug" class="form-label">Slug</label>
-                        <input type="text" id="slug" name="slug" class="form-input @error('slug') is-invalid @enderror"
-                            value="{{ old('slug', $role->slug) }}">
-                        <span class="form-hint">Used for programmatic access. Must be unique.</span>
+                    <div>
+                        <label for="slug" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Slug
+                        </label>
+                        <input type="text" id="slug" name="slug"
+                               class="form-input text-xs @error('slug') border-danger @enderror"
+                               value="{{ old('slug', $role->slug) }}">
                         @error('slug')
-                            <span class="form-error">{{ $message }}</span>
+                            <span class="text-danger text-xs mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem;">
-                        <input type="checkbox" id="is_active" name="is_active" class="form-checkbox" value="1" {{ old('is_active', $role->is_active) ? 'checked' : '' }}>
-                        <label for="is_active" class="form-label" style="margin-bottom: 0;">Active</label>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Status
+                        </label>
+                        <label class="inline-flex items-center gap-2 mt-2 cursor-pointer">
+                            <input type="checkbox" id="is_active" name="is_active" value="1"
+                                   class="form-checkbox text-primary"
+                                   {{ old('is_active', $role->is_active) ? 'checked' : '' }}>
+                            <span class="text-xs font-bold text-dark dark:text-white-light">Role is Active</span>
+                        </label>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Assign Privileges</label>
-                    @if($privileges->count())
-                        <div class="checkbox-list">
-                            @foreach($privileges as $privilege)
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="privileges[]" value="{{ $privilege->id }}" class="checkbox-input"
-                                        {{ in_array($privilege->id, old('privileges', $role->privileges->pluck('id')->toArray())) ? 'checked' : '' }}>
-                                    <div class="checkbox-item-content">
-                                        <div class="checkbox-item-title">{{ $privilege->name }}</div>
-                                        <div class="checkbox-item-description">{{ $privilege->slug }}</div>
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="alert alert-info">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div class="alert-content">
-                                <p class="alert-message">No privileges available. <a
-                                        href="{{ route('tyro-dashboard.privileges.create') }}">Create one</a> first.</p>
-                            </div>
-                        </div>
-                    @endif
-                    @error('privileges')
-                        <span class="form-error">{{ $message }}</span>
-                    @enderror
                 </div>
             </div>
-            <div class="card-footer" style="display: flex; gap: 0.75rem;">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-secondary">Cancel</a>
+
+            {{-- Section 2: Privilege Assignments --}}
+            <div class="pb-3">
+                <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">2. Assign Privileges</h5>
+                <p class="text-xs text-white-dark mb-4">Select the system privileges granted to users holding this role.</p>
+
+                @if($privileges->count())
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        @foreach($privileges as $privilege)
+                            <label class="relative flex items-start gap-3 rounded-xl border border-[#e0e6ed] p-3.5 hover:border-primary transition cursor-pointer dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                                <input type="checkbox"
+                                       name="privileges[]"
+                                       value="{{ $privilege->id }}"
+                                       class="form-checkbox text-primary mt-0.5"
+                                       {{ in_array($privilege->id, old('privileges', $role->privileges->pluck('id')->toArray())) ? 'checked' : '' }}>
+                                <div>
+                                    <div class="text-xs font-bold text-dark dark:text-white-light">{{ $privilege->name }}</div>
+                                    <code class="text-[11px] text-primary font-mono block mt-0.5">{{ $privilege->slug }}</code>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="rounded-lg bg-info/10 p-4 text-info border border-info/20 text-xs">
+                        No privileges available. <a href="{{ route('tyro-dashboard.privileges.create') }}" class="font-bold underline">Create one first</a>.
+                    </div>
+                @endif
+
+                @error('privileges')
+                    <span class="text-danger text-xs mt-2 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            {{-- Form Actions --}}
+            <div class="flex items-center gap-3 border-t border-[#e0e6ed] pt-5 mt-5 dark:border-[#1b2e4b]">
+                <button type="submit" class="btn btn-primary gap-2">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <span>Save Changes</span>
+                </button>
+                <a href="{{ route('tyro-dashboard.roles.index') }}" class="btn btn-outline-danger">
+                    Cancel
+                </a>
             </div>
         </form>
     </div>
+
+</div>
 @endsection

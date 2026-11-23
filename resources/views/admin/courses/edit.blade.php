@@ -51,19 +51,25 @@
 
                     <div class="form-group md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Program / Course Title <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-input text-xs" placeholder="e.g. Bachelor of Science in Computer Science & AI" value="{{ old('name', $course->name) }}" required>
+                        <input type="text" name="name" class="form-input text-xs" value="{{ old('name', $course->name) }}" required>
                     </div>
                 </div>
             </div>
 
             <!-- Section 2: Academic Categorization (Study Area & Program Level) -->
-            <div class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
+            <div x-data="programLevelQuickAdd()" class="border-b border-[#e0e6ed] pb-5 mb-5 dark:border-[#1b2e4b]">
                 <h5 class="text-sm font-bold uppercase tracking-wider text-primary mb-3">2. Academic Categorization & Discipline</h5>
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                     
                     <div class="form-group">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Program Level</label>
-                        <select name="program_level" class="form-select text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Program Level</label>
+                            <button type="button" @click="openModal()" class="text-[11px] font-semibold text-primary hover:underline flex items-center gap-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Add Level
+                            </button>
+                        </div>
+                        <select name="program_level" id="program_level_select" class="form-select text-xs">
                             <option value="">Select Program Level</option>
                             @foreach ($programLevels as $key => $label)
                                 <option value="{{ $key }}" {{ old('program_level', $course->program_level) == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -71,30 +77,80 @@
                         </select>
                     </div>
 
+                    <!-- Quick Add Program Level Modal -->
+                    <template x-teleport="#modal-portal">
+                        <div x-cloak
+                             x-show="isOpen"
+                             class="modal-overlay-full"
+                             style="display: none;">
+                            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                                <div @click.away="isOpen = false"
+                                     x-show="isOpen"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="w-full max-w-md rounded-xl border border-[#e0e6ed] bg-white shadow-xl dark:border-[#1b2e4b] dark:bg-[#1b2e4b] overflow-hidden">
+                                    <div class="flex items-center justify-between border-b border-[#e0e6ed] bg-[#fbfbfb] px-5 py-4 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                                        <h5 class="text-base font-bold text-dark dark:text-white-light">Add Program Level</h5>
+                                        <button type="button" @click="isOpen = false" class="text-white-dark hover:text-dark dark:hover:text-white transition">
+                                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <form @submit.prevent="submitLevel()">
+                                        <div class="p-5 space-y-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                                                    Level Name <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text" x-model="name" required class="form-input text-xs">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                                                    Unique Code <span class="text-[10px] text-slate-400">(Optional - auto-generated if blank)</span>
+                                                </label>
+                                                <input type="text" x-model="code" class="form-input text-xs">
+                                            </div>
+                                            <template x-if="error">
+                                                <div class="text-xs text-danger" x-text="error"></div>
+                                            </template>
+                                        </div>
+                                        <div class="flex items-center justify-end gap-3 border-t border-[#e0e6ed] bg-[#fbfbfb] px-5 py-3 dark:border-[#1b2e4b] dark:bg-[#121e32]">
+                                            <button type="button" @click="isOpen = false" class="btn btn-outline-danger btn-sm text-xs">Cancel</button>
+                                            <button type="submit" :disabled="loading" class="btn btn-primary btn-sm text-xs">
+                                                <span x-show="!loading">Save & Select Level</span>
+                                                <span x-show="loading">Saving...</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
                     <div class="form-group">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Study Area (Faculty)</label>
-                        <input type="text" name="study_area" list="study_area_list" class="form-input text-xs" placeholder="e.g. Engineering & Technology" value="{{ old('study_area', $course->study_area) }}">
-                        <datalist id="study_area_list">
-                            @foreach($studyAreas as $area)
-                                <option value="{{ $area }}">
-                            @endforeach
-                        </datalist>
-                        <span class="text-[10px] text-white-dark">Choose from suggestions or type a custom study area</span>
+                        <input type="text" name="study_area" class="form-input text-xs" value="{{ old('study_area', $course->study_area) }}">
                     </div>
 
                     <div class="form-group">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Discipline Area (Major)</label>
-                        <input type="text" name="discipline_area" class="form-input text-xs" placeholder="e.g. Software Engineering, Robotics" value="{{ old('discipline_area', $course->discipline_area) }}">
+                        <input type="text" name="discipline_area" class="form-input text-xs" value="{{ old('discipline_area', $course->discipline_area) }}">
                     </div>
 
                     <div class="form-group">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Degree Title (Optional)</label>
-                        <input type="text" name="degree_level" class="form-input text-xs" placeholder="e.g. B.Sc (Hons), MBA, M.Eng" value="{{ old('degree_level', $course->degree_level) }}">
+                        <input type="text" name="degree_level" class="form-input text-xs" value="{{ old('degree_level', $course->degree_level) }}">
                     </div>
 
                     <div class="form-group">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Duration Description</label>
-                        <input type="text" name="duration" class="form-input text-xs" placeholder="e.g. 3 Years, 48 Months" value="{{ old('duration', $course->duration) }}">
+                        <input type="text" name="duration" class="form-input text-xs" value="{{ old('duration', $course->duration) }}">
                     </div>
 
                     <div class="form-group">
@@ -157,32 +213,27 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                         <div class="form-group">
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tuition Fee</label>
-                            <input type="number" step="0.01" name="tuition_fee" class="form-input text-xs" placeholder="e.g. 7797.00" value="{{ old('tuition_fee', $course->tuition_fee) }}">
-                            <span class="text-[10px] text-slate-400">e.g. $7797/year</span>
+                            <input type="text" name="tuition_fee" class="form-input text-xs" value="{{ old('tuition_fee', $course->tuition_fee) }}">
                         </div>
 
                         <div class="form-group">
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Admission Fee</label>
-                            <input type="number" step="0.01" name="admission_fee" class="form-input text-xs" placeholder="e.g. 600.00" value="{{ old('admission_fee', $course->admission_fee) }}">
-                            <span class="text-[10px] text-slate-400">Application / entry</span>
+                            <input type="text" name="admission_fee" class="form-input text-xs" value="{{ old('admission_fee', $course->admission_fee) }}">
                         </div>
 
                         <div class="form-group">
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Living Cost</label>
-                            <input type="number" step="0.01" name="living_cost" class="form-input text-xs" placeholder="e.g. 7797.00" value="{{ old('living_cost', $course->living_cost) }}">
-                            <span class="text-[10px] text-slate-400">Est. accommodation</span>
+                            <input type="text" name="living_cost" class="form-input text-xs" value="{{ old('living_cost', $course->living_cost) }}">
                         </div>
 
                         <div class="form-group">
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Additional</label>
-                            <input type="number" step="0.01" name="additional_cost" class="form-input text-xs" placeholder="e.g. 350.00" value="{{ old('additional_cost', $course->additional_cost) }}">
-                            <span class="text-[10px] text-slate-400">Insurance, misc</span>
+                            <input type="text" name="additional_cost" class="form-input text-xs" value="{{ old('additional_cost', $course->additional_cost) }}">
                         </div>
 
                         <div class="form-group">
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Scholarship</label>
-                            <input type="number" step="0.01" name="scholarship_amount" class="form-input text-xs" placeholder="e.g. 4500.00" value="{{ old('scholarship_amount', $course->scholarship_amount) }}">
-                            <span class="text-[10px] text-slate-400">Max waiver / grant</span>
+                            <input type="text" name="scholarship_amount" class="form-input text-xs" value="{{ old('scholarship_amount', $course->scholarship_amount) }}">
                         </div>
                     </div>
                 </div>
@@ -276,6 +327,71 @@
 @push('scripts')
     <script src="{{ asset('assets/js/quill.js') }}"></script>
     <script>
+        function programLevelQuickAdd() {
+            return {
+                isOpen: false,
+                name: '',
+                code: '',
+                loading: false,
+                error: '',
+                openModal() {
+                    this.name = '';
+                    this.code = '';
+                    this.error = '';
+                    this.loading = false;
+                    this.isOpen = true;
+                },
+                async submitLevel() {
+                    if (!this.name.trim()) return;
+                    this.loading = true;
+                    this.error = '';
+
+                    try {
+                        const response = await fetch('{{ route('admin.program-settings.levels.store') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                name: this.name,
+                                code: this.code
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                            this.error = data.message || 'Failed to save program level.';
+                            this.loading = false;
+                            return;
+                        }
+
+                        // Add new level to select and select it
+                        const select = document.getElementById('program_level_select');
+                        if (select && data.level) {
+                            const opt = document.createElement('option');
+                            opt.value = data.level.code;
+                            opt.textContent = data.level.name;
+                            opt.selected = true;
+                            select.appendChild(opt);
+                            select.value = data.level.code;
+                        }
+
+                        this.isOpen = false;
+                        if (typeof window.showMessage === 'function') {
+                            window.showMessage(data.message || 'Program level created successfully.');
+                        }
+                    } catch (err) {
+                        this.error = 'Network error. Please try again.';
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+
         $(document).ready(function () {
             $('.select2').select2({
                 placeholder: "Select University",
@@ -286,7 +402,7 @@
             // Initialize Quill
             var quill = new Quill('#editor-container', {
                 theme: 'snow',
-                placeholder: 'Write program overview, syllabus, career prospects...',
+                placeholder: '',
             });
 
             // Set initial content

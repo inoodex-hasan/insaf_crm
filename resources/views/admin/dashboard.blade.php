@@ -6,6 +6,32 @@
     <!-- Staff Attendance Tracking Widget (Visible for regular staff, hidden for Super Admin) -->
     @include('admin.attendance.partials.dashboard-widget')
 
+    {{-- Individual User Daily Operations Dashboard (Accessible for application, consultant, marketing, admin, super-admin) --}}
+    @php
+        $authUser = auth()->user();
+        $isOperationalStaff = $authUser && (
+            $authUser->hasRole('application') ||
+            $authUser->hasRole('consultant') ||
+            $authUser->hasRole('marketing')
+        );
+        $isAdminUser = $authUser && ($authUser->isAdminOrSuperAdmin() || $authUser->hasRole('admin') || $authUser->hasRole('super-admin') || $authUser->hasRole('superadmin'));
+    @endphp
+
+    {{-- For application, consultant, and marketing roles (operational staff), show at the top --}}
+    @if(!empty($userOperations) && $isOperationalStaff && !$isAdminUser)
+        @include('admin.dashboard.partials.user-operations-widget')
+    @endif
+
+    {{-- For Admin / Super Admin: If inspecting a staff member, show their Operations Dashboard right at the top --}}
+    @if(!empty($userOperations) && $isAdminUser && !empty($isInspectingOther))
+        @include('admin.dashboard.partials.user-operations-widget')
+    @endif
+
+    {{-- For Admin / Super Admin: If viewing own overview, show Quick Staff Operations Switcher Bar at the top --}}
+    @if($isAdminUser && empty($isInspectingOther))
+        @include('admin.dashboard.partials.admin-staff-quick-bar')
+    @endif
+
     <!-- Application & Admission Pipeline Intelligence Filter Widget -->
     @include('admin.dashboard.partials.pipeline-filter-widget')
 
@@ -384,20 +410,11 @@
         </div>
     @endif
 
-    @if (auth()->check() && auth()->user()->hasRole('marketing'))
-        @include('admin.marketing.leads.index')
-    @endif
-
-    @if (auth()->check() && auth()->user()->hasRole('consultant'))
-        @include('admin.students.index')
-    @endif
-
-    @if (auth()->check() && auth()->user()->hasRole('application'))
-        @include('admin.applications.index')
-    @endif
-
-    @if (auth()->check() && auth()->user()->hasRole('accountant'))
-        @include('admin.payments.index')
+    {{-- For admin and super admin, show User Operations Dashboard at the bottom when not in inspection mode --}}
+    @if(!empty($userOperations) && $isAdminUser && empty($isInspectingOther))
+        <div class="mt-8">
+            @include('admin.dashboard.partials.user-operations-widget')
+        </div>
     @endif
     </div>
 @endsection

@@ -15,7 +15,9 @@ class AccountingPeriodController extends Controller
     public function index()
     {
         $periods = AccountingPeriod::orderBy('start_date', 'desc')->get();
-        return view('admin.accounts.periods.index', compact('periods'));
+        $totalCount = AccountingPeriod::count();
+        $openCount = AccountingPeriod::where('status', 'open')->count();
+        return view('admin.accounts.periods.index', compact('periods', 'totalCount', 'openCount'));
     }
 
     /**

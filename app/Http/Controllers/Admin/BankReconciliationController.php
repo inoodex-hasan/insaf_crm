@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Auth;
 
 class BankReconciliationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reconciliations = BankReconciliation::with(['account', 'closedBy'])
-            ->orderBy('statement_date', 'desc')
-            ->paginate(15);
+        $query = BankReconciliation::with(['account', 'closedBy'])->orderBy('statement_date', 'desc');
+        $reconciliations = $query->paginate(15);
         $accounts = OfficeAccount::where('status', 'active')->get();
-        return view('admin.accounts.bank-reconciliations.index', compact('reconciliations', 'accounts'));
+        $totalCount = BankReconciliation::count();
+        $closedCount = BankReconciliation::where('status', 'closed')->count();
+        return view('admin.accounts.bank-reconciliations.index', compact('reconciliations', 'accounts', 'totalCount', 'closedCount'));
     }
 
     public function create()

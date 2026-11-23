@@ -675,6 +675,244 @@ class LearningResourceController extends Controller
     }
 
     /**
+     * Display the dedicated full-page document editor.
+     */
+    public function editor(Request $request)
+    {
+        $templateId = $request->get('template_id');
+        $studentId = $request->get('student_id');
+
+        $templates = AgreementTemplate::where('is_active', true)->ordered()->with('country')->get();
+        $template = $templateId ? AgreementTemplate::with('country')->find($templateId) : $templates->first();
+        if (!$template && $templates->isNotEmpty()) {
+            $template = $templates->first();
+        }
+
+        $student = null;
+        if ($studentId) {
+            $student = \App\Models\Student::with(['country', 'university', 'course', 'intake'])->find($studentId);
+        }
+
+        $initialValues = [];
+        if ($template) {
+            $data = [];
+            if ($student) {
+                $data = [
+                    'applicant_name' => $student->full_name,
+                    'father_name' => $student->father_name ?? '',
+                    'mother_name' => $student->mother_name ?? '',
+                    'passport_no' => $student->passport_number ?? '',
+                    'phone' => $student->phone ?? '',
+                    'address' => $student->address ?? '',
+                    'country_name' => $student->country->name ?? '',
+                    'university_name' => $student->university->name ?? '',
+                    'course_name' => $student->course->name ?? '',
+                    'intake_name' => $student->intake->intake_name ?? '',
+                ];
+            }
+            $tokenMap = $this->buildTemplateTokenMap($template, $data);
+            $initialValues = $tokenMap['plain'];
+        }
+
+        return view('admin.learning-resources.editor', compact('templates', 'template', 'student', 'initialValues'));
+    }
+
+    /**
+     * Search students for auto-fill in the editor.
+     */
+    public function searchStudents(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+        $query = \App\Models\Student::query();
+
+        if (!empty($q)) {
+            $query->where(function($sq) use ($q) {
+                $sq->where('first_name', 'like', "%{$q}%")
+                   ->orWhere('last_name', 'like', "%{$q}%")
+                   ->orWhere('passport_number', 'like', "%{$q}%")
+                   ->orWhere('phone', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%");
+            });
+        }
+
+        $students = $query->with(['country', 'university', 'course', 'intake'])
+            ->orderBy('id', 'desc')
+            ->limit(20)
+            ->get()
+            ->map(function($st) {
+                return [
+                    'id' => $st->id,
+                    'name' => $st->full_name,
+                    'passport' => $st->passport_number,
+                    'phone' => $st->phone,
+                    'country' => $st->country->name ?? '',
+                    'university' => $st->university->name ?? '',
+                    'course' => $st->course->name ?? '',
+                    'intake' => $st->intake->intake_name ?? '',
+                    'father_name' => $st->father_name ?? '',
+                    'mother_name' => $st->mother_name ?? '',
+                    'address' => $st->address ?? '',
+                ];
+            });
+
+        return response()->json($students);
+    }
+
+    /**
+     * Get single student detailed data for autofill.
+     */
+    public function getStudentData(\App\Models\Student $student)
+    {
+        $student->load(['country', 'university', 'course', 'intake']);
+        return response()->json([
+            'id' => $student->id,
+            'name' => $student->full_name,
+            'applicant_name' => $student->full_name,
+            'father_name' => $student->father_name ?? '',
+            'mother_name' => $student->mother_name ?? '',
+            'passport_no' => $student->passport_number ?? '',
+            'phone' => $student->phone ?? '',
+            'address' => $student->address ?? '',
+            'country_name' => $student->country->name ?? '',
+            'university_name' => $student->university->name ?? '',
+            'course_name' => $student->course->name ?? '',
+            'intake_name' => $student->intake->intake_name ?? '',
+        ]);
+    }
+
+    /**
+     * Return populated raw DOCX binary for client-side 1:1 DOCX renderers.
+     */
+    public function getRawDocxTemplate(Request $request, AgreementTemplate $template)
+    {
+        $masterPath = $this->getMasterDocxTemplatePath($template);
+        if (!$masterPath || !file_exists($masterPath)) {
+            return response()->json(['error' => 'Master DOCX file not found'], 404);
+        }
+
+        $studentId = $request->get('student_id');
+        $student = $studentId ? \App\Models\Student::with(['country', 'university', 'course', 'intake'])->find($studentId) : null;
+
+        $data = [];
+        if ($student) {
+            $data = [
+                'applicant_name' => $student->full_name,
+                'father_name' => $student->father_name ?? '',
+                'mother_name' => $student->mother_name ?? '',
+                'passport_no' => $student->passport_number ?? '',
+                'phone' => $student->phone ?? '',
+                'address' => $student->address ?? '',
+                'country_name' => $student->country->name ?? '',
+                'university_name' => $student->university->name ?? '',
+                'course_name' => $student->course->name ?? '',
+                'intake_name' => $student->intake->intake_name ?? '',
+            ];
+        }
+
+        $tokens = $this->buildTemplateTokenMap($template, $data);
+
+        // Normalize template XML so that both [VARIABLE] and ${VARIABLE} are supported
+        $tempMaster = tempnam(sys_get_temp_dir(), 'tmpl_raw_') . '.docx';
+        copy($masterPath, $tempMaster);
+
+        $zip = new \ZipArchive();
+        if ($zip->open($tempMaster) === true) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $entryName = $zip->getNameIndex($i);
+                if (str_ends_with($entryName, '.xml')) {
+                    $xml = $zip->getFromIndex($i);
+                    $newXml = preg_replace('/\[([A-Z0-9_]+)\]/', '${$1}', $xml);
+                    if ($newXml !== $xml) {
+                        $zip->addFromString($entryName, $newXml);
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        Settings::setOutputEscapingEnabled(true);
+        $processor = new TemplateProcessor($tempMaster);
+        $processor->setValues($tokens['plain']);
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'docx_stream_') . '.docx';
+        $processor->saveAs($tempPath);
+        @unlink($tempMaster);
+
+        $cleanTitle = Str::slug($template->title) . '.docx';
+
+        return response()->download($tempPath, $cleanTitle, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Access-Control-Allow-Origin' => '*',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Download fully edited document as DOCX.
+     */
+    public function downloadEditorDocx(Request $request)
+    {
+        $validated = $request->validate([
+            'template_id' => 'required|exists:agreement_clearance_templates,id',
+            'html_content' => 'required|string',
+            'document_title' => 'nullable|string|max:255',
+        ]);
+
+        $template = AgreementTemplate::with('country')->findOrFail($validated['template_id']);
+        $cleanTitle = Str::slug($validated['document_title'] ?: $template->title);
+
+        $html = $validated['html_content'];
+        $cleanHtml = $this->prepareHtmlForPhpWord($html);
+
+        $phpWord = new PhpWord();
+        $phpWord->setDefaultFontName('Calibri');
+        $phpWord->setDefaultFontSize(11);
+
+        $topMarginTwips = ($template->layout_type === 'stamp' && $template->header_space_mm > 0)
+            ? Converter::pixelToTwip(intval($template->header_space_mm * 3.7795))
+            : 1134;
+
+        $section = $phpWord->addSection([
+            'marginTop' => $topMarginTwips,
+            'marginBottom' => 1134,
+            'marginLeft' => 1134,
+            'marginRight' => 1134,
+            'paperSize' => 'A4',
+            'orientation' => 'portrait',
+        ]);
+
+        if ($template->layout_type === 'pad') {
+            $header = $section->addHeader();
+            $header->addText(
+                'INSAF IMMIGRATION CONSULTANCY',
+                ['bold' => true, 'size' => 13, 'color' => '1E293B', 'name' => 'Calibri'],
+                ['alignment' => 'center']
+            );
+            $header->addText(
+                'Official Student Agreement & Clearance Service Hub | Dhaka, Bangladesh',
+                ['italic' => true, 'size' => 8.5, 'color' => '64748B', 'name' => 'Calibri'],
+                ['alignment' => 'center']
+            );
+            $header->addLine(['weight' => 1, 'width' => 450, 'height' => 0, 'color' => 'CBD5E1']);
+        }
+
+        try {
+            Html::addHtml($section, $cleanHtml, false, false);
+        } catch (\Throwable $e) {
+            // Fallback plain paragraph if complex inline HTML styles conflict
+            $plainText = strip_tags(str_replace(['<br>', '</tr>', '</p>'], "\n", $html));
+            $section->addText($plainText);
+        }
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'docx_edit_') . '.docx';
+        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $objWriter->save($tempPath);
+
+        return response()->download($tempPath, "{$cleanTitle}.docx", [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
      * Clean and normalize HTML tags for PhpWord converter.
      */
     private function prepareHtmlForPhpWord(string $html): string

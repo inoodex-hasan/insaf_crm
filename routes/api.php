@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\v1\StudentApiController;
 use App\Http\Controllers\Api\v1\ApplicationApiController;
 use App\Http\Controllers\Api\v1\LeadApiController;
 use App\Http\Controllers\Api\v1\AttendanceApiController;
+use App\Http\Controllers\Api\v1\DashboardApiController;
+use App\Http\Controllers\Api\v1\LookupApiController;
 
 Route::prefix('v1')->group(function () {
     // Public Authentication
@@ -19,6 +21,19 @@ Route::prefix('v1')->group(function () {
 
     // Protected Routes (Sanctum)
     Route::middleware('auth:sanctum')->group(function () {
+        // Mobile Dashboard & Pipeline Intelligence
+        Route::get('dashboard', [DashboardApiController::class, 'index']);
+
+        // Form Metadata & Dynamic Lookups
+        Route::prefix('lookups')->group(function () {
+            Route::get('all', [LookupApiController::class, 'all']);
+            Route::get('countries', [LookupApiController::class, 'countries']);
+            Route::get('universities', [LookupApiController::class, 'universities']);
+            Route::get('courses', [LookupApiController::class, 'courses']);
+            Route::get('intakes', [LookupApiController::class, 'intakes']);
+            Route::get('staff', [LookupApiController::class, 'staff']);
+        });
+
         // Authenticated User & Session
         Route::prefix('auth')->group(function () {
             Route::get('me', [AuthController::class, 'me']);

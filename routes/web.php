@@ -100,6 +100,15 @@ Route::prefix('dashboard/search-student')->name('admin.student-search.')->middle
     Route::get('country-remarks', [App\Http\Controllers\Admin\StudentSearchController::class, 'getCountryRemarks'])->name('country-remarks');
 });
 
+// Student Payment Statuses Management
+Route::prefix('dashboard/student-payment-statuses')->name('admin.student-payment-statuses.')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\StudentPaymentStatusController::class, 'index'])->name('index')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::post('/', [App\Http\Controllers\Admin\StudentPaymentStatusController::class, 'store'])->name('store')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::put('{studentPaymentStatus}', [App\Http\Controllers\Admin\StudentPaymentStatusController::class, 'update'])->name('update')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::delete('{studentPaymentStatus}', [App\Http\Controllers\Admin\StudentPaymentStatusController::class, 'destroy'])->name('destroy')->middleware('can:*consultant|*application|*marketing|*accountant');
+    Route::post('{studentPaymentStatus}/toggle-status', [App\Http\Controllers\Admin\StudentPaymentStatusController::class, 'toggleStatus'])->name('toggle-status')->middleware('can:*consultant|*application|*marketing|*accountant');
+});
+
 // Search Program Module
 Route::prefix('dashboard/search-program')->name('admin.search-program.')->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\SearchProgramController::class, 'index'])->name('index');
@@ -131,6 +140,12 @@ Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')
     Route::get('templates/{template}/download-pdf', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadPdf'])->name('templates.download-pdf');
     Route::get('templates/{template}/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadDocx'])->name('templates.download-docx');
     Route::post('generate-agreement', [App\Http\Controllers\Admin\LearningResourceController::class, 'generateAgreement'])->name('generate-agreement');
+    Route::get('editor', [App\Http\Controllers\Admin\LearningResourceController::class, 'editor'])->name('editor');
+    Route::get('editor/raw-docx/{template}', [App\Http\Controllers\Admin\LearningResourceController::class, 'getRawDocxTemplate'])->name('editor.raw-docx');
+    Route::post('editor/save-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'saveEditedDocx'])->name('editor.save-docx');
+    Route::post('editor/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadEditorDocx'])->name('editor.download-docx');
+    Route::get('api/students-search', [App\Http\Controllers\Admin\LearningResourceController::class, 'searchStudents'])->name('api.students-search');
+    Route::get('api/student/{student}', [App\Http\Controllers\Admin\LearningResourceController::class, 'getStudentData'])->name('api.student-data');
     Route::post('documents', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeDocument'])->name('documents.store');
     Route::delete('documents/{resource}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyDocument'])->name('documents.destroy');
     Route::post('interview-prep', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeInterviewPrep'])->name('interview-prep.store');
@@ -464,6 +479,8 @@ Route::prefix('dashboard/attendance')->name('admin.attendance.')->middleware('au
     Route::post('/{attendance}/adjust', [App\Http\Controllers\Admin\AttendanceController::class, 'adjust'])->name('adjust');
     Route::post('/manual-store', [App\Http\Controllers\Admin\AttendanceController::class, 'manualStore'])->name('manual-store');
     Route::get('/report', [App\Http\Controllers\Admin\AttendanceController::class, 'report'])->name('report');
+    Route::get('/export-excel', [App\Http\Controllers\Admin\AttendanceController::class, 'exportExcel'])->name('export-excel');
+    Route::get('/export-daily-excel', [App\Http\Controllers\Admin\AttendanceController::class, 'exportDailyExcel'])->name('export-daily-excel');
 });
 
 

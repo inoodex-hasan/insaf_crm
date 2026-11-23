@@ -23,70 +23,92 @@
 
 <div class="panel mt-6">
     <div class="mb-5">
-        <form action="{{ route('admin.applications.index') }}" method="GET" class="flex flex-col gap-3 w-full">
+        <form action="{{ route('admin.applications.index') }}" method="GET" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
 
-            {{-- Row 1: Search + Status + Offer Letter + Visa --}}
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%;">
-                <div class="relative" style="position: relative; flex: 2; min-width: 180px;">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search ID, student name..." class="form-input text-xs w-full" style="height: 38px; padding-right: 36px;" />
-                    <button type="submit"
-                        style="position: absolute; right: 8px; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0; cursor: pointer;"
-                        class="text-gray-400 hover:text-primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                    </button>
+            <!-- Toolbar: KPI summary & Primary Quick Filters / Search -->
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 12px;" class="dark:border-[#1b2e4b]">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        Total: {{ $totalCount ?? $applications->total() }} Applications
+                    </span>
+                    <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        Visa Approved: {{ $visaApprovedCount ?? 0 }}
+                    </span>
+                    <span class="badge bg-warning/10 text-warning border border-warning/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        Pending: {{ $pendingCount ?? 0 }}
+                    </span>
                 </div>
 
-                <select name="status" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
-                    <option value="">Status</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="applied" {{ request('status') == 'applied' ? 'selected' : '' }}>Applied</option>
-                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    <option value="withdrawn" {{ request('status') == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
-                    <option value="visa_processing" {{ request('status') == 'visa_processing' ? 'selected' : '' }}>Visa Processing</option>
-                    <option value="enrolled" {{ request('status') == 'enrolled' ? 'selected' : '' }}>Enrolled</option>
-                </select>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                    <select name="status" class="form-select text-xs" style="height: 36px; width: 125px; border-radius: 6px;" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="applied" {{ request('status') == 'applied' ? 'selected' : '' }}>Applied</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                        <option value="withdrawn" {{ request('status') == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
+                        <option value="visa_processing" {{ request('status') == 'visa_processing' ? 'selected' : '' }}>Visa Processing</option>
+                        <option value="enrolled" {{ request('status') == 'enrolled' ? 'selected' : '' }}>Enrolled</option>
+                    </select>
 
-                <select name="offer_letter" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
-                    <option value="">Offer Letter</option>
-                    <option value="1" {{ request('offer_letter') == '1' ? 'selected' : '' }}>Received</option>
-                    <option value="0" {{ request('offer_letter') == '0' ? 'selected' : '' }}>Not Received</option>
-                </select>
+                    <select name="offer_letter" class="form-select text-xs" style="height: 36px; width: 125px; border-radius: 6px;" onchange="this.form.submit()">
+                        <option value="">Offer Letter</option>
+                        <option value="1" {{ request('offer_letter') == '1' ? 'selected' : '' }}>Received</option>
+                        <option value="0" {{ request('offer_letter') == '0' ? 'selected' : '' }}>Not Received</option>
+                    </select>
 
-                <select name="visa_status" class="form-select text-xs" style="flex: 1; min-width: 120px; height: 38px;">
-                    <option value="">Visa</option>
-                    <option value="not_applied" {{ request('visa_status') == 'not_applied' ? 'selected' : '' }}>Not Applied</option>
-                    <option value="pending" {{ request('visa_status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="approved" {{ request('visa_status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="rejected" {{ request('visa_status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                </select>
+                    <select name="visa_status" class="form-select text-xs" style="height: 36px; width: 120px; border-radius: 6px;" onchange="this.form.submit()">
+                        <option value="">Visa</option>
+                        <option value="not_applied" {{ request('visa_status') == 'not_applied' ? 'selected' : '' }}>Not Applied</option>
+                        <option value="pending" {{ request('visa_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="approved" {{ request('visa_status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="rejected" {{ request('visa_status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+
+                    <div style="position: relative; width: 220px;">
+                        <input type="text"
+                               name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Search ID, student name..."
+                               class="form-input text-xs w-full"
+                               style="height: 36px; padding-right: 36px; border-radius: 6px;" />
+                        <button type="submit"
+                                style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                                class="text-gray-400 hover:text-primary">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    @if(request('search') || request('status') || request('offer_letter') || request('visa_status') || request('emgs_score') || request('security_deposit') || request('cvu_fee') || request('created_by'))
+                        <a href="{{ route('admin.applications.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+                    @endif
+                </div>
             </div>
 
-            {{-- Row 2: EMGS Score + Security Deposit + CVU Fee + Created/Collected By + Filter/Reset buttons --}}
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%;">
-                <select name="emgs_score" class="form-select text-xs" style="flex: 1; min-width: 110px; height: 38px;">
+            <!-- Secondary Row: Advanced Filters (EMGS, Security Deposit, CVU Fee, Creator) -->
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
+                <select name="emgs_score" class="form-select text-xs" style="height: 34px; width: 115px; border-radius: 6px;" onchange="this.form.submit()">
                     <option value="">EMGS Score</option>
                     @foreach([5, 15, 32, 35, 70] as $score)
                         <option value="{{ $score }}" {{ request('emgs_score') == $score ? 'selected' : '' }}>{{ $score }}%</option>
                     @endforeach
                 </select>
 
-                <select name="security_deposit" class="form-select text-xs" style="flex: 1; min-width: 140px; height: 38px;">
+                <select name="security_deposit" class="form-select text-xs" style="height: 34px; width: 140px; border-radius: 6px;" onchange="this.form.submit()">
                     <option value="">Security Deposit</option>
                     <option value="1" {{ request('security_deposit') == '1' ? 'selected' : '' }}>Paid</option>
                     <option value="0" {{ request('security_deposit') == '0' ? 'selected' : '' }}>Pending</option>
                 </select>
 
-                <select name="cvu_fee" class="form-select text-xs" style="flex: 1; min-width: 110px; height: 38px;">
+                <select name="cvu_fee" class="form-select text-xs" style="height: 34px; width: 110px; border-radius: 6px;" onchange="this.form.submit()">
                     <option value="">CVU Fee</option>
                     <option value="1" {{ request('cvu_fee') == '1' ? 'selected' : '' }}>Paid</option>
                     <option value="0" {{ request('cvu_fee') == '0' ? 'selected' : '' }}>Pending</option>
                 </select>
 
-                <select name="created_by" class="form-select text-xs" style="flex: 1.5; min-width: 160px; height: 38px;">
+                <select name="created_by" class="form-select text-xs" style="height: 34px; width: 165px; border-radius: 6px;" onchange="this.form.submit()">
                     <option value="">Created / Collected By</option>
                     @foreach($creators ?? [] as $creator)
                         <option value="{{ $creator->id }}" {{ (request('created_by') == $creator->id || request('collected_by') == $creator->id) ? 'selected' : '' }}>
@@ -94,11 +116,6 @@
                         </option>
                     @endforeach
                 </select>
-
-                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
-                    <button type="submit" class="btn btn-primary text-xs font-semibold px-4" style="height: 38px; white-space: nowrap;">Filter</button>
-                    <a href="{{ route('admin.applications.index') }}" class="btn btn-outline-danger text-xs font-semibold px-4" style="height: 38px; white-space: nowrap; display: inline-flex; align-items: center;">Reset</a>
-                </div>
             </div>
 
         </form>

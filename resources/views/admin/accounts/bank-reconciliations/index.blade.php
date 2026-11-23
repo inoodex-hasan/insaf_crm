@@ -18,7 +18,19 @@
     </div>
 
     <div class="panel mt-6">
-        <div class="table-responsive">
+        <!-- Toolbar: KPI summary -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 16px;" class="dark:border-[#1b2e4b]">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Total: {{ $totalCount ?? $reconciliations->total() }} Reconciliations
+                </span>
+                <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Closed: {{ $closedCount ?? 0 }}
+                </span>
+            </div>
+        </div>
+
+        <div class="table-responsive" style="min-height: 280px;">
             <table class="table-hover">
                 <thead>
                     <tr>
@@ -49,17 +61,39 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('admin.bank-reconciliations.show', $rec) }}" class="btn btn-sm btn-outline-primary">
-                                        {{ $rec->status == 'closed' ? 'View' : 'Continue' }}
-                                    </a>
-                                    @if($rec->status != 'closed')
-                                        <form action="{{ route('admin.bank-reconciliations.destroy', $rec) }}" method="POST" onsubmit="return confirm('Delete this draft?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                        </form>
-                                    @endif
+                                <div class="dropdown flex items-center justify-center" x-data="dropdown" @click.outside="open = false">
+                                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-dark/70 hover:bg-gray-100 hover:text-primary dark:text-white-light/70 dark:hover:bg-dark/40 dark:hover:text-primary" @click="toggle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                        </svg>
+                                    </button>
+                                    <ul x-cloak x-show="open" x-transition x-transition.duration.300ms :class="openUp ? 'bottom-full mb-1' : 'top-full mt-1'" class="ltr:right-0 rtl:left-0 !z-50 whitespace-nowrap shadow-lg">
+                                        <li>
+                                            <a href="{{ route('admin.bank-reconciliations.show', $rec) }}" @click="toggle">
+                                                <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-info" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                {{ $rec->status == 'closed' ? 'View' : 'Continue' }}
+                                            </a>
+                                        </li>
+                                        @if($rec->status != 'closed')
+                                            <li>
+                                                <form action="{{ route('admin.bank-reconciliations.destroy', $rec) }}" method="POST"
+                                                    class="m-0" onsubmit="return confirm('Delete this draft?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="flex w-full items-center px-4 py-2 text-left text-danger hover:!bg-danger/10 hover:!text-danger">
+                                                        <svg class="h-4 w-4 ltr:mr-2 rtl:ml-2 text-danger" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                        </svg>
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        @endif
+                                    </ul>
                                 </div>
                             </td>
                         </tr>

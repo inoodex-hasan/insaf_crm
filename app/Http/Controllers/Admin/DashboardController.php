@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\{Application, Attendance, AttendanceSetting, Country, Course, CourseIntake, Currency, Lead, Payment, Salary, Student, University, User};
+use App\Services\UserDashboardService;
 use HasinHayder\Tyro\Models\{Privilege, Role};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -14,8 +15,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Redirect digital marketing users to campaigns page
-        if (auth()->check() && auth()->user()->hasRole('digital-marketing')) {
+        // Redirect digital marketing users to campaigns page (except admin / super-admin)
+        if (auth()->check() && !auth()->user()->isAdminOrSuperAdmin() && auth()->user()->hasRole('digital-marketing')) {
             return redirect()->route('admin.marketing.campaigns.index');
         }
 
@@ -186,6 +187,38 @@ class DashboardController extends Controller
         $todayAttendance = $user ? Attendance::where('user_id', $user->id)->where('date', now()->toDateString())->first() : null;
         $attendanceSettings = AttendanceSetting::getSettings();
 
+        // ========================================================
+        // 2. Individual User Operations Dashboard (Daily Doings)
+        // ========================================================
+        $isAdmin = $user && ($user->isAdminOrSuperAdmin() || $user->hasRole('admin') || $user->hasRole('super-admin') || $user->hasRole('superadmin'));
+        
+        // Admin user switcher inspection
+        $inspectUserId = $request->get('user_id');
+        $viewingUser = $user;
+        $isInspectingOther = false;
+
+        if ($isAdmin && !empty($inspectUserId)) {
+            $foundUser = User::find($inspectUserId);
+            if ($foundUser) {
+                $viewingUser = $foundUser;
+                $isInspectingOther = ($foundUser->id !== $user->id);
+            }
+        }
+
+        $timeframe = $request->get('timeframe', 'today');
+        $customStart = $request->get('start_date');
+        $customEnd = $request->get('end_date');
+
+        $userDashboardService = app(UserDashboardService::class);
+        $userOperations = $viewingUser ? $userDashboardService->getUserMetrics($viewingUser, $timeframe, $customStart, $customEnd) : null;
+
+        // Staff members list for Admin Switcher dropdown (Filtered to core operational roles: application, consultant, marketing)
+        $staffMembers = $isAdmin
+            ? User::whereHas('roles', fn($q) => $q->whereIn('slug', ['application', 'consultant', 'marketing'])->orWhereIn('name', ['application', 'consultant', 'marketing', 'Application', 'Consultant', 'Marketing']))
+                ->orderBy('name')
+                ->get(['id', 'name', 'email', 'designation'])
+            : collect();
+
         return view('admin.dashboard', compact(
             'stats',
             'leads',
@@ -204,7 +237,13 @@ class DashboardController extends Controller
             'dateRange',
             'intakeFilter',
             'yearFilter',
-            'countryFilter'
+            'countryFilter',
+            'viewingUser',
+            'isInspectingOther',
+            'isAdmin',
+            'userOperations',
+            'staffMembers',
+            'timeframe'
         ));
     }
 }

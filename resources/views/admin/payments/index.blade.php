@@ -42,38 +42,51 @@
 </div>
 
 <div class="panel mt-6">
-    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <form action="{{ route('admin.payments.index') }}" method="GET"
-            class="flex flex-1 flex-col gap-5 md:flex-row md:items-center w-full">
-            <div class="relative flex-1">
-                <input type="text" name="search" value="{{ request('search') }}"
-                    placeholder="Search student name, phone or email..." class="form-input ltr:pr-11 rtl:pl-11" />
+    <!-- Toolbar: KPI summary & Search -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; width: 100%; border-bottom: 1px solid #e0e6ed; padding-bottom: 16px; margin-bottom: 20px;" class="dark:border-[#1b2e4b]">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span class="badge bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                Total: {{ $totalCount ?? $payments->total() }} Payments
+            </span>
+            <span class="badge bg-success/10 text-success border border-success/20 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                Completed: {{ $completedCount ?? 0 }}
+            </span>
+        </div>
+
+        <form action="{{ route('admin.payments.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+            <select name="payment_type" class="form-select text-xs" style="height: 36px; width: 120px; border-radius: 6px;" onchange="this.form.submit()">
+                <option value="">All Types</option>
+                <option value="advance" {{ request('payment_type') == 'advance' ? 'selected' : '' }}>Advance</option>
+                <option value="final" {{ request('payment_type') == 'final' ? 'selected' : '' }}>Final</option>
+            </select>
+
+            <select name="payment_status" class="form-select text-xs" style="height: 36px; width: 130px; border-radius: 6px;" onchange="this.form.submit()">
+                <option value="">All Statuses</option>
+                <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>Partial</option>
+                <option value="completed" {{ request('payment_status') == 'completed' ? 'selected' : '' }}>Completed</option>
+            </select>
+
+            <div style="position: relative; width: 220px;">
+                <input type="text"
+                       name="search"
+                       value="{{ request('search') }}"
+                       placeholder="Search student, receipt..."
+                       class="form-input text-xs w-full"
+                       style="height: 36px; padding-right: 36px; border-radius: 6px;" />
                 <button type="submit"
-                    class="absolute inset-y-0 flex items-center hover:text-primary ltr:right-4 rtl:left-4">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5" />
-                        <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
+                        class="text-gray-400 hover:text-primary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </button>
             </div>
-            <div class="flex gap-2">
-                <select name="payment_type" class="form-select w-auto md:w-auto pr-10">
-                    <option value="">Type</option>
-                    <option value="advance" {{ request('payment_type')=='advance' ? 'selected' : '' }}>Advance
-                    </option>
-                    <option value="final" {{ request('payment_type')=='final' ? 'selected' : '' }}>Final</option>
-                </select>
-                <select name="payment_status" class="form-select w-auto md:w-auto pr-10">
-                    <option value="">Status</option>
-                    <option value="pending" {{ request('payment_status')=='pending' ? 'selected' : '' }}>Pending
-                    </option>
-                    <option value="partial" {{ request('payment_status')=='partial' ? 'selected' : '' }}>Partial
-                    </option>
-                    <option value="completed" {{ request('payment_status')=='completed' ? 'selected' : '' }}>Completed
-                    </option>
-                </select>
-                <button type="submit" class="btn btn-primary">Filter</button>
-            </div>
+
+            @if(request('search') || request('payment_type') || request('payment_status'))
+                <a href="{{ route('admin.payments.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center;">Reset</a>
+            @endif
         </form>
     </div>
 

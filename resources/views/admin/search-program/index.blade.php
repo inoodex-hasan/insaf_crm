@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- 4. Student's Nationality (Bangladesh default, student state excluded) -->
-                <div class="filter-field-col" style="flex: 2; min-width: 160px;">
+                <!-- <div class="filter-field-col" style="flex: 2; min-width: 160px;">
                     <label>Student's Nationality</label>
                     <div class="input-with-icon">
                         <span class="input-icon">
@@ -93,7 +93,7 @@
                             <option value="Other" {{ request('nationality') == 'Other' ? 'selected' : '' }}>All Nationalities</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- 5. Search Button -->
                 <div class="filter-field-col" style="flex: 0 0 auto; min-width: 110px;">
@@ -512,7 +512,7 @@
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Tuition Fee</span>
-                                <span class="font-bold text-[#10b981]" x-text="selectedCourse?.tuition_fee ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : 'Contact University'"></span>
+                                <span class="font-bold text-[#10b981]" x-text="selectedCourse?.tuition_fee ? (!isNaN(Number(selectedCourse.tuition_fee)) && Number(selectedCourse.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'yr') : selectedCourse.tuition_fee) : 'Contact University'"></span>
                             </div>
                             <div>
                                 <span class="text-white-dark block text-[10px] uppercase font-semibold">Duration</span>
@@ -526,23 +526,23 @@
                             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Tuition Fee</span>
-                                    <span class="font-bold text-primary text-xs" x-text="Number(selectedCourse?.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-primary text-xs" x-text="selectedCourse?.tuition_fee ? (!isNaN(Number(selectedCourse.tuition_fee)) && Number(selectedCourse.tuition_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.tuition_fee).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.tuition_fee) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Admission</span>
-                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="selectedCourse?.admission_fee ? (!isNaN(Number(selectedCourse.admission_fee)) && Number(selectedCourse.admission_fee) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.admission_fee).toLocaleString() : selectedCourse.admission_fee) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Living Cost</span>
-                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="selectedCourse?.living_cost ? (!isNaN(Number(selectedCourse.living_cost)) && Number(selectedCourse.living_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.living_cost).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.living_cost) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Additional</span>
-                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="Number(selectedCourse?.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : 'N/A'"></span>
+                                    <span class="font-bold text-dark dark:text-white-light text-xs" x-text="selectedCourse?.additional_cost ? (!isNaN(Number(selectedCourse.additional_cost)) && Number(selectedCourse.additional_cost) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.additional_cost).toLocaleString() : selectedCourse.additional_cost) : 'N/A'"></span>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-[#121e32] p-2 rounded-lg border border-[#e0e6ed] dark:border-[#1b2e4b]">
                                     <span class="block text-[10px] text-slate-400 font-semibold uppercase">Scholarship</span>
-                                    <span class="font-bold text-success text-xs" x-text="Number(selectedCourse?.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : 'N/A'"></span>
+                                    <span class="font-bold text-success text-xs" x-text="selectedCourse?.scholarship_amount ? (!isNaN(Number(selectedCourse.scholarship_amount)) && Number(selectedCourse.scholarship_amount) > 0 ? (selectedCourse.currency || 'USD') + ' ' + Number(selectedCourse.scholarship_amount).toLocaleString() + '/' + (selectedCourse.fee_period || 'year') : selectedCourse.scholarship_amount) : 'N/A'"></span>
                                 </div>
                             </div>
                         </div>

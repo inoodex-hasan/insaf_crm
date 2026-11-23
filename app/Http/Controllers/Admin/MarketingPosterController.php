@@ -22,8 +22,10 @@ class MarketingPosterController extends Controller
         }
 
         $posters = $query->paginate(15)->withQueryString();
+        $totalCount = MarketingPoster::count();
+        $readyCount = MarketingPoster::where('status', 'ready')->orWhere('status', 'uploaded')->count();
 
-        return view('admin.marketing.posters.index', compact('posters'));
+        return view('admin.marketing.posters.index', compact('posters', 'totalCount', 'readyCount'));
     }
 
     public function store(Request $request)

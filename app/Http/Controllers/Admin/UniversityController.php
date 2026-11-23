@@ -24,8 +24,10 @@ class UniversityController extends Controller
 
         $universities = $query->latest()->paginate(15)->withQueryString();
         $countries = Country::where('status', 1)->orderBy('name')->get();
+        $totalCount = University::count();
+        $activeCount = University::where('status', '1')->orWhere('status', 1)->count();
 
-        return view('admin.universities.index', compact('universities', 'countries'));
+        return view('admin.universities.index', compact('universities', 'countries', 'totalCount', 'activeCount'));
     }
 
     public function create()

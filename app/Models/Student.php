@@ -38,6 +38,7 @@ class Student extends Model
         'course_intake_id',
         'subject',
         'package_amount',
+        'payment_status',
         'remarks',
         'notes',
         'created_by',
@@ -120,6 +121,29 @@ class Student extends Model
     {
         $package = (float) ($this->package_amount ?? 0);
         return max(0, $package - $this->total_paid_amount);
+    }
+
+    public function getCalculatedPaymentStatusAttribute(): string
+    {
+        if (!empty($this->payment_status)) {
+            return $this->payment_status;
+        }
+
+        $package = (float) ($this->package_amount ?? 0);
+        if ($package <= 0) {
+            return 'no_package';
+        }
+
+        $paid = $this->total_paid_amount;
+        if ($paid >= $package) {
+            return 'paid';
+        }
+
+        if ($paid > 0) {
+            return 'partial';
+        }
+
+        return 'unpaid';
     }
 
     public static function getRemarksForCountry(?string $countryName, ?int $countryId = null): array

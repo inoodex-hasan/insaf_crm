@@ -429,6 +429,44 @@ class AttendanceController extends Controller
     }
 
     /**
+     * Export Monthly Attendance & Salary Deductions report to Excel (.xlsx).
+     */
+    public function exportExcel(Request $request)
+    {
+        $this->authorizeAdmin();
+
+        $month = $request->get('month', now()->format('Y-m'));
+        $cleanMonth = Carbon::parse($month . '-01')->format('M_Y');
+        $filename = "Monthly_Attendance_Report_{$cleanMonth}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\MonthlyAttendanceReportExport($month),
+            $filename
+        );
+    }
+
+    /**
+     * Export Daily Attendance Board logs to Excel (.xlsx).
+     */
+    public function exportDailyExcel(Request $request)
+    {
+        $this->authorizeAdmin();
+
+        $date = $request->get('date', now()->toDateString());
+        $status = $request->get('status');
+        $userId = $request->get('user_id');
+        $search = $request->get('search');
+
+        $cleanDate = Carbon::parse($date)->format('Y-m-d');
+        $filename = "Daily_Attendance_Log_{$cleanDate}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\DailyAttendanceExport($date, $status, $userId ? (int) $userId : null, $search),
+            $filename
+        );
+    }
+
+    /**
      * Helper to restrict Admin / Super Admin operations.
      */
     protected function authorizeAdmin(): void

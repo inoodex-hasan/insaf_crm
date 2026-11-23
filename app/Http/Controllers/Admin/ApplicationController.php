@@ -83,7 +83,11 @@ class ApplicationController extends Controller
           ->orderBy('name')
           ->get(['id', 'name']);
 
-        return view('admin.applications.index', compact('applications', 'creators'));
+        $totalCount = Application::count();
+        $pendingCount = Application::where('status', 'pending')->count();
+        $visaApprovedCount = Application::where('visa_status', 'approved')->count();
+
+        return view('admin.applications.index', compact('applications', 'creators', 'totalCount', 'pendingCount', 'visaApprovedCount'));
     }
 
     public function create(Request $request)

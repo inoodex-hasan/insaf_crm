@@ -288,8 +288,8 @@
                 </li>
 
                 <!-- Consulting -->
-                <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click.prevent="open = !open" class="group">
+                <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.student-search.*') || request()->routeIs('admin.students.*') || request()->routeIs('admin.student-payment-statuses.*') ? 'true' : 'false' }} }">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group {{ request()->routeIs('admin.student-search.*') || request()->routeIs('admin.students.*') || request()->routeIs('admin.student-payment-statuses.*') ? 'active' : '' }}">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -306,9 +306,10 @@
                         </div>
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
-                        <li><a href="{{ route('admin.student-search.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] font-semibold text-primary">Search Student</a></li>
-                        <li><a href="{{ route('admin.students.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Add Student</a></li>
-                        <li><a href="{{ route('admin.students.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Student List</a></li>
+                        <li><a href="{{ route('admin.student-search.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.student-search.*') ? 'font-semibold text-primary' : '' }}">Search Student</a></li>
+                        <li><a href="{{ route('admin.students.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.students.create') ? 'font-semibold text-primary' : '' }}">Add Student</a></li>
+                        <li><a href="{{ route('admin.students.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.students.index') ? 'font-semibold text-primary' : '' }}">Student List</a></li>
+                        <li><a href="{{ route('admin.student-payment-statuses.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.student-payment-statuses.*') ? 'font-semibold text-primary' : '' }}">Payment Statuses</a></li>
                     </ul>
                 </li>
 
@@ -435,8 +436,8 @@
                 </li>
 
                 <!-- Payments -->
-                <li class="nav-item" x-data="{ open: false }">
-                    <a href="javascript:;" @click.prevent="open = !open" class="group">
+                <li class="nav-item" x-data="{ open: {{ request()->routeIs('admin.payments.*') || request()->routeIs('admin.student-payment-statuses.*') ? 'true' : 'false' }} }">
+                    <a href="javascript:;" @click.prevent="open = !open" class="group {{ request()->routeIs('admin.payments.*') || request()->routeIs('admin.student-payment-statuses.*') ? 'active' : '' }}">
                         <div class="flex items-center justify-between w-full">
                             <div class="flex items-center">
                                 <svg class="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -451,8 +452,9 @@
                         </div>
                     </a>
                     <ul x-show="open" x-collapse class="mt-1 space-y-1 rounded-md bg-gray-100 p-2 dark:bg-[#1b2e4b]">
-                        <li><a href="{{ route('admin.payments.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Add Payment</a></li>
-                        <li><a href="{{ route('admin.payments.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726]">Payment List</a></li>
+                        <li><a href="{{ route('admin.payments.create') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.payments.create') ? 'font-semibold text-primary' : '' }}">Add Payment</a></li>
+                        <li><a href="{{ route('admin.payments.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.payments.index') ? 'font-semibold text-primary' : '' }}">Payment List</a></li>
+                        <li><a href="{{ route('admin.student-payment-statuses.index') }}" class="block rounded-md px-3 py-2 text-sm hover:bg-white hover:shadow-sm dark:hover:bg-[#0e1726] {{ request()->routeIs('admin.student-payment-statuses.*') ? 'font-semibold text-primary' : '' }}">Payment Statuses</a></li>
                     </ul>
                 </li>
 

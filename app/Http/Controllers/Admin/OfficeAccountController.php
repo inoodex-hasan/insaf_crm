@@ -30,8 +30,10 @@ class OfficeAccountController extends Controller
         }
 
         $accounts = $query->latest()->paginate(15)->withQueryString();
+        $totalCount = OfficeAccount::count();
+        $activeCount = OfficeAccount::where('status', 'active')->count();
 
-        return view('admin.office-accounts.index', compact('accounts'));
+        return view('admin.office-accounts.index', compact('accounts', 'totalCount', 'activeCount'));
     }
 
     public function create()

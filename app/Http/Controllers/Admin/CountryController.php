@@ -19,8 +19,10 @@ class CountryController extends Controller
         }
 
         $countries = $query->latest()->paginate(15)->withQueryString();
+        $totalCount = Country::count();
+        $activeCount = Country::where('status', '1')->orWhere('status', 1)->count();
 
-        return view('admin.countries.index', compact('countries'));
+        return view('admin.countries.index', compact('countries', 'totalCount', 'activeCount'));
     }
 
     public function create()

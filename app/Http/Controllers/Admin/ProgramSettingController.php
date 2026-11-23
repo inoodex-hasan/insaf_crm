@@ -40,12 +40,20 @@ class ProgramSettingController extends Controller
             $code = $baseCode . '_' . $counter++;
         }
 
-        ProgramLevel::create([
+        $level = ProgramLevel::create([
             'name' => $validated['name'],
             'code' => $code,
             'sort_order' => $validated['sort_order'] ?? (ProgramLevel::max('sort_order') + 1),
             'is_active' => true,
         ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'level' => $level,
+                'message' => 'Program level added successfully.'
+            ]);
+        }
 
         return redirect()->route('admin.program-settings.index', ['tab' => 'levels'])
             ->with('success', 'Program level added successfully.');
