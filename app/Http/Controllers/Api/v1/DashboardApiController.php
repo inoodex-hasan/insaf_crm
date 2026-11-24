@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\{Application, Attendance, Country, Course, CourseIntake, Currency, Invoice, Lead, Payment, Student, University, User};
+use App\Services\UserDashboardService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -179,7 +180,40 @@ class DashboardApiController extends BaseApiController
             'total_revenue' => (float) Payment::where('payment_status', 'completed')->sum('amount'),
         ];
 
+        // Individual User Operations (Daily Doings, 10 Operational Cards & Action Queues)
+        $timeframe = $request->get('timeframe', 'today');
+        $targetUser = $user;
+        $isInspectingOther = false;
+
+        $isAdmin = $user && ($user->isAdminOrSuperAdmin() || $user->hasRole('admin') || $user->hasRole('super-admin') || $user->hasRole('superadmin'));
+        if ($isAdmin && $request->filled('user_id')) {
+            $foundUser = User::find($request->get('user_id'));
+            if ($foundUser) {
+                $targetUser = $foundUser;
+                $isInspectingOther = ($foundUser->id !== $user->id);
+            }
+        }
+
+        $userDashboardService = app(UserDashboardService::class);
+        $userOperations = $targetUser ? $userDashboardService->getUserMetrics($targetUser, $timeframe, $request->get('start_date'), $request->get('end_date')) : null;
+
         return $this->sendResponse([
+            'user_operations' => $userOperations ? [
+                'viewing_user' => [
+                    'id' => $targetUser->id,
+                    'name' => $targetUser->name,
+                    'email' => $targetUser->email,
+                    'designation' => $targetUser->designation ?? null,
+                ],
+                'is_inspecting_other' => $isInspectingOther,
+                'timeframe' => $timeframe,
+                'cards' => $userOperations['cards'] ?? [],
+                'queues' => [
+                    'follow_ups' => $userOperations['queues']['follow_ups'] ?? [],
+                    'pending_ol' => $userOperations['queues']['pending_ol'] ?? [],
+                    'activities' => $userOperations['queues']['activities'] ?? [],
+                ],
+            ] : null,
             'pipeline_metrics' => $pipelineMetrics,
             'pipeline_details' => $pipelineDetails,
             'general_stats' => $generalStats,
@@ -187,6 +221,7 @@ class DashboardApiController extends BaseApiController
                 'countries' => $pipelineCountries,
                 'intakes' => $pipelineIntakes,
                 'years' => $pipelineYears,
+                'timeframes' => ['today', 'yesterday', 'this_week', 'this_month', 'all_time'],
             ],
             'applied_filters' => [
                 'start_date' => $startDate ? $startDate->toDateString() : null,
@@ -194,6 +229,8 @@ class DashboardApiController extends BaseApiController
                 'intake' => $intakeFilter ?: null,
                 'year' => $yearFilter ?: null,
                 'country_id' => $countryFilter ?: null,
+                'timeframe' => $timeframe,
+                'user_id' => $targetUser ? $targetUser->id : null,
             ],
             'attendance_status' => $todayAttendance ? [
                 'checked_in' => !empty($todayAttendance->check_in),

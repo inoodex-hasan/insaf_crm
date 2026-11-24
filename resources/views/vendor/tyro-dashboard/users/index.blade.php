@@ -41,7 +41,7 @@
             {{-- Filter Form --}}
             <form action="{{ route('tyro-dashboard.users.index') }}" method="GET" style="display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap;">
                 {{-- Role Filter --}}
-                <select name="role" onchange="this.form.submit()" class="form-select text-xs" style="height: 36px; width: 150px; border-radius: 6px;">
+                <select name="role" onchange="this.form.submit()" class="form-select text-xs" style="height: 36px; width: 150px; min-width: 150px; border-radius: 6px; flex-shrink: 0;">
                     <option value="">All Roles</option>
                     @foreach($roles as $role)
                         <option value="{{ $role->slug }}" {{ ($filters['role'] ?? '') === $role->slug ? 'selected' : '' }}>
@@ -51,14 +51,14 @@
                 </select>
 
                 {{-- Status Filter --}}
-                <select name="status" onchange="this.form.submit()" class="form-select text-xs" style="height: 36px; width: 130px; border-radius: 6px;">
+                <select name="status" onchange="this.form.submit()" class="form-select text-xs" style="height: 36px; width: 130px; min-width: 130px; border-radius: 6px; flex-shrink: 0;">
                     <option value="">All Status</option>
                     <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="suspended" {{ ($filters['status'] ?? '') === 'suspended' ? 'selected' : '' }}>Suspended</option>
                 </select>
 
                 {{-- Search Box --}}
-                <div style="position: relative; width: 220px;">
+                <div style="position: relative; width: 220px; min-width: 220px; flex-shrink: 0;">
                     <input type="text"
                            name="search"
                            value="{{ $filters['search'] ?? '' }}"
@@ -78,7 +78,7 @@
 
                 {{-- Reset Button --}}
                 @if(!empty($filters['search']) || !empty($filters['role']) || !empty($filters['status']))
-                    <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center; padding: 0 12px;">
+                    <a href="{{ route('tyro-dashboard.users.index') }}" class="btn btn-outline-danger btn-sm text-xs" style="height: 36px; display: inline-flex; align-items: center; padding: 0 12px; flex-shrink: 0;">
                         Clear
                     </a>
                 @endif

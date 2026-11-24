@@ -24,7 +24,14 @@ Route::prefix('v1')->group(function () {
         // Mobile Dashboard & Pipeline Intelligence
         Route::get('dashboard', [DashboardApiController::class, 'index']);
 
-        // Form Metadata & Dynamic Lookups
+        // Academic & Directory Endpoints (Direct REST)
+        Route::get('countries', [LookupApiController::class, 'countries']);
+        Route::get('universities', [LookupApiController::class, 'universities']);
+        Route::get('courses', [LookupApiController::class, 'courses']);
+        Route::get('intakes', [LookupApiController::class, 'intakes']);
+        Route::get('staff', [LookupApiController::class, 'staff']);
+
+        // Form Metadata & Dynamic Lookups (Bundle & Aliases)
         Route::prefix('lookups')->group(function () {
             Route::get('all', [LookupApiController::class, 'all']);
             Route::get('countries', [LookupApiController::class, 'countries']);
