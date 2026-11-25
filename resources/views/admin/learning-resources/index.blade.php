@@ -353,16 +353,6 @@
                                     <div class="pt-3 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center justify-between gap-2 mt-auto">
                                         <div class="flex items-center gap-1.5">
 
-                                            <!-- Open & Edit in Browser -->
-                                            <a href="{{ route('admin.learning-resources.editor', ['template_id' => $template->id]) }}" 
-                                               class="btn btn-outline-primary btn-sm px-2.5 py-1 text-xs flex items-center gap-1 font-semibold" 
-                                               title="Open and edit template in browser editor before saving">
-                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                </svg>
-                                                Open &amp; Edit
-                                            </a>
-
                                             <!-- Word (.docx) -->
                                             <a href="{{ route('admin.learning-resources.templates.download-docx', $template) }}" 
                                                class="btn btn-primary btn-sm px-2.5 py-1 text-xs flex items-center gap-1" 
@@ -442,14 +432,6 @@
 
                 <!-- Action Buttons -->
                 <div class="mt-5 pt-4 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center gap-2">
-
-                    <a href="{{ route('admin.learning-resources.editor', ['template_id' => $template->id]) }}" 
-                       class="btn btn-outline-primary btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5 font-semibold">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                        Open &amp; Edit
-                    </a>
 
                     <a href="{{ route('admin.learning-resources.templates.download-docx', $template) }}" 
                        class="btn btn-primary btn-sm flex items-center gap-1.5 text-xs px-2.5 py-1.5" style="background-color: #2563eb; color: white;">
@@ -540,14 +522,6 @@
                         <!-- Action Buttons -->
                         <div class="mt-5 pt-4 border-t border-[#e0e6ed] dark:border-[#1b2e4b] flex flex-wrap items-center justify-between gap-2">
                             <div class="flex flex-wrap items-center gap-1.5">
-
-                                <a href="{{ route('admin.learning-resources.editor', ['template_id' => $template->id]) }}" 
-                                   class="btn btn-outline-primary btn-sm px-2.5 py-1 text-xs flex items-center gap-1 font-semibold">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    Open &amp; Edit
-                                </a>
 
                                 <a href="{{ route('admin.learning-resources.templates.download-docx', $template) }}"
                                    class="btn btn-primary btn-sm px-2.5 py-1 text-xs flex items-center gap-1"

@@ -140,12 +140,6 @@ Route::prefix('dashboard/learning-resources')->name('admin.learning-resources.')
     Route::get('templates/{template}/download-pdf', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadPdf'])->name('templates.download-pdf');
     Route::get('templates/{template}/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadDocx'])->name('templates.download-docx');
     Route::post('generate-agreement', [App\Http\Controllers\Admin\LearningResourceController::class, 'generateAgreement'])->name('generate-agreement');
-    Route::get('editor', [App\Http\Controllers\Admin\LearningResourceController::class, 'editor'])->name('editor');
-    Route::get('editor/raw-docx/{template}', [App\Http\Controllers\Admin\LearningResourceController::class, 'getRawDocxTemplate'])->name('editor.raw-docx');
-    Route::post('editor/save-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'saveEditedDocx'])->name('editor.save-docx');
-    Route::post('editor/download-docx', [App\Http\Controllers\Admin\LearningResourceController::class, 'downloadEditorDocx'])->name('editor.download-docx');
-    Route::get('api/students-search', [App\Http\Controllers\Admin\LearningResourceController::class, 'searchStudents'])->name('api.students-search');
-    Route::get('api/student/{student}', [App\Http\Controllers\Admin\LearningResourceController::class, 'getStudentData'])->name('api.student-data');
     Route::post('documents', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeDocument'])->name('documents.store');
     Route::delete('documents/{resource}', [App\Http\Controllers\Admin\LearningResourceController::class, 'destroyDocument'])->name('documents.destroy');
     Route::post('interview-prep', [App\Http\Controllers\Admin\LearningResourceController::class, 'storeInterviewPrep'])->name('interview-prep.store');
